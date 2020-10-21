@@ -5,7 +5,11 @@
     <script type="text/javascript" src="src/game-engine.js"></script>
     <style>
       body{
-        font-family: monospace;
+        background: black;
+        color: white;
+        font-family: 'Consolas',Courier, monospace;
+        font-size: 12px;
+        line-height: 1.15em;
       }
     </style>
   </head>
@@ -16,8 +20,11 @@
     </div>
 
 
+    <div id="debug"></div>
+
+
     <script>
-      gameEngineJS.init('Hello World');
+      gameEngineJS.init();
       // gameEngineJS.fDrawTestFunct();
     </script>
   </body>
