@@ -1,7 +1,35 @@
 var gameEngineJS = (function(){
 
-  // stores the display
   var eScreen;
+
+  var nScreenWidth = 120;
+  var nScreenRows = 40;
+
+  var fPlayerX = 0.0;
+  var fPlayerY = 0.0;
+  var fPlayerA = 0.0;
+
+  var nMapHeight = 16;
+  var nMapWidth = 16;
+
+  var map;
+  map += "################";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "################";
 
 
   var aTest = {
@@ -13,26 +41,35 @@ var gameEngineJS = (function(){
   };
 
 
-  var fDrawTestFunct = function(input){
+  var fDrawFrame = function(input)
+  {
     eScreen.innerHTML = aTest[input];
   };
 
 
-  var init = function( input ){
-
-    // gets the display
-    eScreen = document.getElementById('display');
-
+  /**
+   * The basic game loop
+   */
+  var main = function()
+  {
     var test = 0;
 
     // basic game loop
     setInterval(onTimerTick, 33);
     function onTimerTick() {
-      // console.log(test%3);
-      fDrawTestFunct(test%3);
+      fDrawFrame(test%3);
       test++;
     }
+  };
 
+
+  var init = function( input )
+  {
+    // gets the display
+    eScreen = document.getElementById('display');
+
+    // runs the game loop
+    main();
   };
 
 
