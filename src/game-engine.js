@@ -9,6 +9,7 @@ var gameEngineJS = (function(){
   var fPlayerX = 8.0;
   var fPlayerY = 8.0;
   var fPlayerA = 1.15;
+  var fPlayerA = 0;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -17,23 +18,23 @@ var gameEngineJS = (function(){
   var fDepth = 16.0; // viewport depth
 
   var map = "";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#..........#...#";
-  map += "#..........#...#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "###...##..##...#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#..............#";
-  map += "#.......########";
-  map += "#..............#";
-  map += "#..............#";
   map += "################";
+  map += "#..........#...#";
+  map += "#..........#...#";
+  map += "#..........#...#";
+  map += "#..........#...#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#........#######";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
+  map += "#..............#";
 
 
   // gonna leave the console for errors,
@@ -97,7 +98,7 @@ var gameEngineJS = (function(){
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
             bHitWall = true;
             // TODO: Figure out why this didn't work
-            // fDistanceToWall = fDepth;
+            fDistanceToWall = fDepth;
           }else{
             // Ray is in the bounds, so let's see if the ray cell wall is a block.
             // converts our position in 3D space into the 2D coordinates
@@ -128,7 +129,10 @@ var gameEngineJS = (function(){
           else if( j > nCeiling && j <= nFloor ){
 
             // draw wall, in different shades
-            if(fDistanceToWall < fDepth / 4){
+            if(fDistanceToWall >= fDepth){
+              screen[j*nScreenWidth+i] = '&nbsp;';
+            }
+            else if(fDistanceToWall < fDepth / 4){
               screen[j*nScreenWidth+i] = '&block;';
             }
             else if(fDistanceToWall < fDepth / 3){
@@ -152,7 +156,7 @@ var gameEngineJS = (function(){
             }else if(b < 0.75){
               screen[j*nScreenWidth+i] = '-';
             }else if(b < 0.9){
-              screen[j*nScreenWidth+i] = '.';
+              screen[j*nScreenWidth+i] = '`';
             }else{
               screen[j*nScreenWidth+i] = ' ';
             }
