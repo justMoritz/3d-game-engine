@@ -64,6 +64,7 @@ var gameEngineJS = (function(){
   };
 
 
+
   /**
    * The basic game loop
    */
@@ -102,13 +103,14 @@ var gameEngineJS = (function(){
             fDistanceToWall = fDepth;
           }else{
             // Ray is in the bounds, so let's see if the ray cell wall is a block.
-            // converts our position in 3D space into the 2D coordinates
-            // (because the map is stored in a 2D array)
+            // We are actually testing if we DIDN't hit an empty space
+            // This code effectively converts our position in 3D space into
+            // 2D coordinates (because the map is stored in a 2D array)
             if(map[nTestY * nMapWidth + nTestX] !== '.'){
               bHitWall = true;
 
               // we are writing what kind of block was detected into the walltype variable.
-              // This will take on '#' or 'X' or whatever is not '.'
+              // This will take on '#' or 'X', or whatever is not '.'
               sWalltype = map[nTestY * nMapWidth + nTestX];
 
               // Exp: fDistanceToWall will retain it's distance value;
@@ -134,16 +136,22 @@ var gameEngineJS = (function(){
           }
           else if( j > nCeiling && j <= nFloor ){
 
-            if( sWalltype == 'X' ){
-
+            // Door Walltype
+            if(sWalltype == 'X'){
               if( j < nDoorFrameHeight){
-                screen[j*nScreenWidth+i] = 'X';
+                screen[j*nScreenWidth+i] = '&boxH;';
               }else{
-                screen[j*nScreenWidth+i] = '&nbsp;';
+
+                if(fDistanceToWall < fDepth / 4){
+                  screen[j*nScreenWidth+i] = '&boxV;';
+                }
+                else{
+                  screen[j*nScreenWidth+i] = '|';
+                }
               }
-
-
-            }else{
+            }
+            // Solid Walltype
+            else if(sWalltype == '#'){
               // draw wall, in different shades
               if(fDistanceToWall >= fDepth){
                 screen[j*nScreenWidth+i] = '&nbsp;';
@@ -160,6 +168,10 @@ var gameEngineJS = (function(){
               else{
                 screen[j*nScreenWidth+i] = '&blk14;';
               }
+            }
+            // renders whatever char is on the map as walltype
+            else{
+              screen[j*nScreenWidth+i] = sWalltype;
             }
           }
           else{
