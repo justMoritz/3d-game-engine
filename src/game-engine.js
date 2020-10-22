@@ -9,7 +9,7 @@ var gameEngineJS = (function(){
   var fPlayerX = 8.0;
   var fPlayerY = 8.0;
   var fPlayerA = 1.15;
-  var fPlayerA = 0;
+  var fPlayerA = 180;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -237,14 +237,14 @@ var gameEngineJS = (function(){
         // forward arrow (w)
         fPlayerX += Math.sin(fPlayerA) + 5.0 * 0.0051;
         fPlayerY += Math.cos(fPlayerA) + 5.0 * 0.0051;
+
         _debugOutput(
           'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
           'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
         );
 
-        // convert coordinates into integer space and check if it is a wall (#), if so, reverse
-        _debugOutput(fPlayerY * nMapWidth + fPlayerX);
-        if(map[fPlayerY * nMapWidth + fPlayerX] == '#'){
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == '#'){
           fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
           fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
         }
@@ -254,10 +254,13 @@ var gameEngineJS = (function(){
         // backward arrow (s)
         fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
         fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
-        _debugOutput(
-          'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
-          'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
-        );
+
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == '#'){
+          fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
+          fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
+        }
+
       }
     };
 
