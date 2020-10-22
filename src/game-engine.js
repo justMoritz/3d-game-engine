@@ -28,7 +28,7 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "X..............#";
   map += "#..............#";
-  map += "#..............#";
+  map += "T......T##.....#";
   map += "#..............#";
   map += "#........#######";
   map += "#..............#";
@@ -61,6 +61,30 @@ var gameEngineJS = (function(){
       sOutput += oInput[i];
     }
     eScreen.innerHTML = sOutput;
+  };
+
+
+  // figures out shading for given section
+  var _renderSolidWall = function(j, fDistanceToWall){
+    var fill = '';
+
+    if(fDistanceToWall >= fDepth){
+      fill = '&nbsp;';
+    }
+    else if(fDistanceToWall < fDepth / 4 ){
+      fill = '&block;';
+    }
+    else if(fDistanceToWall < fDepth / 3 ){
+      fill = '&blk34;';
+    }
+    else if(fDistanceToWall < fDepth / 2 ){
+      fill = '&blk12;';
+    }
+    else{
+      fill = '&blk14;';
+    }
+
+    return fill;
   };
 
 
@@ -122,6 +146,8 @@ var gameEngineJS = (function(){
 
         // based on the distance to wall, determine how much floor and ceiling to show per column,
         // or, to put in another way, how big or small to paint the rendered wall per column
+
+        var nTower = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
         var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         var nFloor = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
@@ -129,10 +155,23 @@ var gameEngineJS = (function(){
 
         // draw the column, one screenheight pixel at a time
         for(var j = 0; j < nScreenHeight; j++){
+
           if( j < nCeiling){
 
+
+            // case of tower block
+            if(sWalltype == 'T'){
+              if( j > nTower ){
+                screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
+              }else{
+                screen[j*nScreenWidth+i] = '&nbsp;';
+              }
+            }
+
             // draw ceiling/sky
-            screen[j*nScreenWidth+i] = '&nbsp;';
+            else{
+              screen[j*nScreenWidth+i] = '&nbsp;';
+            }
           }
           else if( j > nCeiling && j <= nFloor ){
 
@@ -151,23 +190,9 @@ var gameEngineJS = (function(){
               }
             }
             // Solid Walltype
-            else if(sWalltype == '#'){
+            else if(sWalltype == '#' || sWalltype == 'T'){
               // draw wall, in different shades
-              if(fDistanceToWall >= fDepth){
-                screen[j*nScreenWidth+i] = '&nbsp;';
-              }
-              else if(fDistanceToWall < fDepth / 4){
-                screen[j*nScreenWidth+i] = '&block;';
-              }
-              else if(fDistanceToWall < fDepth / 3){
-                screen[j*nScreenWidth+i] = '&blk34;';
-              }
-              else if(fDistanceToWall < fDepth / 2){
-                screen[j*nScreenWidth+i] = '&blk12;';
-              }
-              else{
-                screen[j*nScreenWidth+i] = '&blk14;';
-              }
+              screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
             }
             // renders whatever char is on the map as walltype
             else{
@@ -208,17 +233,7 @@ var gameEngineJS = (function(){
 
 
 
-  var init = function( input )
-  {
-    // prep document
-    eScreen = document.getElementById('display');
-    eDebugOut = document.getElementById('debug');
-
-
-    // rendering loop
-    main();
-
-
+  var _inputHandler = function(){
     // Keypress logic is outside our rendering engine
     document.onkeypress = function (e) {
     e = e || window.event;
@@ -235,8 +250,8 @@ var gameEngineJS = (function(){
       }
       else if(e.keyCode == 119){
         // forward arrow (w)
-        fPlayerX += Math.sin(fPlayerA) + 5.0 * 0.0051;
-        fPlayerY += Math.cos(fPlayerA) + 5.0 * 0.0051;
+        fPlayerX += Math.sin(fPlayerA) - 5.0 * 0.0051;
+        fPlayerY += Math.cos(fPlayerA) - 5.0 * 0.0051;
 
         _debugOutput(
           'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
@@ -247,6 +262,10 @@ var gameEngineJS = (function(){
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == '#'){
           fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
           fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
+        }
+
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == 'X'){
+          _debugOutput('You have found the door');
         }
 
       }
@@ -265,42 +284,56 @@ var gameEngineJS = (function(){
     };
 
 
+    // mousemove logig
 
-    // // mousemove logig
+    var oldX = 0, oldY = 0;
+    function captureMouseMove($event){
 
-    // var oldX = 0, oldY = 0;
-    // function captureMouseMove($event){
+      var directionX = 0, directionY = 0, diffX = 0, diffY = 0;
+      if ($event.pageX < oldX) {
+          directionX = "left"
+          diffX = oldX - $event.pageX;
 
-    //   var directionX = 0, directionY = 0, diffX = 0, diffY = 0;
-    //   if ($event.pageX < oldX) {
-    //       directionX = "left"
-    //       diffX = oldX - $event.pageX;
+          fPlayerA -= diffX * 0.005;
+      } else if ($event.pageX > oldX) {
+          directionX = "right"
+          diffX = $event.pageX - oldX;
 
-    //       fPlayerA -= diffX * 0.0005;
-    //   } else if ($event.pageX > oldX) {
-    //       directionX = "right"
-    //       diffX = $event.pageX - oldX;
+          fPlayerA += diffX * 0.005;
+      }
 
-    //       fPlayerA += diffX * 0.0005;
-    //   }
+      // if ($event.pageY < oldY) {
+      //     directionY = "top"
+      //     diffY = oldY - $event.pageY;
+      //     fPlayerX += Math.sin(fPlayerA) + 5.0 / 2;
+      //     fPlayerY += Math.cos(fPlayerA) + 5.0 / 2;
+      // } else if ($event.pageY > oldY) {
+      //     directionY = "bottom";
+      //     diffY = $event.pageY - oldY;
+      //     fPlayerX -= Math.sin(fPlayerA) + 5.0 / 2;
+      //     fPlayerY -= Math.cos(fPlayerA) + 5.0 / 2;
+      // }
 
-    //   if ($event.pageY < oldY) {
-    //       directionY = "top"
-    //       diffY = oldY - $event.pageY;
-    //       // fPlayerX += Math.sin(fPlayerA) + 5.0 * 0.000051;
-    //       // fPlayerY += Math.cos(fPlayerA) + 5.0 * 0.000051;
-    //   } else if ($event.pageY > oldY) {
-    //       directionY = "bottom";
-    //       diffY = $event.pageY - oldY;
-    //       // fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.000051;
-    //       // fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.000051;
-    //   }
+      oldX = $event.pageX;
+      oldY = $event.pageY;
+    }
 
-    //   oldX = $event.pageX;
-    //   oldY = $event.pageY;
-    // }
+    window.addEventListener('mousemove', captureMouseMove);
+  };
 
-    // window.addEventListener('mousemove', captureMouseMove);
+
+
+  var init = function( input )
+  {
+    // prep document
+    eScreen = document.getElementById('display');
+    eDebugOut = document.getElementById('debug');
+
+
+    // rendering loop
+    main();
+
+    _inputHandler();
   };
 
 
