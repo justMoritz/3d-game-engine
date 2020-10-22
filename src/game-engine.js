@@ -26,7 +26,7 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "#..............#";
   map += "#..............#";
-  map += "#..............#";
+  map += "X..............#";
   map += "#..............#";
   map += "#..............#";
   map += "#..............#";
@@ -84,6 +84,7 @@ var gameEngineJS = (function(){
 
         var fDistanceToWall = 0;
         var bHitWall = false;
+        var sWalltype = '#';
 
         var fEyeX = Math.sin(fRayAngle); // unit vector for way in player space
         var fEyeY = Math.cos(fRayAngle); // I think this determines the line the testing travels along
@@ -103,8 +104,12 @@ var gameEngineJS = (function(){
             // Ray is in the bounds, so let's see if the ray cell wall is a block.
             // converts our position in 3D space into the 2D coordinates
             // (because the map is stored in a 2D array)
-            if(map[nTestY * nMapWidth + nTestX] == '#'){
+            if(map[nTestY * nMapWidth + nTestX] !== '.'){
               bHitWall = true;
+
+              // we are writing what kind of block was detected into the walltype variable.
+              // This will take on '#' or 'X' or whatever is not '.'
+              sWalltype = map[nTestY * nMapWidth + nTestX];
 
               // Exp: fDistanceToWall will retain it's distance value;
               // It was incremented above.
@@ -115,8 +120,9 @@ var gameEngineJS = (function(){
 
         // based on the distance to wall, determine how much floor and ceiling to show per column,
         // or, to put in another way, how big or small to paint the rendered wall per column
-        var nCeiling = (nScreenHeight / 2.0) - nScreenHeight / fDistanceToWall;
+        var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         var nFloor = nScreenHeight - nCeiling;
+        var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
 
         // draw the column, one screenheight pixel at a time
@@ -128,21 +134,32 @@ var gameEngineJS = (function(){
           }
           else if( j > nCeiling && j <= nFloor ){
 
-            // draw wall, in different shades
-            if(fDistanceToWall >= fDepth){
-              screen[j*nScreenWidth+i] = '&nbsp;';
-            }
-            else if(fDistanceToWall < fDepth / 4){
-              screen[j*nScreenWidth+i] = '&block;';
-            }
-            else if(fDistanceToWall < fDepth / 3){
-              screen[j*nScreenWidth+i] = '&blk34;';
-            }
-            else if(fDistanceToWall < fDepth / 2){
-              screen[j*nScreenWidth+i] = '&blk12;';
-            }
-            else{
-              screen[j*nScreenWidth+i] = '&blk14;';
+            if( sWalltype == 'X' ){
+
+              if( j < nDoorFrameHeight){
+                screen[j*nScreenWidth+i] = 'X';
+              }else{
+                screen[j*nScreenWidth+i] = '&nbsp;';
+              }
+
+
+            }else{
+              // draw wall, in different shades
+              if(fDistanceToWall >= fDepth){
+                screen[j*nScreenWidth+i] = '&nbsp;';
+              }
+              else if(fDistanceToWall < fDepth / 4){
+                screen[j*nScreenWidth+i] = '&block;';
+              }
+              else if(fDistanceToWall < fDepth / 3){
+                screen[j*nScreenWidth+i] = '&blk34;';
+              }
+              else if(fDistanceToWall < fDepth / 2){
+                screen[j*nScreenWidth+i] = '&blk12;';
+              }
+              else{
+                screen[j*nScreenWidth+i] = '&blk14;';
+              }
             }
           }
           else{
@@ -212,6 +229,14 @@ var gameEngineJS = (function(){
           'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
           'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
         );
+
+        // convert coordinates into integer space and check if it is a wall (#), if so, reverse
+        _debugOutput(fPlayerY * nMapWidth + fPlayerX);
+        if(map[fPlayerY * nMapWidth + fPlayerX] == '#'){
+          fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
+          fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
+        }
+
       }
       else if(e.keyCode == 115){
         // backward arrow (s)
