@@ -90,8 +90,8 @@ var gameEngineJS = (function(){
         while(!bHitWall && fDistanceToWall < fDepth){
           fDistanceToWall += 0.1;
 
-          var nTestX = parseInt( (parseInt(fPlayerX) + fEyeX * fDistanceToWall) );
-          var nTestY = parseInt( (parseInt(fPlayerY) + fEyeY * fDistanceToWall) );
+          var nTestX = parseInt( ((fPlayerX) + fEyeX * fDistanceToWall) );
+          var nTestY = parseInt( ((fPlayerY) + fEyeY * fDistanceToWall) );
 
           // test if Ray is out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
@@ -204,11 +204,19 @@ var gameEngineJS = (function(){
         // forward arrow (w)
         fPlayerX += Math.sin(fPlayerA) + 5.0 * 0.0051;
         fPlayerY += Math.cos(fPlayerA) + 5.0 * 0.0051;
+        _debugOutput(
+          'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
+          'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
+        );
       }
       else if(e.keyCode == 115){
         // backward arrow (s)
         fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
         fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
+        _debugOutput(
+          'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
+          'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
+        );
       }
     };
 
@@ -248,7 +256,7 @@ var gameEngineJS = (function(){
     //   oldY = $event.pageY;
     // }
 
-    window.addEventListener('mousemove', captureMouseMove);
+    // window.addEventListener('mousemove', captureMouseMove);
   };
 
 
