@@ -24,6 +24,9 @@ var gameEngineJS = (function(){
   var bStrafeRight;
   var bMoveForward;
   var bMoveBackward;
+  var bJumping;
+
+  var nJumptimer = 0;
 
 
   var map = "";
@@ -105,6 +108,9 @@ var gameEngineJS = (function(){
 
         _debugOutput(e.which);
 
+        if (e.which == 32) { // space
+          bJumping = true;
+        }
         if (e.which == 65) { // a
           bStrafeLeft = true;
         }
@@ -126,6 +132,11 @@ var gameEngineJS = (function(){
       };
 
       window.onkeyup = function(e) {
+
+        if (e.which == 32) { // space
+          bJumping = false;
+          nJumptimer = 0;
+        }
         if (e.which == 65) { // a
           bStrafeLeft = false;
         }
@@ -220,6 +231,15 @@ var gameEngineJS = (function(){
 
       _moveHelpers.move();
 
+      // allows jumping for only a certain amount of time
+      if(bJumping){
+        nJumptimer++
+        _debugOutput(nJumptimer);
+      }
+      if( nJumptimer > 5 ){
+        bJumping = false;
+      }
+
 
       // holds the frame we're going to send to the renderer
       var screen = [];
@@ -278,13 +298,19 @@ var gameEngineJS = (function(){
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
 
+        if(bJumping){
+          nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
+          nFloor = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
+          nTower = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+        }
+
+
         // draw the column, one screenheight pixel at a time
         // j is equivalent to y
         // i is equivalent to x
         for(var j = 0; j < nScreenHeight; j++){
 
           if( j < nCeiling){
-
 
             // case of tower block
             if(sWalltype == 'T'){
