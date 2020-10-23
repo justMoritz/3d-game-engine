@@ -6,10 +6,10 @@ var gameEngineJS = (function(){
   var nScreenWidth = 120;
   var nScreenHeight = 40;
 
-  var fPlayerX = 8.0;
-  var fPlayerY = 8.0;
+  var fPlayerX = 14.0;
+  var fPlayerY = 1.0;
   var fPlayerA = 1.15;
-  var fPlayerA = 180;
+  var fPlayerA = 0;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -27,15 +27,15 @@ var gameEngineJS = (function(){
 
 
   var map = "";
-  map += "################";
+  map += "#############..#";
   map += "#...........#..#";
   map += "#...........#..#";
   map += "#...........#..#";
-  map += "#...........#..#";
-  map += "#..............#";
-  map += "#####..........#";
+  map += "#########...#..#";
   map += "#..............#";
   map += "#..............#";
+  map += "#.....####.....#";
+  map += "#......##......#";
   map += "#..............#";
   map += "#.......########";
   map += "#..............#";
@@ -74,12 +74,10 @@ var gameEngineJS = (function(){
 
   // figures out shading for given section
   var _renderSolidWall = function(j, fDistanceToWall){
-    var fill = '&blk14;';
+    var fill = '&#9617;';
 
-    if(fDistanceToWall >= fDepth){
-      fill = '&nbsp;';
-    }
-    else if(fDistanceToWall < fDepth / 4 ){
+
+    if(fDistanceToWall < fDepth / 4 ){
       fill = '&#9608;';
     }
     else if(fDistanceToWall < fDepth / 3 ){
@@ -88,12 +86,11 @@ var gameEngineJS = (function(){
     else if(fDistanceToWall < fDepth / 2 ){
       fill = '&#9618;';
     }
-    else if(fDistanceToWall < fDepth ){
+    else if(fDistanceToWall < fDepth / 1 ){
       fill = '&#9617;';
+    }else{
+      fill = '&nbsp;';
     }
-    // else{
-    //   fill = '&blk14;';
-    // }
 
     return fill;
   };
@@ -108,43 +105,43 @@ var gameEngineJS = (function(){
 
         _debugOutput(e.which);
 
-        if (e.which == 65) {
+        if (e.which == 65) { // a
           bStrafeLeft = true;
         }
-        if (e.which == 68) {
+        if (e.which == 68) { // d
           bStrafeRight = true;
         }
-        if (e.which == 81) {
+        if (e.which == 81 || e.which == 37) { // q or left
           bTurnLeft = true;
         }
-        if (e.which == 69) {
+        if (e.which == 69 || e.which == 39) { // e or right
           bTurnRight = true;
         }
-        if (e.which == 87) {
+        if (e.which == 87 || e.which == 38) { // w or up
           bMoveForward = true;
         }
-        if (e.which == 83) {
+        if (e.which == 83 || e.which == 40) { // s or down
           bMoveBackward = true;
         }
       };
 
       window.onkeyup = function(e) {
-        if (e.which == 65) {
+        if (e.which == 65) { // a
           bStrafeLeft = false;
         }
-        if (e.which == 68) {
+        if (e.which == 68) { // d
           bStrafeRight = false;
         }
-        if (e.which == 81) {
+        if (e.which == 81 || e.which == 37) { // q or left
           bTurnLeft = false;
         }
-        if (e.which == 69) {
+        if (e.which == 69 || e.which == 39) { // e or right
           bTurnRight = false;
         }
-        if (e.which == 87) {
+        if (e.which == 87 || e.which == 38) { // w or up
           bMoveForward = false;
         }
-        if (e.which == 83) {
+        if (e.which == 83 || e.which == 40) { // s or down
           bMoveBackward = false;
         }
       };
@@ -233,7 +230,7 @@ var gameEngineJS = (function(){
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
         // and then chop it up into equal little bits of the screen width (at the current colum)
-        var fRayAngle = (fPlayerA - fFOV / 2) + (i / nScreenWidth) * fFOV;
+        var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
 
         var fDistanceToWall = 0;
         var bHitWall = false;
