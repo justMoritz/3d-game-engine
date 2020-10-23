@@ -17,24 +17,32 @@ var gameEngineJS = (function(){
   var fFOV = 3.14159 / 4.0;
   var fDepth = 16.0; // viewport depth
 
+
+  var bTurnLeft;
+  var bTurnRight;
+  var bStrafeLeft;
+  var bStrafeRight;
+  var bMoveForward;
+  var bMoveBackward;
+
+
   var map = "";
   map += "################";
-  map += "#..........#...#";
-  map += "#..........#...#";
-  map += "#..........#...#";
-  map += "#..........#...#";
+  map += "#...........#..#";
+  map += "#...........#..#";
+  map += "#...........#..#";
+  map += "#...........#..#";
+  map += "#..............#";
+  map += "#####..........#";
   map += "#..............#";
   map += "#..............#";
   map += "#..............#";
-  map += "X..............#";
-  map += "#..............#";
-  map += "T......T##.....#";
-  map += "#..............#";
-  map += "#........#######";
+  map += "#.......########";
   map += "#..............#";
   map += "#..............#";
   map += "#..............#";
   map += "#..............#";
+  map += "#####TXT....#..#";
 
 
   // gonna leave the console for errors,
@@ -66,25 +74,141 @@ var gameEngineJS = (function(){
 
   // figures out shading for given section
   var _renderSolidWall = function(j, fDistanceToWall){
-    var fill = '';
+    var fill = '&blk14;';
 
     if(fDistanceToWall >= fDepth){
       fill = '&nbsp;';
     }
     else if(fDistanceToWall < fDepth / 4 ){
-      fill = '&block;';
+      fill = '&#9608;';
     }
     else if(fDistanceToWall < fDepth / 3 ){
-      fill = '&blk34;';
+      fill = '&#9619;';
     }
     else if(fDistanceToWall < fDepth / 2 ){
-      fill = '&blk12;';
+      fill = '&#9618;';
     }
-    else{
-      fill = '&blk14;';
+    else if(fDistanceToWall < fDepth ){
+      fill = '&#9617;';
     }
+    // else{
+    //   fill = '&blk14;';
+    // }
 
     return fill;
+  };
+
+
+
+  var _moveHelpers = {
+
+    listen: function(){
+
+      window.onkeydown = function(e) {
+
+        _debugOutput(e.which);
+
+        if (e.which == 65) {
+          bStrafeLeft = true;
+        }
+        if (e.which == 68) {
+          bStrafeRight = true;
+        }
+        if (e.which == 81) {
+          bTurnLeft = true;
+        }
+        if (e.which == 69) {
+          bTurnRight = true;
+        }
+        if (e.which == 87) {
+          bMoveForward = true;
+        }
+        if (e.which == 83) {
+          bMoveBackward = true;
+        }
+      };
+
+      window.onkeyup = function(e) {
+        if (e.which == 65) {
+          bStrafeLeft = false;
+        }
+        if (e.which == 68) {
+          bStrafeRight = false;
+        }
+        if (e.which == 81) {
+          bTurnLeft = false;
+        }
+        if (e.which == 69) {
+          bTurnRight = false;
+        }
+        if (e.which == 87) {
+          bMoveForward = false;
+        }
+        if (e.which == 83) {
+          bMoveBackward = false;
+        }
+      };
+    },
+
+
+    // called once per frame, handles movement computation
+    move: function(){
+      if(bTurnLeft){
+        fPlayerA -= 0.05;
+      }
+
+      if(bTurnRight){
+        fPlayerA += 0.05;
+      }
+
+      if(bStrafeRight){
+        // forward arrow (w)
+        fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+          fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        }
+      }
+
+      if(bStrafeLeft){
+        // forward arrow (w)
+        fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        }
+      }
+
+      if(bMoveForward){
+        // forward arrow (w)
+        fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        }
+      }
+
+      if(bMoveBackward){
+        // backward arrow (s)
+        fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+
+        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+          fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        }
+      }
+    },
   };
 
 
@@ -97,6 +221,10 @@ var gameEngineJS = (function(){
     setInterval(gameLoop, 33);
     function gameLoop(){
 
+      _moveHelpers.move();
+
+
+      // holds the frame we're going to send to the renderer
       var screen = [];
 
       // for the length of the screenwidth (one frame)
@@ -154,6 +282,8 @@ var gameEngineJS = (function(){
 
 
         // draw the column, one screenheight pixel at a time
+        // j is equivalent to y
+        // i is equivalent to x
         for(var j = 0; j < nScreenHeight; j++){
 
           if( j < nCeiling){
@@ -225,104 +355,6 @@ var gameEngineJS = (function(){
   };
 
 
-
-  var _testCoordinates = function(){
-    console.log(map);
-    console.log(map[22]);
-  };
-
-
-
-  var _inputHandler = function(){
-    // Keypress logic is outside our rendering engine
-    document.onkeypress = function (e) {
-    e = e || window.event;
-      // use e.keyCode
-      _debugOutput( e.keyCode );
-
-      if(e.keyCode == 97){
-        // left arrow (a)
-        fPlayerA -= 0.15;
-      }
-      else if(e.keyCode == 100){
-        // right arrow (d)
-        fPlayerA += 0.15;
-      }
-      else if(e.keyCode == 119){
-        // forward arrow (w)
-        fPlayerX += Math.sin(fPlayerA) - 5.0 * 0.0051;
-        fPlayerY += Math.cos(fPlayerA) - 5.0 * 0.0051;
-
-        _debugOutput(
-          'PlayerX: ' + Math.sin(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.sin(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerX + '<br>' +
-          'PlayerY: ' + Math.cos(fPlayerA) + ' + 5.0 * 0.0051 = ' + (Math.cos(fPlayerA) + 5.0 * 0.0051) + '. Updated X to: ' +fPlayerY
-        );
-
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == '#'){
-          fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
-          fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
-        }
-
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == 'X'){
-          _debugOutput('You have found the door');
-        }
-
-      }
-      else if(e.keyCode == 115){
-        // backward arrow (s)
-        fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
-        fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
-
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == '#'){
-          fPlayerX -= Math.sin(fPlayerA) + 5.0 * 0.0051;
-          fPlayerY -= Math.cos(fPlayerA) + 5.0 * 0.0051;
-        }
-
-      }
-    };
-
-
-    // mousemove logig
-
-    var oldX = 0, oldY = 0;
-    function captureMouseMove($event){
-
-      var directionX = 0, directionY = 0, diffX = 0, diffY = 0;
-      if ($event.pageX < oldX) {
-          directionX = "left"
-          diffX = oldX - $event.pageX;
-
-          fPlayerA -= diffX * 0.005;
-      } else if ($event.pageX > oldX) {
-          directionX = "right"
-          diffX = $event.pageX - oldX;
-
-          fPlayerA += diffX * 0.005;
-      }
-
-      // if ($event.pageY < oldY) {
-      //     directionY = "top"
-      //     diffY = oldY - $event.pageY;
-      //     fPlayerX += Math.sin(fPlayerA) + 5.0 / 2;
-      //     fPlayerY += Math.cos(fPlayerA) + 5.0 / 2;
-      // } else if ($event.pageY > oldY) {
-      //     directionY = "bottom";
-      //     diffY = $event.pageY - oldY;
-      //     fPlayerX -= Math.sin(fPlayerA) + 5.0 / 2;
-      //     fPlayerY -= Math.cos(fPlayerA) + 5.0 / 2;
-      // }
-
-      oldX = $event.pageX;
-      oldY = $event.pageY;
-    }
-
-    window.addEventListener('mousemove', captureMouseMove);
-  };
-
-
-
   var init = function( input )
   {
     // prep document
@@ -333,7 +365,7 @@ var gameEngineJS = (function(){
     // rendering loop
     main();
 
-    _inputHandler();
+    _moveHelpers.listen();
   };
 
 
