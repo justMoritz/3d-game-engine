@@ -36,7 +36,7 @@ var gameEngineJS = (function(){
   map += "#...........#..#";
   map += "#########...#..#";
   map += "#..............#";
-  map += "#............o.#";
+  map += "#..............#";
   map += "#.....####.....#";
   map += "#......##......#";
   map += "#..............#";
@@ -240,8 +240,6 @@ var gameEngineJS = (function(){
       // holds the frame we're going to send to the renderer
       var screen = [];
 
-      var overlayscreen = []
-
       // for the length of the screenwidth (one frame)
       for(var i = 0; i < nScreenWidth; i++){
 
@@ -251,31 +249,22 @@ var gameEngineJS = (function(){
         var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
 
         var fDistanceToWall = 0;
-        var fDistanceToInverseWall = 0;
         var bHitWall = false;
-        var bHitWallAgain = false;
         var sWalltype = '#';
 
         var fEyeX = Math.sin(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.cos(fRayAngle);
 
+        while(!bHitWall && fDistanceToWall < fDepth){
+          fDistanceToWall += 0.1;
 
-        // this loop determines the fDistanceToWall (front side)
-        // and fDistanceToInverseWall (backside)
-        while(!bHitWallAgain && fDistanceToWall < fDepth){
-          if( !bHitWall ){
-            fDistanceToWall += 0.1;
-          }
-          fDistanceToInverseWall += 0.1;
-
-          var nTestX = parseInt( ((fPlayerX) + fEyeX * fDistanceToInverseWall) );
-          var nTestY = parseInt( ((fPlayerY) + fEyeY * fDistanceToInverseWall) );
+          var nTestX = parseInt( ((fPlayerX) + fEyeX * fDistanceToWall) );
+          var nTestY = parseInt( ((fPlayerY) + fEyeY * fDistanceToWall) );
 
           // test if Ray is out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
             bHitWall = true; // didn't actually, just no wall there
-            bHitWallAgain = true; // didn't actually, just no wall there
-            fDistanceToInverseWall = fDepth;
+            fDistanceToWall = fDepth;
           }
 
           else{
@@ -293,11 +282,6 @@ var gameEngineJS = (function(){
               // Exp: fDistanceToWall will retain it's distance value;
               // It was incremented above.
             }
-
-            else if( map[nTestY * nMapWidth + nTestX] == '.' && bHitWall == true ){
-              bHitWallAgain = true;
-            }
-
           }
         } // end angle loop
 
@@ -310,21 +294,12 @@ var gameEngineJS = (function(){
         var nFloor   = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
-        var nFloorTileHeight = (nScreenHeight / 2) + nScreenHeight / (fDistanceToWall + 1);
-        var nFloorTileSky = nScreenHeight - nFloorTileHeight;
-
 
         if(bJumping){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
           nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
           nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
         }
-
-
-        // if(sWalltype == 'o'){
-        //   nCeiling = (nScreenHeight / 1.1) - nScreenHeight / fDistanceToWall;
-        //   nFloor   = nScreenHeight - nCeiling;
-        // }
 
 
         // draw the column, one screenheight pixel at a time
@@ -348,8 +323,6 @@ var gameEngineJS = (function(){
             else{
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
-
-            overlayscreen[j*nScreenWidth+i] = '?';
           }
 
           // solid block
@@ -378,27 +351,10 @@ var gameEngineJS = (function(){
             else{
               screen[j*nScreenWidth+i] = sWalltype;
             }
-
-
-            // Floor Walltype
-            if(sWalltype == 'o'){
-              if( j < nFloorTileHeight ){
-                overlayscreen[j*nScreenWidth+i] = ':';
-              }else{
-                overlayscreen[j*nScreenWidth+i] = 'M';
-              }
-            }else{
-              overlayscreen[j*nScreenWidth+i] = '`';
-            }
-
-
-
-
           }
 
-
           // floor
-          else {
+          else{
 
             // draw floor, in different shades
             b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
@@ -413,15 +369,12 @@ var gameEngineJS = (function(){
             }else{
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
-            overlayscreen[j*nScreenWidth+i] = '`';
-
           }
         } // end draw column loop
 
       }  // end column loop
 
       _fDrawFrame(screen);
-      // _fDrawFrame(overlayscreen);
 
     }
   };
