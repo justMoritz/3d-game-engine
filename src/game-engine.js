@@ -239,7 +239,6 @@ var gameEngineJS = (function(){
 
       // holds the frame we're going to send to the renderer
       var screen = [];
-
       var overlayscreen = []
 
       // for the length of the screenwidth (one frame)
@@ -310,8 +309,7 @@ var gameEngineJS = (function(){
         var nFloor   = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
-        var nFloorTileHeight = (nScreenHeight / 2) + nScreenHeight / (fDistanceToWall + 1);
-        var nFloorTileSky = nScreenHeight - nFloorTileHeight;
+        var nFloorTileBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseWall + 1);
 
 
         if(bJumping){
@@ -319,12 +317,6 @@ var gameEngineJS = (function(){
           nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
           nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
         }
-
-
-        // if(sWalltype == 'o'){
-        //   nCeiling = (nScreenHeight / 1.1) - nScreenHeight / fDistanceToWall;
-        //   nFloor   = nScreenHeight - nCeiling;
-        // }
 
 
         // draw the column, one screenheight pixel at a time
@@ -349,7 +341,8 @@ var gameEngineJS = (function(){
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
 
-            overlayscreen[j*nScreenWidth+i] = '?';
+            // sky is always 0 on overlayscreen
+            overlayscreen[j*nScreenWidth+i] = '0';
           }
 
           // solid block
@@ -380,18 +373,17 @@ var gameEngineJS = (function(){
             }
 
 
-            // Floor Walltype
+            // Floortile Walltype
             if(sWalltype == 'o'){
-              if( j < nFloorTileHeight ){
-                overlayscreen[j*nScreenWidth+i] = ':';
-              }else{
-                overlayscreen[j*nScreenWidth+i] = 'M';
+              if( j < nFloorTileBackwall ){
+                overlayscreen[j*nScreenWidth+i] = '0';
+              }
+              else{
+                overlayscreen[j*nScreenWidth+i] = '1';
               }
             }else{
-              overlayscreen[j*nScreenWidth+i] = '`';
+              overlayscreen[j*nScreenWidth+i] = '0';
             }
-
-
 
 
           }
@@ -413,14 +405,16 @@ var gameEngineJS = (function(){
             }else{
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
-            overlayscreen[j*nScreenWidth+i] = '`';
+
+            // overlayscreen floor is always 0
+            overlayscreen[j*nScreenWidth+i] = '0';
 
           }
         } // end draw column loop
 
       }  // end column loop
 
-      _fDrawFrame(screen);
+      _fDrawFrame(screen, overlayscreen);
       // _fDrawFrame(overlayscreen);
 
     }
