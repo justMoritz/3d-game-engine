@@ -42,10 +42,10 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "#.......########";
   map += "#..............#";
+  map += "#.....o........#";
   map += "#..............#";
   map += "#..............#";
-  map += "#..............#";
-  map += "#####TXT....#..#";
+  map += "TTTTTTXT....#..#";
 
 
   // gonna leave the console for errors, logging seems to kill performance
@@ -367,7 +367,7 @@ var gameEngineJS = (function(){
             }else if(b < 0.9){
               screen[j*nScreenWidth+i] = '`';
             }else{
-              screen[j*nScreenWidth+i] = ' ';
+              screen[j*nScreenWidth+i] = '&nbsp;';
             }
           }
         } // end draw column loop
