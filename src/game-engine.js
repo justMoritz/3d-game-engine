@@ -55,19 +55,29 @@ var gameEngineJS = (function(){
 
 
   // renderer
-  var _fDrawFrame = function(oInput)
+  var _fDrawFrame = function(oInput, oOverlay)
   {
     var sOutput = '';
 
-    // loops through each pixel and appends it to the output
+    // loops through each pixel of the background (oInput)
+    // and appends it to the output
     for(var i = 0; i < oInput.length; i++){
 
       // insert H blank based on screen-width
       if(i % nScreenWidth == 0){
         sOutput += '<br>';
       }
-      sOutput += oInput[i];
+
+
+      // if oOverlay !0, appends it to the output instead
+      if( oOverlay[i] != 0){
+        sOutput += oOverlay[i];
+      }else{
+        sOutput += oInput[i];
+      }
     }
+
+
     eScreen.innerHTML = sOutput;
   };
 
