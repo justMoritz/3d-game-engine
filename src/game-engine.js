@@ -55,8 +55,8 @@ var gameEngineJS = (function(){
 
 
   // renderer
-  var _fDrawFrame = function(oInput, oOverlay)
-  {
+  var _fDrawFrame = function(oInput, oOverlay){
+    var oOverlay = oOverlay || false;
     var sOutput = '';
 
     // loops through each pixel of the background (oInput)
@@ -68,15 +68,13 @@ var gameEngineJS = (function(){
         sOutput += '<br>';
       }
 
-
       // if oOverlay !0, appends it to the output instead
-      if( oOverlay[i] != 0){
+      if( oOverlay && oOverlay[i] != 0){
         sOutput += oOverlay[i];
       }else{
         sOutput += oInput[i];
       }
     }
-
 
     eScreen.innerHTML = sOutput;
   };
@@ -227,6 +225,10 @@ var gameEngineJS = (function(){
   };
 
 
+  var _calculateCurrentRayAngle = function(i){
+    return (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
+  };
+
 
   /**
    * The basic game loop
@@ -252,13 +254,16 @@ var gameEngineJS = (function(){
       var overlayscreen = []
 
       // for the length of the screenwidth (one frame)
+
+
+
       // this loop is responsible for drawing ONLY the foreground elements
       for(var i = 0; i < nScreenWidth; i++){
 
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
         // and then chop it up into equal little bits of the screen width (at the current colum)
-        var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
+        var fRayAngle = _calculateCurrentRayAngle(i);
 
         var fDistanceToWall = 0;
         var fDistanceToInverseWall = 0;
@@ -367,13 +372,7 @@ var gameEngineJS = (function(){
 
           }
         } // end draw column loop
-
       }  // end column loop
-
-
-
-
-
 
 
       // this loop draws ONLY the very background
@@ -382,7 +381,7 @@ var gameEngineJS = (function(){
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
         // and then chop it up into equal little bits of the screen width (at the current colum)
-        var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
+        var fRayAngle = _calculateCurrentRayAngle(i);
 
         var fDistanceToWall = 0;
         var bHitWall = false;
@@ -514,8 +513,8 @@ var gameEngineJS = (function(){
             }
           }
         } // end draw column loop
-
       }  // end column loop
+
 
       _fDrawFrame(screen, overlayscreen);
       // _fDrawFrame(overlayscreen);
