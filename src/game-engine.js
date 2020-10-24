@@ -42,8 +42,8 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "#.......########";
   map += "#..............#";
-  map += "#.....o........#";
   map += "#..............#";
+  map += "#..ooooooo.....#";
   map += "#..............#";
   map += "TTTTTTXT....#..#";
 
@@ -252,6 +252,7 @@ var gameEngineJS = (function(){
       var overlayscreen = []
 
       // for the length of the screenwidth (one frame)
+      // this loop is responsible for drawing ONLY the foreground elements
       for(var i = 0; i < nScreenWidth; i++){
 
         // calculates the ray angle into the world space
@@ -292,6 +293,7 @@ var gameEngineJS = (function(){
             // We are actually testing if we DIDN't hit an empty space
             // This code effectively converts our position in 3D space into
             // 2D coordinates (because the map is stored in a 2D array)
+
             if(map[nTestY * nMapWidth + nTestX] !== '.'){
               bHitWall = true;
 
@@ -319,8 +321,120 @@ var gameEngineJS = (function(){
         var nFloor   = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
-        var nFloorTileBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseWall + 1);
+        var nFloorTileBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseWall + 2);
 
+
+        if(bJumping){
+          nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
+          nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
+          nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+
+          var nFloorTileBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseWall + 2);
+        }
+
+
+        // draw the column, one screenheight pixel at a time
+        // j is equivalent to y
+        // i is equivalent to x
+        for(var j = 0; j < nScreenHeight; j++){
+
+          // sky
+          if( j < nCeiling){
+            // sky is always 0 on overlayscreen
+            overlayscreen[j*nScreenWidth+i] = '0';
+          }
+
+          // solid block
+          else if( j > nCeiling && j <= nFloor ){
+
+            // Floortile Walltype
+            if(sWalltype == 'o'){
+              if( j < nFloorTileBackwall ){
+                overlayscreen[j*nScreenWidth+i] = '0';
+              }
+              else{
+                overlayscreen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
+              }
+            }else{
+              overlayscreen[j*nScreenWidth+i] = '0';
+            }
+          }
+
+          // floor
+          else {
+            // overlayscreen floor is always 0
+            overlayscreen[j*nScreenWidth+i] = '0';
+
+          }
+        } // end draw column loop
+
+      }  // end column loop
+
+
+
+
+
+
+
+      // this loop draws ONLY the very background
+      for(var i = 0; i < nScreenWidth; i++){
+
+        // calculates the ray angle into the world space
+        // take the current player angle, subtract half the field of view
+        // and then chop it up into equal little bits of the screen width (at the current colum)
+        var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
+
+        var fDistanceToWall = 0;
+        var bHitWall = false;
+        var sWalltype = '#';
+
+        var fEyeX = Math.sin(fRayAngle); // I think this determines the line the testing travels along
+        var fEyeY = Math.cos(fRayAngle);
+
+
+        // this loop determines the fDistanceToWall (front side)
+        // and fDistanceToInverseWall (backside)
+        while(!bHitWall && fDistanceToWall < fDepth){
+          fDistanceToWall += 0.1;
+
+          var nTestX = parseInt( ((fPlayerX) + fEyeX * fDistanceToWall) );
+          var nTestY = parseInt( ((fPlayerY) + fEyeY * fDistanceToWall) );
+
+          // test if Ray is out of bounds
+          if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
+            bHitWall = true; // didn't actually, just no wall there
+            bHitWallAgain = true; // didn't actually, just no wall there
+            fDistanceToWall = fDepth;
+          }
+
+          else{
+            // Ray is in the bounds, so let's see if the ray cell wall is a block.
+            // We are actually testing if we DIDN't hit an empty space
+            // This code effectively converts our position in 3D space into
+            // 2D coordinates (because the map is stored in a 2D array)
+
+            if(map[nTestY * nMapWidth + nTestX] == '#' || map[nTestY * nMapWidth + nTestX] == 'X' || map[nTestY * nMapWidth + nTestX] == 'T'){
+              bHitWall = true;
+
+              // we are writing what kind of block was detected into the walltype variable.
+              // This will take on '#' or 'X', or whatever is not '.'
+              sWalltype = map[nTestY * nMapWidth + nTestX];
+
+              // Exp: fDistanceToWall will retain it's distance value;
+              // It was incremented above.
+            }
+
+          }
+        } // end angle loop
+
+
+        // based on the distance to wall, determine how much floor and ceiling to show per column,
+        // or, to put in another way, how big or small to paint the rendered wall per column
+
+        var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
+        var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
+        var nFloor   = nScreenHeight - nCeiling;
+        var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
         if(bJumping){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
@@ -350,9 +464,6 @@ var gameEngineJS = (function(){
             else{
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
-
-            // sky is always 0 on overlayscreen
-            overlayscreen[j*nScreenWidth+i] = '0';
           }
 
           // solid block
@@ -382,20 +493,6 @@ var gameEngineJS = (function(){
               screen[j*nScreenWidth+i] = sWalltype;
             }
 
-
-            // Floortile Walltype
-            if(sWalltype == 'o'){
-              if( j < nFloorTileBackwall ){
-                overlayscreen[j*nScreenWidth+i] = '0';
-              }
-              else{
-                overlayscreen[j*nScreenWidth+i] = '1';
-              }
-            }else{
-              overlayscreen[j*nScreenWidth+i] = '0';
-            }
-
-
           }
 
 
@@ -415,10 +512,6 @@ var gameEngineJS = (function(){
             }else{
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
-
-            // overlayscreen floor is always 0
-            overlayscreen[j*nScreenWidth+i] = '0';
-
           }
         } // end draw column loop
 
