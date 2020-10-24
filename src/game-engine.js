@@ -48,16 +48,13 @@ var gameEngineJS = (function(){
   map += "#####TXT....#..#";
 
 
-  // gonna leave the console for errors,
-  // console logging in fps seems to kill performance
+  // gonna leave the console for errors, logging seems to kill performance
   var _debugOutput = function(input){
     eDebugOut.innerHTML = input;
   };
 
 
-  /**
-   * Renderer
-   */
+  // renderer
   var _fDrawFrame = function(oInput)
   {
     var sOutput = '';
@@ -78,7 +75,6 @@ var gameEngineJS = (function(){
   // figures out shading for given section
   var _renderSolidWall = function(j, fDistanceToWall){
     var fill = '&#9617;';
-
 
     if(fDistanceToWall < fDepth / 4 ){
       fill = '&#9608;';
@@ -102,6 +98,7 @@ var gameEngineJS = (function(){
 
   var _moveHelpers = {
 
+    // keystroke listening engine
     listen: function(){
 
       window.onkeydown = function(e) {
@@ -224,8 +221,7 @@ var gameEngineJS = (function(){
   /**
    * The basic game loop
    */
-  var main = function()
-  {
+  var main = function(){
     setInterval(gameLoop, 33);
     function gameLoop(){
 
@@ -256,8 +252,8 @@ var gameEngineJS = (function(){
         var bHitWall = false;
         var sWalltype = '#';
 
-        var fEyeX = Math.sin(fRayAngle); // unit vector for way in player space
-        var fEyeY = Math.cos(fRayAngle); // I think this determines the line the testing travels along
+        var fEyeX = Math.sin(fRayAngle); // I think this determines the line the testing travels along
+        var fEyeY = Math.cos(fRayAngle);
 
         while(!bHitWall && fDistanceToWall < fDepth){
           fDistanceToWall += 0.1;
@@ -267,10 +263,11 @@ var gameEngineJS = (function(){
 
           // test if Ray is out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
-            bHitWall = true;
-            // TODO: Figure out why this didn't work
+            bHitWall = true; // didn't actually, just no wall there
             fDistanceToWall = fDepth;
-          }else{
+          }
+
+          else{
             // Ray is in the bounds, so let's see if the ray cell wall is a block.
             // We are actually testing if we DIDN't hit an empty space
             // This code effectively converts our position in 3D space into
@@ -292,16 +289,16 @@ var gameEngineJS = (function(){
         // based on the distance to wall, determine how much floor and ceiling to show per column,
         // or, to put in another way, how big or small to paint the rendered wall per column
 
-        var nTower = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
+        var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
         var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
-        var nFloor = nScreenHeight - nCeiling;
+        var nFloor   = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
 
         if(bJumping){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
-          nFloor = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
-          nTower = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+          nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
+          nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
         }
 
 
@@ -310,9 +307,10 @@ var gameEngineJS = (function(){
         // i is equivalent to x
         for(var j = 0; j < nScreenHeight; j++){
 
+          // sky
           if( j < nCeiling){
 
-            // case of tower block
+            // case of tower block (the bit that reaches into the ceiling)
             if(sWalltype == 'T'){
               if( j > nTower ){
                 screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
@@ -326,6 +324,8 @@ var gameEngineJS = (function(){
               screen[j*nScreenWidth+i] = '&nbsp;';
             }
           }
+
+          // solid block
           else if( j > nCeiling && j <= nFloor ){
 
             // Door Walltype
@@ -344,7 +344,7 @@ var gameEngineJS = (function(){
             }
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
-              // draw wall, in different shades
+              // draws different shades of wall
               screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
             }
             // renders whatever char is on the map as walltype
@@ -352,6 +352,8 @@ var gameEngineJS = (function(){
               screen[j*nScreenWidth+i] = sWalltype;
             }
           }
+
+          // floor
           else{
 
             // draw floor, in different shades
