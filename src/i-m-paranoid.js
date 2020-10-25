@@ -36,17 +36,16 @@ var gameEngineJS = (function(){
   map += "#...........#..#";
   map += "#########...#..#";
   map += "#..............#";
-  map += "#............o.#";
+  map += "#..............#";
   map += "#.....####.....#";
   map += "#......##......#";
   map += "#..............#";
   map += "#.......########";
   map += "#..............#";
-  map += "#..ooooooo.....#";
+  map += "#.....o........#";
   map += "#..............#";
-  map += "#....TXT....#..#";
-  map += "######X#....#..#";
-
+  map += "#..............#";
+  map += "TTTTTTXT....#..#";
 
 
   // gonna leave the console for errors, logging seems to kill performance
@@ -56,31 +55,21 @@ var gameEngineJS = (function(){
 
 
   // renderer
-  var _fDrawFrame = function(oInput, oOverlay, eTarget){
-    var oOverlay = oOverlay || false;
-    var eTarget  = eTarget || eScreen;
+  var _fDrawFrame = function(oInput)
+  {
     var sOutput = '';
 
-    // loops through each pixel of the background (oInput)
-    // and appends it to the output
+    // loops through each pixel and appends it to the output
     for(var i = 0; i < oInput.length; i++){
 
       // insert H blank based on screen-width
       if(i % nScreenWidth == 0){
         sOutput += '<br>';
       }
-
-      // if oOverlay !0, appends it to the output instead
-      if( oOverlay && oOverlay[i] != 0){
-        sOutput += oOverlay[i];
-      }else{
-        sOutput += oInput[i];
-      }
+      sOutput += oInput[i];
     }
-
-    eTarget.innerHTML = sOutput;
+    eScreen.innerHTML = sOutput;
   };
-
 
 
   // figures out shading for given section
@@ -106,30 +95,6 @@ var gameEngineJS = (function(){
   };
 
 
-  // shading and sectionals for gate
-  var _renderGate = function(j, fDistanceToWall, nDoorFrameHeight){
-    var fill = "X";
-    if( j < nDoorFrameHeight){
-
-      if(fDistanceToWall < fDepth / 4){
-        fill = '&boxH;';
-      }
-      else{
-        fill = '=';
-      }
-
-    }else{
-
-      if(fDistanceToWall < fDepth / 4){
-        fill = '&boxV;';
-      }
-      else{
-        fill = '|';
-      }
-    }
-    return fill;
-  };
-
 
   var _moveHelpers = {
 
@@ -138,7 +103,7 @@ var gameEngineJS = (function(){
 
       window.onkeydown = function(e) {
 
-        // _debugOutput(e.which);
+        _debugOutput(e.which);
 
         if (e.which == 32) { // space
           bJumping = true;
@@ -252,6 +217,7 @@ var gameEngineJS = (function(){
   };
 
 
+
   /**
    * The basic game loop
    */
@@ -271,9 +237,8 @@ var gameEngineJS = (function(){
       }
 
 
-      // holds the frames we're going to send to the renderer
+      // holds the frame we're going to send to the renderer
       var screen = [];
-      var overlayscreen = []
 
       // for the length of the screenwidth (one frame)
       for(var i = 0; i < nScreenWidth; i++){
@@ -283,105 +248,63 @@ var gameEngineJS = (function(){
         // and then chop it up into equal little bits of the screen width (at the current colum)
         var fRayAngle = (fPlayerA - fFOV / 1.8) + (i / nScreenWidth) * fFOV;
 
-        var bBreakLoop = false;
-
         var fDistanceToWall = 0;
-        var fDistanceToObject = 0;
-        var fDistanceToInverseObject = 0;
-
         var bHitWall = false;
-
-        var bHitObject = false;
-        var bHitBackObject = false;
-
         var sWalltype = '#';
-        var sObjectType = '0';
 
         var fEyeX = Math.sin(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.cos(fRayAngle);
 
-        var nRayLength = 0.0;
+        while(!bHitWall && fDistanceToWall < fDepth){
+          fDistanceToWall += 0.1;
 
-        /**
-         * Ray Casting Loop
-         */
-        while(!bBreakLoop && nRayLength < fDepth){
+          var nTestX = parseInt( ((fPlayerX) + fEyeX * fDistanceToWall) );
+          var nTestY = parseInt( ((fPlayerY) + fEyeY * fDistanceToWall) );
 
-          // increment
-          nRayLength +=0.1;
-
-          if( !bHitObject ){
-            fDistanceToObject += 0.1;
-          }
-          if( !bHitBackObject ){
-            fDistanceToInverseObject += 0.1;
-          }
-          if( !bHitWall ){
-            fDistanceToWall += 0.1;
-          }
-
-          // ray position
-          var nTestX = parseInt( ((fPlayerX) + fEyeX * nRayLength) );
-          var nTestY = parseInt( ((fPlayerY) + fEyeY * nRayLength) );
-
-          // test if ray hits out of bounds
+          // test if Ray is out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
             bHitWall = true; // didn't actually, just no wall there
             fDistanceToWall = fDepth;
-            bBreakLoop = true;
           }
 
-          // test for objects
-          else if(map[nTestY * nMapWidth + nTestX] == 'o'){
-            bHitObject = true;
-            sObjectType = 'o';
-          }
-          else if(bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.'){
-            bHitBackObject = true;
-            sObjectType = 'o';
-          }
+          else{
+            // Ray is in the bounds, so let's see if the ray cell wall is a block.
+            // We are actually testing if we DIDN't hit an empty space
+            // This code effectively converts our position in 3D space into
+            // 2D coordinates (because the map is stored in a 2D array)
+            if(map[nTestY * nMapWidth + nTestX] !== '.'){
+              bHitWall = true;
 
-          // Test for walls
-          else if(map[nTestY * nMapWidth + nTestX] == '#' || map[nTestY * nMapWidth + nTestX] == 'X' || map[nTestY * nMapWidth + nTestX] == 'T'){
-            bHitWall = true;
-            bBreakLoop = true;
+              // we are writing what kind of block was detected into the walltype variable.
+              // This will take on '#' or 'X', or whatever is not '.'
+              sWalltype = map[nTestY * nMapWidth + nTestX];
 
-            sWalltype = map[nTestY * nMapWidth + nTestX];
+              // Exp: fDistanceToWall will retain it's distance value;
+              // It was incremented above.
+            }
           }
-        } // end ray casting loop
-
-        // at the end of ray casting, we should have the lengths of the rays
-        // set totheir last value, representing their distances
+        } // end angle loop
 
 
         // based on the distance to wall, determine how much floor and ceiling to show per column,
+        // or, to put in another way, how big or small to paint the rendered wall per column
+
         var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
         var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         var nFloor   = nScreenHeight - nCeiling;
         var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
-        // similar operation for objects
-        var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
-        var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
-        var nObjectFloor = nScreenHeight - nObjectCeilFG;
-        var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
 
-
-        // recalc if jumping
         if(bJumping){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
           nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
           nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
-
-          var nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-          var nObjectCeilFG = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
-          var nObjectFloor = nScreenHeight - nObjectCeilFG;
-          var nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
         }
 
 
-        // draw the columns one screenheight pixel at a time
-        // Background Draw
+        // draw the column, one screenheight pixel at a time
+        // j is equivalent to y
+        // i is equivalent to x
         for(var j = 0; j < nScreenHeight; j++){
 
           // sky
@@ -407,24 +330,31 @@ var gameEngineJS = (function(){
 
             // Door Walltype
             if(sWalltype == 'X'){
-              screen[j*nScreenWidth+i] = _renderGate(j, fDistanceToWall, nDoorFrameHeight);
-            }
+              if( j < nDoorFrameHeight){
+                screen[j*nScreenWidth+i] = '&boxH;';
+              }else{
 
+                if(fDistanceToWall < fDepth / 4){
+                  screen[j*nScreenWidth+i] = '&boxV;';
+                }
+                else{
+                  screen[j*nScreenWidth+i] = '|';
+                }
+              }
+            }
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
+              // draws different shades of wall
               screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
             }
-
             // renders whatever char is on the map as walltype
             else{
               screen[j*nScreenWidth+i] = sWalltype;
             }
-
           }
 
-
           // floor
-          else {
+          else{
 
             // draw floor, in different shades
             b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
@@ -442,47 +372,9 @@ var gameEngineJS = (function(){
           }
         } // end draw column loop
 
-
-        // Overlay Draw
-        for(var y = 0; y < nScreenHeight; y++){
-
-          // sky
-          if( y < nObjectCeiling){
-            // sky is always 0 on overlayscreen
-            overlayscreen[y*nScreenWidth+i] = '0';
-          }
-
-          // solid block
-          else if( y > nObjectCeiling && y <= nObjectFloor ){
-
-            // Floortile Walltype
-            if(sObjectType == 'o'){
-              if( y < nFObjectBackwall ){
-                overlayscreen[y*nScreenWidth+i] = '0';
-              }
-              else{
-                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(j, fDistanceToObject);
-                // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
-              }
-            }else{
-              overlayscreen[y*nScreenWidth+i] = '0';
-            }
-          }
-
-          // floor
-          else {
-            // overlayscreen floor is always 0
-            overlayscreen[y*nScreenWidth+i] = '0';
-
-          }
-        } // end draw column loop
-
       }  // end column loop
 
-
-
-      _fDrawFrame(screen, overlayscreen);
-      // _fDrawFrame(overlayscreen, false, eDebugOut);
+      _fDrawFrame(screen);
 
     }
   };
