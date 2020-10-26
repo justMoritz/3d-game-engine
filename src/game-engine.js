@@ -105,7 +105,6 @@ var gameEngineJS = (function(){
     return fill;
   };
 
-
   // shading and sectionals for gate
   var _renderGate = function(j, fDistanceToWall, nDoorFrameHeight){
     var fill = "X";
@@ -127,6 +126,45 @@ var gameEngineJS = (function(){
         fill = '|';
       }
     }
+    return fill;
+  };
+
+  var _renderObject = function(j){
+    var fill = 'o'
+
+    b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
+    if(b < 0.25){
+      fill = '&#9608;';
+    }else if(b < 0.5){
+      fill = '&#9619;';
+    }else if(b < 0.75){
+      fill = '&#9618;';
+    }else if(b < 0.9){
+      fill = '&#9617;';
+    }else{
+      fill = '&nbsp;';
+    }
+
+    return fill;
+  };
+
+  var _renderFloor = function(j){
+    var fill = '`';
+
+    // draw floor, in different shades
+    b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
+    if(b < 0.25){
+      fill = 'x';
+    }else if(b < 0.5){
+      fill = '=';
+    }else if(b < 0.75){
+      fill = '-';
+    }else if(b < 0.9){
+      fill = '`';
+    }else{
+      fill = '&nbsp;';
+    }
+
     return fill;
   };
 
@@ -425,20 +463,7 @@ var gameEngineJS = (function(){
 
           // floor
           else {
-
-            // draw floor, in different shades
-            b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
-            if(b < 0.25){
-              screen[j*nScreenWidth+i] = 'x';
-            }else if(b < 0.5){
-              screen[j*nScreenWidth+i] = '=';
-            }else if(b < 0.75){
-              screen[j*nScreenWidth+i] = '-';
-            }else if(b < 0.9){
-              screen[j*nScreenWidth+i] = '`';
-            }else{
-              screen[j*nScreenWidth+i] = '&nbsp;';
-            }
+            screen[j*nScreenWidth+i] = _renderFloor(j);
           }
         } // end draw column loop
 
@@ -461,7 +486,7 @@ var gameEngineJS = (function(){
                 overlayscreen[y*nScreenWidth+i] = '0';
               }
               else{
-                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(j, fDistanceToObject);
+                overlayscreen[y*nScreenWidth+i] = _renderObject(y);
                 // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
