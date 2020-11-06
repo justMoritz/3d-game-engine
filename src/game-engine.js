@@ -3,8 +3,8 @@ var gameEngineJS = (function(){
   var eScreen;
   var eDebugOut;
 
-  var nScreenWidth = 120;
-  var nScreenHeight = 40;
+  var nScreenWidth = 240;
+  var nScreenHeight = 80;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -32,11 +32,11 @@ var gameEngineJS = (function(){
   var map = "";
   map += "#############..#";
   map += "#...........#..#";
-  map += "#...........#..#";
-  map += "#...........#..#";
-  map += "#########...#..#";
-  map += "#..............#";
-  map += "#............o.#";
+  map += "#...T.......#..#";
+  map += "#...T.......#..#";
+  map += "#...T..........#";
+  map += "#...T........o.#";
+  map += "#...T........o.#";
   map += "#.....###....o.#";
   map += "#......##....o.#";
   map += "#..............#";
@@ -87,16 +87,16 @@ var gameEngineJS = (function(){
   var _renderSolidWall = function(j, fDistanceToWall){
     var fill = '&#9617;';
 
-    if(fDistanceToWall < fDepth / 4 ){
+    if(fDistanceToWall < fDepth / 5.5 ){   // 4
       fill = '&#9608;';
     }
-    else if(fDistanceToWall < fDepth / 3 ){
+    else if(fDistanceToWall < fDepth / 3.66 ){    // 3
       fill = '&#9619;';
     }
-    else if(fDistanceToWall < fDepth / 2 ){
+    else if(fDistanceToWall < fDepth / 2.33 ){    // 2
       fill = '&#9618;';
     }
-    else if(fDistanceToWall < fDepth / 1 ){
+    else if(fDistanceToWall < fDepth / 1 ){    // 1
       fill = '&#9617;';
     }else{
       fill = '&nbsp;';
@@ -163,6 +163,27 @@ var gameEngineJS = (function(){
       fill = '`';
     }else{
       fill = '&nbsp;';
+    }
+
+    return fill;
+  };
+
+
+  var _renderCeiling = function(j){
+    var fill = '`';
+
+    // draw floor, in different shades
+    b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
+    if(b < 0.25){
+      fill = '`';
+    }else if(b < 0.5){
+      fill = '-';
+    }else if(b < 0.75){
+      fill = '=';
+    }else if(b < 0.9){
+      fill = 'x';
+    }else{
+      fill = '#';
     }
 
     return fill;
@@ -370,11 +391,11 @@ var gameEngineJS = (function(){
           }
 
           // test for objects
-          else if(map[nTestY * nMapWidth + nTestX] == 'o'){
+          else if(map[nTestY * nMapWidth + nTestX] == 'o' || map[nTestY * nMapWidth + nTestX] == ','){
             bHitObject = true;
             sObjectType = map[nTestY * nMapWidth + nTestX];
           }
-          else if(bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.'){
+          else if(bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.' || bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.'){
             bHitBackObject = true;
           }
 
@@ -384,6 +405,33 @@ var gameEngineJS = (function(){
             bBreakLoop = true;
 
             sWalltype = map[nTestY * nMapWidth + nTestX];
+
+            var vectorPairList = {};
+            // vector with a pair: distance to the perefect corner, dot (angle between the two vectors)
+
+            for (var tx = 0; tx < 2; tx++) {
+              for (var ty = 0; ty < 2; ty++) {
+                var vy = nTestY + ty - fPlayerY;
+                var vx = nTestX + tx - fPlayerX;
+                var d = Math.sqrt(vx*vx + vy+vy); // magnitude of that vector
+                var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+                vectorPairList[d] = dot;
+              }
+            }
+
+            var fBound = 0.05;
+            var isBoundary = false;
+
+
+            if( Math.acos( vectorPairList[0] ) < fBound ) {
+              isBoundary = true;
+            }
+            if( Math.acos( vectorPairList[1] ) < fBound ) {
+              isBoundary = true;
+            }
+
+            _debugOutput(isBoundary);
+
           }
         } // end ray casting loop
 
@@ -435,7 +483,11 @@ var gameEngineJS = (function(){
 
             // draw ceiling/sky
             else{
-              screen[j*nScreenWidth+i] = '&nbsp;';
+              if(sWalltype == ','){
+                screen[j*nScreenWidth+i] = '1';
+              }else{
+                screen[j*nScreenWidth+i] = '&nbsp;';
+              }
             }
           }
 
@@ -450,6 +502,10 @@ var gameEngineJS = (function(){
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
               screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
+              // _debugOutput(fPlayerA % 6.3);
+              if( isBoundary ){
+                screen[j*nScreenWidth+i] = 'I';
+              }
             }
 
             // renders whatever char is on the map as walltype
@@ -485,7 +541,7 @@ var gameEngineJS = (function(){
                 overlayscreen[y*nScreenWidth+i] = '0';
               }
               else{
-                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(y, fDistanceToWall);
+                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(y, fDistanceToObject);
                 // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
