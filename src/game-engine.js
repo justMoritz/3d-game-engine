@@ -6,8 +6,8 @@ var gameEngineJS = (function(){
   var nScreenWidth = 120;
   var nScreenHeight = 40;
 
-  var nScreenWidth = 180;
-  var nScreenHeight = 60;
+  // var nScreenWidth = 180;
+  // var nScreenHeight = 60;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
