@@ -36,7 +36,7 @@ var gameEngineJS = (function(){
   var bLookUp;
   var bLookDown;
 
-  var nLooktimer = 0;
+  var fLooktimer = 0;
 
 
   var map = "";
@@ -91,134 +91,127 @@ var gameEngineJS = (function(){
   };
 
 
+  // various shaders for walls, ceilings, objects
+  // _renderHelpers
+  var _rh = {
 
-  // figures out shading for given section
-  var _renderSolidWall = function(j, fDistanceToWall, isBoundary){
-    var fill = '&#9617;';
+    // figures out shading for given section
+    renderSolidWall: function(j, fDistanceToWall, isBoundary){
+      var fill = '&#9617;';
 
-    if(fDistanceToWall < fDepth / 5.5 ){   // 4
-      fill = '&#9608;';
-    }
-    else if(fDistanceToWall < fDepth / 3.66 ){    // 3
-      fill = '&#9619;';
-    }
-    else if(fDistanceToWall < fDepth / 2.33 ){    // 2
-      fill = '&#9618;';
-    }
-    else if(fDistanceToWall < fDepth / 1 ){    // 1
-      fill = '&#9617;';
-    }else{
-      fill = '&nbsp;';
-    }
-
-    if( isBoundary ){
       if(fDistanceToWall < fDepth / 5.5 ){   // 4
-        fill = '&#9617;';
+        fill = '&#9608;';
       }
       else if(fDistanceToWall < fDepth / 3.66 ){    // 3
-        fill = '&#9617;';
+        fill = '&#9619;';
       }
       else if(fDistanceToWall < fDepth / 2.33 ){    // 2
-        fill = '&nbsp;';
+        fill = '&#9618;';
       }
       else if(fDistanceToWall < fDepth / 1 ){    // 1
-        fill = '&nbsp;';
+        fill = '&#9617;';
       }else{
         fill = '&nbsp;';
       }
-    }
 
-    return fill;
-  };
-
-  // shading and sectionals for gate
-  var _renderGate = function(j, fDistanceToWall, nDoorFrameHeight){
-    var fill = "X";
-    if( j < nDoorFrameHeight){
-
-      if(fDistanceToWall < fDepth / 4){
-        fill = '&boxH;';
+      if( isBoundary ){
+        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+          fill = '&#9617;';
+        }
+        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+          fill = '&#9617;';
+        }
+        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+          fill = '&nbsp;';
+        }
+        else if(fDistanceToWall < fDepth / 1 ){    // 1
+          fill = '&nbsp;';
+        }else{
+          fill = '&nbsp;';
+        }
       }
-      else{
+
+      return fill;
+    },
+
+    // shading and sectionals for gate
+    renderGate: function(j, fDistanceToWall, nDoorFrameHeight){
+      var fill = "X";
+      if( j < nDoorFrameHeight){
+
+        if(fDistanceToWall < fDepth / 4){
+          fill = '&boxH;';
+        }
+        else{
+          fill = '=';
+        }
+
+      }else{
+
+        if(fDistanceToWall < fDepth / 4){
+          fill = '&boxV;';
+        }
+        else{
+          fill = '|';
+        }
+      }
+      return fill;
+    },
+
+    renderObject: function(j, fDistanceToWall){
+      var fill = '&nbsp;'
+      return fill;
+    },
+
+    renderFloor: function(j){
+      var fill = '`';
+
+      // draw floor, in different shades
+      b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
+      b = 1 - (j -nScreenHeight / (2- fLooktimer*0.15)) / (nScreenHeight / (2 - fLooktimer*0.15));
+
+      if(b < 0.25){
+        fill = 'x';
+      }else if(b < 0.5){
         fill = '=';
+      }else if(b < 0.75){
+        fill = '-';
+      }else if(b < 0.9){
+        fill = '`';
+      }else{
+        fill = '&nbsp;';
       }
 
-    }else{
+      return fill;
+    },
 
-      if(fDistanceToWall < fDepth / 4){
-        fill = '&boxV;';
+    renderCeiling: function(j){
+      var fill = '`';
+
+      // draw floor, in different shades
+      b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
+      if(b < 0.25){
+        fill = '`';
+      }else if(b < 0.5){
+        fill = '-';
+      }else if(b < 0.75){
+        fill = '=';
+      }else if(b < 0.9){
+        fill = 'x';
+      }else{
+        fill = '#';
       }
-      else{
-        fill = '|';
-      }
-    }
-    return fill;
-  };
 
-  var _renderObject = function(j, fDistanceToWall){
-    var fill = '&nbsp;'
-
-    // b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
-    // if(b < 0.25){
-    //   fill = '&#9617;';
-    // }else if(b < 0.5 + fDistanceToWall){
-    //   fill = '&#9618;';
-    // }else if(b < 0.75 + fDistanceToWall){
-    //   fill = '&#9619;';
-    // }else if(b < 0.9 + fDistanceToWall){
-    //   fill = '&#9608;';
-    // }else{
-    //   fill = '&nbsp;';
-    // }
-
-    return fill;
-  };
-
-  var _renderFloor = function(j){
-    var fill = '`';
-
-    // draw floor, in different shades
-    b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
-    if(b < 0.25){
-      fill = 'x';
-    }else if(b < 0.5){
-      fill = '=';
-    }else if(b < 0.75){
-      fill = '-';
-    }else if(b < 0.9){
-      fill = '`';
-    }else{
-      fill = '&nbsp;';
-    }
-
-    return fill;
-  };
-
-  var _renderCeiling = function(j){
-    var fill = '`';
-
-    // draw floor, in different shades
-    b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
-    if(b < 0.25){
-      fill = '`';
-    }else if(b < 0.5){
-      fill = '-';
-    }else if(b < 0.75){
-      fill = '=';
-    }else if(b < 0.9){
-      fill = 'x';
-    }else{
-      fill = '#';
-    }
-
-    return fill;
+      return fill;
+    },
   };
 
 
+  // keyboard and mouse
   var _moveHelpers = {
 
     // keystroke listening engine
-    listen: function(){
+    keylisten: function(){
 
       window.onkeydown = function(e) {
 
@@ -286,7 +279,7 @@ var gameEngineJS = (function(){
       };
     },
 
-
+    // mouse (experimental API)
     mouse: function(){
       var fMouseLookFactor = 0.002;
 
@@ -295,17 +288,23 @@ var gameEngineJS = (function(){
         document.body.requestPointerLock();
         document.onmousemove = function (e) {
 
+          // look left/right
           fPlayerA   += ( (e.movementX*fMouseLookFactor) || (e.mozMovementX*fMouseLookFactor) || (e.webkitMovementX*fMouseLookFactor) || 0);
-          nLooktimer -= ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
 
-          _debugOutput( e.movementY );
+          // look up/down (with bounds)
+          var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+          fLooktimer -= fYMoveFactor;
+          if( fLooktimer > 7 || fLooktimer < -7 ){
+            fLooktimer += fYMoveFactor;
+          }
+
+          _debugOutput( fLooktimer );
 
           // on click hide curser
           // document.body.onclick = document.body.requestPointerLock || document.body.mozRequestPointerLock || document.body.webkitRequestPointerLock;
         }
       };
     },
-
 
     // called once per frame, handles movement computation
     move: function(){
@@ -394,14 +393,12 @@ var gameEngineJS = (function(){
         bFalling = false;
       }
 
-      if( bLookUp ){
-        nLooktimer += 0.5;
-      }
-      else if( bLookDown ){
-        nLooktimer -= 0.5;
-      }
-
-      // _debugOutput(nLooktimer);
+      // if( bLookUp ){
+      //   fLooktimer += 0.5;
+      // }
+      // else if( bLookDown ){
+      //   fLooktimer -= 0.5;
+      // }
 
 
       // holds the frames we're going to send to the renderer
@@ -531,14 +528,6 @@ var gameEngineJS = (function(){
               isBoundary = true;
             }
 
-
-
-            // console.log( Math.acos( vectorPairList[0] ) );
-            // _debugOutput( Math.acos(Object.keys(vectorPairList)[0]) );
-
-            // _debugOutput( Object.keys(vectorPairList)[0] ); // first key's name
-            // _debugOutput( vectorPairList[Object.keys(vectorPairList)[0]] ); // first value
-
           }
         } // end ray casting loop
 
@@ -573,14 +562,14 @@ var gameEngineJS = (function(){
 
 
         // recalc for looking
-        nCeiling = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
-        nFloor   = (nScreenHeight / (2 - nLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
-        nTower   = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+        nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
+        nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
+        nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
 
-        nObjectCeiling = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-        nObjectCeilFG = (nScreenHeight / (2 + nLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
+        nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
         nObjectFloor = nScreenHeight - nObjectCeilFG;
-        nFObjectBackwall = (nScreenHeight / (2 - nLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
+        nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
         // draw the columns one screenheight pixel at a time
@@ -594,7 +583,7 @@ var gameEngineJS = (function(){
             // case of tower block (the bit that reaches into the ceiling)
             if(sWalltype == 'T'){
               if( j > nTower ){
-                screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall, isBoundary);
+                screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }else{
                 screen[j*nScreenWidth+i] = '&nbsp;';
               }
@@ -615,12 +604,12 @@ var gameEngineJS = (function(){
 
             // Door Walltype
             if(sWalltype == 'X'){
-              screen[j*nScreenWidth+i] = _renderGate(j, fDistanceToWall, nDoorFrameHeight);
+              screen[j*nScreenWidth+i] = _rh.renderGate(j, fDistanceToWall, nDoorFrameHeight);
             }
 
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
-              screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall, isBoundary);
+              screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
             }
 
             // renders whatever char is on the map as walltype
@@ -633,7 +622,7 @@ var gameEngineJS = (function(){
 
           // floor
           else {
-            screen[j*nScreenWidth+i] = _renderFloor(j);
+            screen[j*nScreenWidth+i] = _rh.renderFloor(j);
           }
         } // end draw column loop
 
@@ -656,7 +645,7 @@ var gameEngineJS = (function(){
                 overlayscreen[y*nScreenWidth+i] = '0';
               }
               else{
-                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(y, fDistanceToObject, isBoundary);
+                overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
                 // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
@@ -693,7 +682,7 @@ var gameEngineJS = (function(){
     // rendering loop
     main();
 
-    _moveHelpers.listen();
+    _moveHelpers.keylisten();
     _moveHelpers.mouse();
   };
 
