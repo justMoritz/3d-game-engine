@@ -3,13 +3,16 @@ var gameEngineJS = (function(){
   var eScreen;
   var eDebugOut;
 
-  var nScreenWidth = 240;
-  var nScreenHeight = 80;
+  var nScreenWidth = 120;
+  var nScreenHeight = 40;
+
+  var nScreenWidth = 180;
+  var nScreenHeight = 60;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
   var fPlayerA = 1.15;
-  var fPlayerA = 0;
+  var fPlayerA = 1.5;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -260,51 +263,51 @@ var gameEngineJS = (function(){
         fPlayerA += 0.05;
       }
 
-      if(bStrafeRight){
+      if(bStrafeLeft){
         // forward arrow (w)
-        fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
         }
       }
 
-      if(bStrafeLeft){
+      if(bStrafeRight){
         // forward arrow (w)
-        fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
         }
       }
 
       if(bMoveForward){
         // forward arrow (w)
-        fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
         }
       }
 
       if(bMoveBackward){
         // backward arrow (s)
-        fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
         }
       }
     },
@@ -356,8 +359,8 @@ var gameEngineJS = (function(){
         var sWalltype = '#';
         var sObjectType = '0';
 
-        var fEyeX = Math.sin(fRayAngle); // I think this determines the line the testing travels along
-        var fEyeY = Math.cos(fRayAngle);
+        var fEyeX = Math.cos(fRayAngle); // I think this determines the line the testing travels along
+        var fEyeY = Math.sin(fRayAngle);
 
         var nRayLength = 0.0;
 
@@ -413,24 +416,31 @@ var gameEngineJS = (function(){
               for (var ty = 0; ty < 2; ty++) {
                 var vy = nTestY + ty - fPlayerY;
                 var vx = nTestX + tx - fPlayerX;
+
                 var d = Math.sqrt(vx*vx + vy+vy); // magnitude of that vector
                 var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
                 vectorPairList[d] = dot;
               }
             }
 
-            var fBound = 0.05;
+            var fBound = 0.1;
             var isBoundary = false;
 
 
-            if( Math.acos( vectorPairList[0] ) < fBound ) {
+            if( Math.acos( vectorPairList[Object.keys(vectorPairList)[0]] ) < fBound ) {
               isBoundary = true;
             }
-            if( Math.acos( vectorPairList[1] ) < fBound ) {
+            if( Math.acos( vectorPairList[Object.keys(vectorPairList)[1]] ) < fBound ) {
               isBoundary = true;
             }
 
-            _debugOutput(isBoundary);
+
+
+            // console.log( Math.acos( vectorPairList[0] ) );
+            _debugOutput( Math.acos(Object.keys(vectorPairList)[0]) );
+
+            // _debugOutput( Object.keys(vectorPairList)[0] ); // first key's name
+            // _debugOutput( vectorPairList[Object.keys(vectorPairList)[0]] ); // first value
 
           }
         } // end ray casting loop
