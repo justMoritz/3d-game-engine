@@ -224,12 +224,12 @@ var gameEngineJS = (function(){
 
         // _debugOutput(e.which);
 
-        if (e.which == 82) { // r
-          bLookUp = true;
-        }
-        if (e.which == 70) { // f
-          bLookDown = true;
-        }
+        // if (e.which == 82) { // r
+        //   bLookUp = true;
+        // }
+        // if (e.which == 70) { // f
+        //   bLookDown = true;
+        // }
         if (e.which == 32) { // space
           bJumping = true;
         }
@@ -255,12 +255,12 @@ var gameEngineJS = (function(){
 
       window.onkeyup = function(e) {
 
-        if (e.which == 82) { // r
-          bLookUp = false;
-        }
-        if (e.which == 70) { // f
-          bLookDown = false;
-        }
+        // if (e.which == 82) { // r
+        //   bLookUp = false;
+        // }
+        // if (e.which == 70) { // f
+        //   bLookDown = false;
+        // }
         if (e.which == 32) { // space
           bJumping = false;
           bFalling = true;
@@ -282,6 +282,26 @@ var gameEngineJS = (function(){
         }
         if (e.which == 83 || e.which == 40) { // s or down
           bMoveBackward = false;
+        }
+      };
+    },
+
+
+    mouse: function(){
+      var fMouseLookFactor = 0.002;
+
+      document.body.onclick = function(){
+
+        document.body.requestPointerLock();
+        document.onmousemove = function (e) {
+
+          fPlayerA   += ( (e.movementX*fMouseLookFactor) || (e.mozMovementX*fMouseLookFactor) || (e.webkitMovementX*fMouseLookFactor) || 0);
+          nLooktimer -= ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+
+          _debugOutput( e.movementY );
+
+          // on click hide curser
+          // document.body.onclick = document.body.requestPointerLock || document.body.mozRequestPointerLock || document.body.webkitRequestPointerLock;
         }
       };
     },
@@ -375,13 +395,13 @@ var gameEngineJS = (function(){
       }
 
       if( bLookUp ){
-        nLooktimer += 0.1;
+        nLooktimer += 0.5;
       }
       else if( bLookDown ){
-        nLooktimer -= 0.1;
+        nLooktimer -= 0.5;
       }
 
-      _debugOutput(nLooktimer);
+      // _debugOutput(nLooktimer);
 
 
       // holds the frames we're going to send to the renderer
@@ -545,16 +565,28 @@ var gameEngineJS = (function(){
           nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
           nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
 
-          var nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-          var nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
-          var nObjectFloor = nScreenHeight - nObjectCeilFG;
-          var nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
+          nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
+          nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
+          nObjectFloor = nScreenHeight - nObjectCeilFG;
+          nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
         }
+
+
+        // recalc for looking
+        nCeiling = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
+        nFloor   = (nScreenHeight / (2 - nLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
+        nTower   = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+
+        nObjectCeiling = (nScreenHeight / (2 - nLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
+        nObjectCeilFG = (nScreenHeight / (2 + nLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        nObjectFloor = nScreenHeight - nObjectCeilFG;
+        nFObjectBackwall = (nScreenHeight / (2 - nLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
         // draw the columns one screenheight pixel at a time
         // Background Draw
         for(var j = 0; j < nScreenHeight; j++){
+
 
           // sky
           if( j < nCeiling){
@@ -662,6 +694,7 @@ var gameEngineJS = (function(){
     main();
 
     _moveHelpers.listen();
+    _moveHelpers.mouse();
   };
 
 
