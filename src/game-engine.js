@@ -33,6 +33,12 @@ var gameEngineJS = (function(){
   var nJumptimer = 0;
 
 
+  var bLookUp;
+  var bLookDown;
+
+  var nLooktimer = 0;
+
+
   var map = "";
   map += "#############..#";
   map += "#...........#..#";
@@ -216,11 +222,14 @@ var gameEngineJS = (function(){
 
       window.onkeydown = function(e) {
 
-        _debugOutput(e.which);
+        // _debugOutput(e.which);
 
-        // r 82
-        // f 70
-
+        if (e.which == 82) { // r
+          bLookUp = true;
+        }
+        if (e.which == 70) { // f
+          bLookDown = true;
+        }
         if (e.which == 32) { // space
           bJumping = true;
         }
@@ -246,6 +255,12 @@ var gameEngineJS = (function(){
 
       window.onkeyup = function(e) {
 
+        if (e.which == 82) { // r
+          bLookUp = false;
+        }
+        if (e.which == 70) { // f
+          bLookDown = false;
+        }
         if (e.which == 32) { // space
           bJumping = false;
           bFalling = true;
@@ -359,7 +374,14 @@ var gameEngineJS = (function(){
         bFalling = false;
       }
 
-      // _debugOutput(nJumptimer);
+      if( bLookUp ){
+        nLooktimer += 0.1;
+      }
+      else if( bLookDown ){
+        nLooktimer -= 0.1;
+      }
+
+      _debugOutput(nLooktimer);
 
 
       // holds the frames we're going to send to the renderer
