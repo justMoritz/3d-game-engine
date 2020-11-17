@@ -28,6 +28,7 @@ var gameEngineJS = (function(){
   var bMoveForward;
   var bMoveBackward;
   var bJumping;
+  var bFalling;
 
   var nJumptimer = 0;
 
@@ -49,7 +50,6 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "#....T.T....#..#";
   map += "######X#....#..#";
-
 
 
   // gonna leave the console for errors, logging seems to kill performance
@@ -87,7 +87,7 @@ var gameEngineJS = (function(){
 
 
   // figures out shading for given section
-  var _renderSolidWall = function(j, fDistanceToWall){
+  var _renderSolidWall = function(j, fDistanceToWall, isBoundary){
     var fill = '&#9617;';
 
     if(fDistanceToWall < fDepth / 5.5 ){   // 4
@@ -103,6 +103,23 @@ var gameEngineJS = (function(){
       fill = '&#9617;';
     }else{
       fill = '&nbsp;';
+    }
+
+    if( isBoundary ){
+      if(fDistanceToWall < fDepth / 5.5 ){   // 4
+        fill = '&#9617;';
+      }
+      else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+        fill = '&#9617;';
+      }
+      else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+        fill = '&nbsp;';
+      }
+      else if(fDistanceToWall < fDepth / 1 ){    // 1
+        fill = '&nbsp;';
+      }else{
+        fill = '&nbsp;';
+      }
     }
 
     return fill;
@@ -171,7 +188,6 @@ var gameEngineJS = (function(){
     return fill;
   };
 
-
   var _renderCeiling = function(j){
     var fill = '`';
 
@@ -200,7 +216,10 @@ var gameEngineJS = (function(){
 
       window.onkeydown = function(e) {
 
-        // _debugOutput(e.which);
+        _debugOutput(e.which);
+
+        // r 82
+        // f 70
 
         if (e.which == 32) { // space
           bJumping = true;
@@ -229,7 +248,7 @@ var gameEngineJS = (function(){
 
         if (e.which == 32) { // space
           bJumping = false;
-          nJumptimer = 0;
+          bFalling = true;
         }
         if (e.which == 65) { // a
           bStrafeLeft = false;
@@ -326,11 +345,21 @@ var gameEngineJS = (function(){
       // allows jumping for only a certain amount of time
       if(bJumping){
         nJumptimer++
-        _debugOutput(nJumptimer);
       }
-      if( nJumptimer > 5 ){
+      if( nJumptimer > 6 ){
+        bFalling = true;
         bJumping = false;
+        nJumptimer = 6;
       }
+      // falling back down after jump
+      if(bFalling){
+        nJumptimer--;
+      }
+      if( nJumptimer < 1 ){
+        bFalling = false;
+      }
+
+      // _debugOutput(nJumptimer);
 
 
       // holds the frames we're going to send to the renderer
@@ -409,35 +438,61 @@ var gameEngineJS = (function(){
 
             sWalltype = map[nTestY * nMapWidth + nTestX];
 
-            var vectorPairList = {};
-            // vector with a pair: distance to the perefect corner, dot (angle between the two vectors)
 
-            for (var tx = 0; tx < 2; tx++) {
-              for (var ty = 0; ty < 2; ty++) {
-                var vy = nTestY + ty - fPlayerY;
-                var vx = nTestX + tx - fPlayerX;
 
-                var d = Math.sqrt(vx*vx + vy+vy); // magnitude of that vector
-                var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
-                vectorPairList[d] = dot;
-              }
-            }
 
             var fBound = 0.1;
             var isBoundary = false;
 
 
-            if( Math.acos( vectorPairList[Object.keys(vectorPairList)[0]] ) < fBound ) {
+
+            // var vectorPairList = {};
+            // // vector with a pair: distance to the perefect corner, dot (angle between the two vectors)
+
+            // for (var tx = 0; tx < 2; tx++) {
+            //   for (var ty = 0; ty < 2; ty++) {
+            //     var vy = nTestY + ty - fPlayerY;
+            //     var vx = nTestX + tx - fPlayerX;
+
+            //     var d = Math.sqrt(vx*vx + vy+vy); // magnitude of that vector
+            //     var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+            //     vectorPairList[d] = dot;
+            //   }
+            // }
+
+            var vectorPairList = [];
+            for (var tx = 0; tx < 2; tx++) {
+              for (var ty = 0; ty < 2; ty++) {
+                var vy = parseFloat(nTestY) + ty - fPlayerY;
+                var vx = parseFloat(nTestX) + tx - fPlayerX;
+                var d = Math.sqrt(vx*vx + vy*vy);
+
+                var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+                vectorPairList.push([d, dot]);
+              }
+            }
+
+            vectorPairList.sort((a, b) => {
+              return a[0] - b[0];
+            })
+
+            var fBound = 0.01;
+            if (Math.acos(vectorPairList[0][1]) < fBound) {
               isBoundary = true;
             }
-            if( Math.acos( vectorPairList[Object.keys(vectorPairList)[1]] ) < fBound ) {
+
+            if (Math.acos(vectorPairList[1][1]) < fBound) {
+              isBoundary = true;
+            }
+
+            if (Math.acos(vectorPairList[2][1]) < fBound) {
               isBoundary = true;
             }
 
 
 
             // console.log( Math.acos( vectorPairList[0] ) );
-            _debugOutput( Math.acos(Object.keys(vectorPairList)[0]) );
+            // _debugOutput( Math.acos(Object.keys(vectorPairList)[0]) );
 
             // _debugOutput( Object.keys(vectorPairList)[0] ); // first key's name
             // _debugOutput( vectorPairList[Object.keys(vectorPairList)[0]] ); // first value
@@ -463,13 +518,13 @@ var gameEngineJS = (function(){
 
 
         // recalc if jumping
-        if(bJumping){
+        if(bJumping || bFalling){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
           nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
           nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
 
           var nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-          var nObjectCeilFG = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
+          var nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
           var nObjectFloor = nScreenHeight - nObjectCeilFG;
           var nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
         }
@@ -485,7 +540,7 @@ var gameEngineJS = (function(){
             // case of tower block (the bit that reaches into the ceiling)
             if(sWalltype == 'T'){
               if( j > nTower ){
-                screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
+                screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall, isBoundary);
               }else{
                 screen[j*nScreenWidth+i] = '&nbsp;';
               }
@@ -511,11 +566,7 @@ var gameEngineJS = (function(){
 
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
-              screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall);
-              // _debugOutput(fPlayerA % 6.3);
-              if( isBoundary ){
-                screen[j*nScreenWidth+i] = 'I';
-              }
+              screen[j*nScreenWidth+i] = _renderSolidWall(j, fDistanceToWall, isBoundary);
             }
 
             // renders whatever char is on the map as walltype
@@ -551,7 +602,7 @@ var gameEngineJS = (function(){
                 overlayscreen[y*nScreenWidth+i] = '0';
               }
               else{
-                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(y, fDistanceToObject);
+                overlayscreen[y*nScreenWidth+i] = _renderSolidWall(y, fDistanceToObject, isBoundary);
                 // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
