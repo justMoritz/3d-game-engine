@@ -294,7 +294,7 @@ var gameEngineJS = (function(){
           // look up/down (with bounds)
           var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
           fLooktimer -= fYMoveFactor;
-          if( fLooktimer > 7 || fLooktimer < -7 ){
+          if( fLooktimer > 8 || fLooktimer < -8 ){
             fLooktimer += fYMoveFactor;
           }
 
@@ -478,26 +478,9 @@ var gameEngineJS = (function(){
             sWalltype = map[nTestY * nMapWidth + nTestX];
 
 
-
-
-            var fBound = 0.1;
+            // test found boundries of the wall
+            var fBound = 0.01;
             var isBoundary = false;
-
-
-
-            // var vectorPairList = {};
-            // // vector with a pair: distance to the perefect corner, dot (angle between the two vectors)
-
-            // for (var tx = 0; tx < 2; tx++) {
-            //   for (var ty = 0; ty < 2; ty++) {
-            //     var vy = nTestY + ty - fPlayerY;
-            //     var vx = nTestX + tx - fPlayerX;
-
-            //     var d = Math.sqrt(vx*vx + vy+vy); // magnitude of that vector
-            //     var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
-            //     vectorPairList[d] = dot;
-            //   }
-            // }
 
             var vectorPairList = [];
             for (var tx = 0; tx < 2; tx++) {
@@ -515,18 +498,15 @@ var gameEngineJS = (function(){
               return a[0] - b[0];
             })
 
-            var fBound = 0.01;
             if (Math.acos(vectorPairList[0][1]) < fBound) {
               isBoundary = true;
             }
-
             if (Math.acos(vectorPairList[1][1]) < fBound) {
               isBoundary = true;
             }
-
-            if (Math.acos(vectorPairList[2][1]) < fBound) {
-              isBoundary = true;
-            }
+            // if (Math.acos(vectorPairList[2][1]) < fBound) {
+            //   isBoundary = true;
+            // }
 
           }
         } // end ray casting loop
@@ -548,23 +528,12 @@ var gameEngineJS = (function(){
         var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
-        // recalc if jumping
-        if(bJumping || bFalling){
-          nCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToWall;
-          nFloor   = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / fDistanceToWall;
-          nTower   = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
-
-          nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-          nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15)) - nScreenHeight / fDistanceToObject;
-          nObjectFloor = nScreenHeight - nObjectCeilFG;
-          nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
-        }
-
 
         // recalc for looking
         nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
         nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+        nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
         nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
         nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
@@ -572,10 +541,25 @@ var gameEngineJS = (function(){
         nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
+
+        // recalc if jumping
+        if(bJumping || bFalling){
+          nCeiling = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToWall;
+          nFloor   = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) + nScreenHeight / fDistanceToWall;
+          nTower   = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / (fDistanceToWall - 2);
+          nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / (fDistanceToWall + 2);
+
+          nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToInverseObject;
+          nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToObject;
+          nObjectFloor = nScreenHeight - nObjectCeilFG;
+          nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) + nScreenHeight / (fDistanceToInverseObject + 0);
+        }
+
+
+
         // draw the columns one screenheight pixel at a time
         // Background Draw
         for(var j = 0; j < nScreenHeight; j++){
-
 
           // sky
           if( j < nCeiling){
