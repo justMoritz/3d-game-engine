@@ -116,7 +116,7 @@ var gameEngineJS = (function(){
   };
 
 
-
+  // returns true every a-th interation of b
   var _everyAofB = function(a, b){
     return ( a && (a % b === 0));
   }
@@ -208,27 +208,34 @@ var gameEngineJS = (function(){
     var sOutput = '';
 
 
+    // this is the maximum of variation created by the lookup timer, aka the final lookmodifier value
+    var neverMoreThan = Math.round(nScreenHeight / _skipEveryXrow(fLooktimer) - 1);
+
 
     // used to skew the image
     var globalPrintIndex = 0;
     var fLookModifier = 0;
+
+    // if looking up, the starting point is the max number of pixesl to indent,
+    // which will be decremented, otherwise it remains 0, which will be incremented
+    if( fLooktimer > 0 && isFinite(neverMoreThan) ){ // looking up
+      fLookModifier = neverMoreThan;
+    }
 
     // print each row at a time
     for(var row = 0; row < nScreenHeight; row++){
 
       // increment the fLookModifier every time it needs to grow (grows per row)
       if ( _everyAofB(row, _skipEveryXrow(fLooktimer)) ) {
-        fLookModifier++;
+
+        if( fLooktimer > 0 ){ // looking up
+          fLookModifier--;
+        }else{
+          fLookModifier++;
+        }
       }
 
-      // we are looking up, so fill from top
-      if( fLooktimer > 0 ){
-        sOutput += _printFillerUp( fLookModifier );
-      }
-      // looking down, fill towards bottom
-      else{
-        sOutput += _printFiller( fLookModifier );
-      }
+      sOutput += _printFiller( fLookModifier );
 
       var toBeRemoved = (2*fLookModifier);
       var removeFrom = [];
@@ -246,12 +253,7 @@ var gameEngineJS = (function(){
       // [1,2, ,4,5, ,7,8]
       //   [1,2,4,5,7,8]
 
-      if( fLooktimer > 0 ){
-        // nada
-      }
-      else{
-        removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
-      }
+      removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
 
 
       // loops through each rows of pixels
@@ -271,23 +273,17 @@ var gameEngineJS = (function(){
       sOutput += row;
       sOutput += '&nbsp;&nbsp;fLooktimer:&nbsp;';
       sOutput += Math.round(fLooktimer);
-      // // sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
-      // // sOutput += Math.round( _skipEveryXrow(fLooktimer) );
+      sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
+      sOutput += Math.round( _skipEveryXrow(fLooktimer) );
       sOutput += '&nbsp;&nbsp;fLookModifier:&nbsp;';
       sOutput += Math.round( fLookModifier );
-      // sOutput += '&nbsp;&nbsp;removeFrom:&nbsp;';
-      // sOutput += removeFrom;
+      sOutput += '&nbsp;&nbsp;NeverMoreThan:&nbsp;';
+      sOutput += neverMoreThan;
       sOutput += '&nbsp;&nbsp;';
 
 
-       // we are looking up, so fill from top
-      if( fLooktimer > 0 ){
-        sOutput += _printFillerUp( fLookModifier );
-      }
-      // looking down, fill towards bottom
-      else{
-        sOutput += _printFiller( fLookModifier );
-      }
+      sOutput += _printFiller( fLookModifier );
+
 
 
       sOutput += '<br>';
