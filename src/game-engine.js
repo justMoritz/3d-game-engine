@@ -6,8 +6,12 @@ var gameEngineJS = (function(){
   var nScreenWidth = 120;
   var nScreenHeight = 40;
 
-  // var nScreenWidth = 180;
-  // var nScreenHeight = 60;
+
+  // var nScreenWidth = 240;
+  // var nScreenHeight = 80;
+
+  var nScreenWidth = 180;
+  var nScreenHeight = 60;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -19,6 +23,8 @@ var gameEngineJS = (function(){
 
   var fFOV = 3.14159 / 4.0;
   var fDepth = 16.0; // viewport depth
+
+  var nLookLimit = 8;
 
 
   var bTurnLeft;
@@ -58,9 +64,140 @@ var gameEngineJS = (function(){
   map += "######X#....#..#";
 
 
+
+  /**
+   * Retrieve a fixed number of elements from an array, evenly distributed but
+   * always including the first and last elements.
+   *
+   * source https://stackoverflow.com/questions/32439437/retrieve-an-evenly-distributed-number-of-elements-from-an-array
+   * wow!!!!
+   *
+   * @param   {Array} items - The array to operate on.
+   * @param   {number} n - The number of elements to extract.
+   * @returns {Array}
+   */
+  // helper function
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+  function _evenlyPickItemsFromArray(allItems, neededCount) {
+    if (neededCount >= allItems.length) {
+      return _toConsumableArray(allItems);
+    }
+
+    var result = [];
+    var totalItems = allItems.length;
+    var interval = totalItems / neededCount;
+
+    for (var i = 0; i < neededCount; i++) {
+      var evenIndex = Math.floor(i * interval + interval / 2);
+      result.push(allItems[evenIndex]);
+    }
+
+    return result;
+  }
+
+
+  function completeArray(inputArray, max){
+    var reversedInputArray = inputArray;
+    reversedInputArray.reverse();
+    var output = [];
+
+    reversedInputArray.forEach(function (item, index) {
+      output[index] = max - item;
+    });
+
+    return inputArray.concat(  output.reverse() );
+  }
+
+
+
   // gonna leave the console for errors, logging seems to kill performance
   var _debugOutput = function(input){
     eDebugOut.innerHTML = input;
+  };
+
+
+
+  var _everyAofB = function(a, b){
+    return ( a && (a % b === 0));
+  }
+
+
+
+  var _printFiller = function(number){
+    var pix = '';
+    for(var i=0; i<number; i++){
+      pix += '.';
+    }
+    return pix;
+  };
+
+
+  var _printFillerUp = function(number){
+
+    // number is always the
+
+    var printnumber = (30 - number) ;
+    var printnumber = (30 - number)  ;
+
+    // 19 (11 .)
+    // if 19, subtract 19
+    // if 14, subtract 16
+    //
+
+    // printnumber =  number ;
+
+    var pix = '';
+    for(var i=0; i<printnumber; i++){
+      pix += '.';
+    }
+
+    // if 0, draw 30
+    // if 60, draw 0
+
+    return pix;
+  };
+
+
+  // lookup table because I suuuuuuck at logic (apparently)
+  // TODO, there we go yeah
+  var _skipEveryXrow = function(input){
+    input = Math.round(input);
+    switch( Number(input) ) {
+      case 0: return 0; break;
+      case 1: return 8; break;
+      case 2: return 7; break;
+      case 3: return 6; break;
+      case 4: return 5; break;
+      case 5: return 4; break;
+      case 6: return 3; break;
+      case 7: return 2; break;
+      case 8: return 2; break;
+
+      case -1: return 8; break;
+      case -2: return 7; break;
+      case -3: return 6; break;
+      case -4: return 5; break;
+      case -5: return 4; break;
+      case -6: return 3; break;
+      case -7: return 2; break;
+      case -8: return 2; break;
+
+      default:
+        return 0;
+    }
+  };
+
+
+
+  var _printCompositPixel = function(oInput, oOverlay, index){
+    var sOutput = '';
+    // if oOverlay !0, appends it to the output instead
+    if( oOverlay && oOverlay[index] != 0){
+      sOutput += oOverlay[index];
+    }else{
+      sOutput += oInput[index];
+    }
+    return sOutput;
   };
 
 
@@ -70,25 +207,116 @@ var gameEngineJS = (function(){
     var eTarget  = eTarget || eScreen;
     var sOutput = '';
 
-    // loops through each pixel of the background (oInput)
-    // and appends it to the output
-    for(var i = 0; i < oInput.length; i++){
 
-      // insert H blank based on screen-width
-      if(i % nScreenWidth == 0){
-        sOutput += '<br>';
+
+    // used to skew the image
+    var globalPrintIndex = 0;
+    var fLookModifier = 0;
+
+    // print each row at a time
+    for(var row = 0; row < nScreenHeight; row++){
+
+      // increment the fLookModifier every time it needs to grow (grows per row)
+      if ( _everyAofB(row, _skipEveryXrow(fLooktimer)) ) {
+        fLookModifier++;
       }
 
-      // if oOverlay !0, appends it to the output instead
-      if( oOverlay && oOverlay[i] != 0){
-        sOutput += oOverlay[i];
-      }else{
-        sOutput += oInput[i];
+      // we are looking up, so fill from top
+      if( fLooktimer > 0 ){
+        sOutput += _printFillerUp( fLookModifier );
       }
-    }
+      // looking down, fill towards bottom
+      else{
+        sOutput += _printFiller( fLookModifier );
+      }
+
+      var toBeRemoved = (2*fLookModifier);
+      var removeFrom = [];
+
+
+      //  make a new array that contains the indices of the elements to print
+      // (removes X amount of elements from array)
+      var items = [];
+      for (var i=0; i<= nScreenWidth; i++) {
+        items.push(i);
+      }
+
+      // list to be removed from each row:
+      // [1,2,3,4,5,6,7,8]
+      // [1,2, ,4,5, ,7,8]
+      //   [1,2,4,5,7,8]
+
+      if( fLooktimer > 0 ){
+        // nada
+      }
+      else{
+        removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
+      }
+
+
+      // loops through each rows of pixels
+      for(var rpix = 0; rpix < nScreenWidth; rpix++){
+
+        // print only if the pixel is in the list of pixels to print
+        if( removeFrom.includes(rpix) ){
+          // don't print
+        }else{
+          // print
+          sOutput += _printCompositPixel(oInput, oOverlay, globalPrintIndex);
+        }
+
+        globalPrintIndex++;
+      } // end for(rpix
+
+      sOutput += row;
+      sOutput += '&nbsp;&nbsp;fLooktimer:&nbsp;';
+      sOutput += Math.round(fLooktimer);
+      // // sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
+      // // sOutput += Math.round( _skipEveryXrow(fLooktimer) );
+      sOutput += '&nbsp;&nbsp;fLookModifier:&nbsp;';
+      sOutput += Math.round( fLookModifier );
+      // sOutput += '&nbsp;&nbsp;removeFrom:&nbsp;';
+      // sOutput += removeFrom;
+      sOutput += '&nbsp;&nbsp;';
+
+
+       // we are looking up, so fill from top
+      if( fLooktimer > 0 ){
+        sOutput += _printFillerUp( fLookModifier );
+      }
+      // looking down, fill towards bottom
+      else{
+        sOutput += _printFiller( fLookModifier );
+      }
+
+
+      sOutput += '<br>';
+    } // end for(row
+
+
+
+    // // loops through each pixel of the background (oInput)
+    // // and appends it to the output
+    // for(var i = 0; i < oInput.length; i++){
+
+    //   // insert H blank based on screen-width
+    //   if(i % nScreenWidth == 0){
+    //     sOutput += '<br>';
+    //   }
+
+    //   // if oOverlay !0, appends it to the output instead
+    //   if( oOverlay && oOverlay[i] != 0){
+    //     sOutput += oOverlay[i];
+    //   }else{
+    //     sOutput += oInput[i];
+    //   }
+    // }
 
     eTarget.innerHTML = sOutput;
   };
+
+
+
 
 
   // various shaders for walls, ceilings, objects
@@ -98,6 +326,14 @@ var gameEngineJS = (function(){
     // figures out shading for given section
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
       var fill = '&#9617;';
+
+      // var shades = "$ B%8&WM#ahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'."; // 67
+      // for(var sh=0; sh < shades.length; sh++){
+      //   if(fDistanceToWall < fDepth / sh / 2 ){
+      //     fill = shades[sh];
+      //   }
+      // }
+
 
       if(fDistanceToWall < fDepth / 5.5 ){   // 4
         fill = '&#9608;';
@@ -294,11 +530,11 @@ var gameEngineJS = (function(){
           // look up/down (with bounds)
           var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
           fLooktimer -= fYMoveFactor;
-          if( fLooktimer > 8 || fLooktimer < -8 ){
+          if( fLooktimer > nLookLimit || fLooktimer < -nLookLimit ){
             fLooktimer += fYMoveFactor;
           }
 
-          _debugOutput( fLooktimer );
+          // _debugOutput( fLooktimer );
 
           // on click hide curser
           // document.body.onclick = document.body.requestPointerLock || document.body.mozRequestPointerLock || document.body.webkitRequestPointerLock;
@@ -393,20 +629,26 @@ var gameEngineJS = (function(){
         bFalling = false;
       }
 
-      // if( bLookUp ){
-      //   fLooktimer += 0.5;
-      // }
-      // else if( bLookDown ){
-      //   fLooktimer -= 0.5;
-      // }
-
 
       // holds the frames we're going to send to the renderer
       var screen = [];
       var overlayscreen = []
 
+      // var fFisheyeCounter = 0;
+
       // for the length of the screenwidth (one frame)
       for(var i = 0; i < nScreenWidth; i++){
+
+        // // changes the field of view per i, creating a cool fisheye lense type effect :o
+        // // fFOV = 3.14159 / 4.0 + fFisheyeCounter*0.005;
+        // fFOV = 3.14159 / 4.0 - fFisheyeCounter*0.0001*fLooktimer;
+
+        // if( fFisheyeCounter > nScreenWidth / 2){
+        //   fFisheyeCounter++;
+        // }else{
+        //   fFisheyeCounter--;
+        // }
+
 
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
@@ -512,33 +754,36 @@ var gameEngineJS = (function(){
         } // end ray casting loop
 
         // at the end of ray casting, we should have the lengths of the rays
-        // set totheir last value, representing their distances
+        // set to their last value, representing their distances
+
+
+
 
 
         // based on the distance to wall, determine how much floor and ceiling to show per column,
-        var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
-        var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
-        var nFloor   = nScreenHeight - nCeiling;
-        var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
+        // var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
+        // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
+        // var nFloor   = nScreenHeight - nCeiling;
+        // var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
 
-        // similar operation for objects
-        var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
-        var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
-        var nObjectFloor = nScreenHeight - nObjectCeilFG;
-        var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
+        // // similar operation for objects
+        // var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
+        // var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
+        // var nObjectFloor = nScreenHeight - nObjectCeilFG;
+        // var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
 
         // recalc for looking
-        nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
-        nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
-        nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
-        nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
+        var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
+        var nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
+        var nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+        var nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
-        nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-        nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
-        nObjectFloor = nScreenHeight - nObjectCeilFG;
-        nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
+        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
+        var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        var nObjectFloor = nScreenHeight - nObjectCeilFG;
+        var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
 
 
 
@@ -559,7 +804,10 @@ var gameEngineJS = (function(){
 
         // draw the columns one screenheight pixel at a time
         // Background Draw
+
         for(var j = 0; j < nScreenHeight; j++){
+
+
 
           // sky
           if( j < nCeiling){
