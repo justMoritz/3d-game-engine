@@ -3,15 +3,16 @@ var gameEngineJS = (function(){
   var eScreen;
   var eDebugOut;
 
-  var nScreenWidth = 120;
+  // var nScreenWidth = 120;
+  var nScreenWidth = 180;
   var nScreenHeight = 40;
 
 
-  // var nScreenWidth = 240;
-  // var nScreenHeight = 80;
+  var nScreenWidth = 240;
+  var nScreenHeight = 80;
 
-  var nScreenWidth = 180;
-  var nScreenHeight = 60;
+  var nScreenWidth = 360;
+  var nScreenHeight = 80;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -21,7 +22,8 @@ var gameEngineJS = (function(){
   var nMapHeight = 16;
   var nMapWidth = 16;
 
-  var fFOV = 3.14159 / 4.0;
+  // var fFOV = 3.14159 / 4.0;
+  var fFOV = 3.14159 / 2.0;
   var fDepth = 16.0; // viewport depth
 
   var nLookLimit = 8;
@@ -62,6 +64,54 @@ var gameEngineJS = (function(){
   map += "#..............#";
   map += "#....T.T....#..#";
   map += "######X#....#..#";
+
+
+  var texWidth = 15;
+  var texHeight = 15;
+  var texture = '';
+  texture += '##.1111.##01..##';
+  texture += '................';
+  texture += '.3333.#####.####';
+  texture += '................';
+  texture += '##.####.5555..##';
+  texture += '................';
+  texture += '.####..7777.####';
+  texture += '................';
+  texture += '##.####.9999..##';
+  texture += '................';
+  texture += '.AAAA..####.####';
+  texture += '................';
+  texture += '##.####.BBBB..##';
+  texture += '................';
+  texture += '.####..CCCC.####';
+  texture += '................';
+
+  // sample position time width
+  // sample position times height
+  //
+  //
+
+
+// 0.25, 0.5
+// 4, 8
+
+
+  var _getSamplePixel = function(texture, x, y){
+
+    x = x%1;
+    y = y%1;
+
+    var sampleX = Math.floor(texWidth*x); // 5
+    var sampleY = Math.floor(texHeight*y); // 7
+
+    var samplePosition = (texWidth*(sampleY)) + sampleX;
+
+    if( x < 0 || x > texWidth || y < 0 || y > texHeight ){
+      return '+';
+    }else{
+      return texture[samplePosition];
+    }
+  };
 
 
 
@@ -159,7 +209,7 @@ var gameEngineJS = (function(){
 
 
   // lookup table because I suuuuuuck at logic (apparently)
-  // TODO, there we go yeah
+  // TODO: The Logic
   var _skipEveryXrow = function(input){
     input = Math.round(input);
     switch( Number(input) ) {
@@ -179,8 +229,8 @@ var gameEngineJS = (function(){
       case -4: return 5; break;
       case -5: return 4; break;
       case -6: return 3; break;
-      case -7: return 2; break;
-      case -8: return 2; break;
+      case -7: return 3; break;
+      case -8: return 3; break;
 
       default:
         return 0;
@@ -201,11 +251,16 @@ var gameEngineJS = (function(){
   };
 
 
-  // renderer
-  var _fDrawFrame = function(oInput, oOverlay, eTarget){
+  /**
+   * Creates a new array of pixels taking looking up and down into account
+   * It returns an array to be rendered later.
+   * the aim is to remove the first and last 30 pixels of very row,
+   * to obscure the skewing
+   */
+  var _fPrepareFrame = function(oInput, oOverlay, eTarget){
     var oOverlay = oOverlay || false;
     var eTarget  = eTarget || eScreen;
-    var sOutput = '';
+    var sOutput = [];
 
 
     // this is the maximum of variation created by the lookup timer, aka the final lookmodifier value
@@ -216,9 +271,10 @@ var gameEngineJS = (function(){
     var globalPrintIndex = 0;
     var fLookModifier = 0;
 
+
     // if looking up, the starting point is the max number of pixesl to indent,
     // which will be decremented, otherwise it remains 0, which will be incremented
-    if( fLooktimer > 0 && isFinite(neverMoreThan) ){ // looking up
+    if( fLooktimer > 0 && isFinite(neverMoreThan) ){
       fLookModifier = neverMoreThan;
     }
 
@@ -235,7 +291,7 @@ var gameEngineJS = (function(){
         }
       }
 
-      sOutput += _printFiller( fLookModifier );
+      sOutput.push( _printFiller( fLookModifier ) );
 
       var toBeRemoved = (2*fLookModifier);
       var removeFrom = [];
@@ -252,7 +308,6 @@ var gameEngineJS = (function(){
       // [1,2,3,4,5,6,7,8]
       // [1,2, ,4,5, ,7,8]
       //   [1,2,4,5,7,8]
-
       removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
 
 
@@ -264,53 +319,54 @@ var gameEngineJS = (function(){
           // don't print
         }else{
           // print
-          sOutput += _printCompositPixel(oInput, oOverlay, globalPrintIndex);
+          sOutput.push( _printCompositPixel(oInput, oOverlay, globalPrintIndex) );
         }
 
         globalPrintIndex++;
       } // end for(rpix
 
-      sOutput += row;
-      sOutput += '&nbsp;&nbsp;fLooktimer:&nbsp;';
-      sOutput += Math.round(fLooktimer);
-      sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
-      sOutput += Math.round( _skipEveryXrow(fLooktimer) );
-      sOutput += '&nbsp;&nbsp;fLookModifier:&nbsp;';
-      sOutput += Math.round( fLookModifier );
-      sOutput += '&nbsp;&nbsp;NeverMoreThan:&nbsp;';
-      sOutput += neverMoreThan;
-      sOutput += '&nbsp;&nbsp;';
+      // sOutput += row;
+      // sOutput += '&nbsp;&nbsp;fLooktimer:&nbsp;';
+      // sOutput += Math.round(fLooktimer);
+      // sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
+      // sOutput += Math.round( _skipEveryXrow(fLooktimer) );
+      // sOutput += '&nbsp;&nbsp;fLookModifier:&nbsp;';
+      // sOutput += Math.round( fLookModifier );
+      // sOutput += '&nbsp;&nbsp;NeverMoreThan:&nbsp;';
+      // sOutput += neverMoreThan;
+      // sOutput += '&nbsp;&nbsp;';
 
 
-      sOutput += _printFiller( fLookModifier );
+      sOutput.push( _printFiller( fLookModifier ) );
 
 
 
-      sOutput += '<br>';
+     sOutput.push( '<br>' );
     } // end for(row
 
-
-
-    // // loops through each pixel of the background (oInput)
-    // // and appends it to the output
-    // for(var i = 0; i < oInput.length; i++){
-
-    //   // insert H blank based on screen-width
-    //   if(i % nScreenWidth == 0){
-    //     sOutput += '<br>';
-    //   }
-
-    //   // if oOverlay !0, appends it to the output instead
-    //   if( oOverlay && oOverlay[i] != 0){
-    //     sOutput += oOverlay[i];
-    //   }else{
-    //     sOutput += oInput[i];
-    //   }
-    // }
-
-    eTarget.innerHTML = sOutput;
+    return sOutput;
+    // eTarget.innerHTML = sOutput;
   };
 
+
+  var _fDrawFrame = function(screen, overlayscreen){
+    var frame = _fPrepareFrame(screen, overlayscreen);
+    // _fPrepareFrame(screen, overlayscreen);
+
+    _debugOutput( frame.length );
+
+    var sOutput = '';
+    // loops through each pixel and appends it to the output
+    for(var i = 0; i < frame.length; i++){
+      // H blank based on screen-width
+      if(i % (nScreenWidth - 60) == 0){
+        // sOutput += '<br>';
+      }
+      sOutput += frame[i];
+    }
+    eScreen.innerHTML = sOutput;
+
+  };
 
 
 
@@ -345,6 +401,12 @@ var gameEngineJS = (function(){
       }else{
         fill = '&nbsp;';
       }
+
+      // var fSampleY = ( parseFloat(j) - parseFloat(nCeiling) / parseFloat(nFloor) - parseFloat(nCeiling) );
+      // fill = _getSamplePixel(fSampleX, fSampleY);
+
+      // draw X and Y of the sample routine
+
 
       if( isBoundary ){
         if(fDistanceToWall < fDepth / 5.5 ){   // 4
@@ -455,6 +517,9 @@ var gameEngineJS = (function(){
         // if (e.which == 70) { // f
         //   bLookDown = true;
         // }
+        if (e.which == 80) { // p
+          clearInterval(gameRun);
+        }
         if (e.which == 32) { // space
           bJumping = true;
         }
@@ -598,12 +663,13 @@ var gameEngineJS = (function(){
     },
   };
 
+  var gameRun;
 
   /**
    * The basic game loop
    */
   var main = function(){
-    setInterval(gameLoop, 33);
+    gameRun = setInterval(gameLoop, 33);
     function gameLoop(){
 
       _moveHelpers.move();
@@ -667,6 +733,8 @@ var gameEngineJS = (function(){
 
         var fEyeX = Math.cos(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.sin(fRayAngle);
+
+        var fSampleX = 0.0;
 
         var nRayLength = 0.0;
 
@@ -745,6 +813,57 @@ var gameEngineJS = (function(){
             // if (Math.acos(vectorPairList[2][1]) < fBound) {
             //   isBoundary = true;
             // }
+
+
+            // var fBlockMidX = nTestX + 0.5;
+            // var fBlockMidY = nTestY + 0.5;
+
+            // var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
+            // var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
+
+            // var fTestAngle = Math.atan2((fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX));
+
+            // if (fTestAngle >= -3.14159 * 0.25 && fTestAngle < 3.14159 * 0.25)
+            //   fSampleX = fTestPointY - nTestY;
+            // if (fTestAngle >= 3.14159 * 0.25 && fTestAngle < 3.14159 * 0.75)
+            //   fSampleX = fTestPointX - nTestX;
+            // if (fTestAngle < -3.14159 * 0.25 && fTestAngle >= -3.14159 * 0.75)
+            //   fSampleX = fTestPointX - nTestX;
+            // if (fTestAngle >= 3.14159 * 0.75 || fTestAngle < -3.14159 * 0.75)
+            //   fSampleX = fTestPointY - nTestY;
+
+
+            // Determine where the ray hit the wall by dividing each
+            // 1u wide cell into quarters
+            var fBlockMidX = (nTestX) + 0.5;
+            var fBlockMidY = (nTestY) + 0.5;
+
+
+
+            // using the distance to the wall and the player angle (Eye Vectors)
+            // to determine the collusion point
+            var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
+            var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
+
+
+            // now we have the location of the middle of the cell,
+            // and the location of point of collision, work out angle
+
+            var fTestAngle = Math.atan2( (fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX) )
+            // rotate by pi over 4
+
+            if( fTestAngle >= -3.14159 * 0.25 && fTestAngle < 3.14159 * 0.25 ){
+              fSampleX = fTestPointY - parseFloat(nTestY);
+            }
+            if( fTestAngle >= 3.14159 * 0.25 && fTestAngle < 3.14159 * 0.75 ){
+              fSampleX = fTestPointX - parseFloat(nTestX);
+            }
+            if( fTestAngle < -3.14159 * 0.25 && fTestAngle >= -3.14159 * 0.75 ){
+              fSampleX = fTestPointX - parseFloat(nTestX);
+            }
+            if( fTestAngle >= 3.14159 * 0.75 || fTestAngle < -3.14159 * 0.75 ){
+              fSampleX = fTestPointY - parseFloat(nTestY);
+            }
 
           }
         } // end ray casting loop
@@ -837,7 +956,15 @@ var gameEngineJS = (function(){
 
             // Solid Walltype
             else if(sWalltype == '#' || sWalltype == 'T'){
-              screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
+
+              var fSampleY = ( (j - nCeiling) / (nFloor - nCeiling) );
+              screen[j*nScreenWidth+i] = _getSamplePixel(texture, fSampleX, fSampleY);
+
+              if( isBoundary ){
+                screen[j*nScreenWidth+i] = '&#9617;';
+              }
+
+              // screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
             }
 
             // renders whatever char is on the map as walltype

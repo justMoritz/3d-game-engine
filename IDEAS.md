@@ -1,7 +1,16 @@
-# Todo
+5# Todo
 
 - Working collision detection
 - aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassad (lol)
+
+- Asset Loader function
+  + will read asset, will remove whitespace, will determine height and width
+  + write into asset-object (with content, height width)
+  + re-write code that uses assets
+  + assets include map, sprites, textures
+
+- Add sprites
+- Make textures
 
 
 # Thoughts:
