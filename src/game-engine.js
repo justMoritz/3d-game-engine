@@ -120,9 +120,6 @@ var gameEngineJS = (function(){
     x = scaleFactor * x%1;
     y = scaleFactor * y%1;
 
-    x = scaleFactor * x%1;
-    y = scaleFactor * y%1;
-
     var sampleX = Math.floor(texWidth*x); // 5
     var sampleY = Math.floor(texHeight*y); // 7
 
