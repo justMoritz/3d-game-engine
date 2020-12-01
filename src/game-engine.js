@@ -66,40 +66,62 @@ var gameEngineJS = (function(){
   map += "######X#....#..#";
 
 
-  var texWidth = 15;
-  var texHeight = 15;
+  // large brick wall texture
+  var texWidth = 16;
+  var texHeight = 16;
   var texture = '';
-  texture += '##.1111.##01..##';
+  texture += '#####.####.####.';
+  texture += '#7#o7.#o#o.#o#o.';
+  texture += '0oooo.#ooo.#ooo.';
   texture += '................';
-  texture += '.3333.#####.####';
+  texture += '5##.####.#####.#';
+  texture += '#7o.7#7o.7#77o.#';
+  texture += 'ooo.oooo.ooo#o.#';
   texture += '................';
-  texture += '##.####.5555..##';
+  texture += '#####.####.####.';
+  texture += '#7#o7.#o#o.#o#o.';
+  texture += '#oooo.#ooo.#ooo.';
   texture += '................';
-  texture += '.####..7777.####';
+  texture += '##.####.#####.##';
+  texture += '#o.#7##.#7#7o.#7';
+  texture += 'oo.#ooo.#oooo.#o';
   texture += '................';
-  texture += '##.####.9999..##';
-  texture += '................';
-  texture += '.AAAA..####.####';
-  texture += '................';
-  texture += '##.####.BBBB..##';
-  texture += '................';
-  texture += '.####..CCCC.####';
-  texture += '................';
+
 
   // sample position time width
   // sample position times height
   //
   //
 
+  // █
+  // ▓
+  // ▒
+  // ░
 
 // 0.25, 0.5
 // 4, 8
+//
 
 
-  var _getSamplePixel = function(texture, x, y){
+  /**
+   * Function will get the pixel to be sampled from the sprite
+   *
+   * @param  {array}  texture     The texture to be sampled
+   * @param  {float} x            The x coordinate of the sample (how much across)
+   * @param  {float} y            The y coordinate of the sample
+   * @param  {float} scaleFactor  scales the texture.
+   *                              Example: 2 will render twice the resolution (2x as large)
+   * @return {string}             Returns the pixel of the texture according to what was sampled
+   */
+  var _getSamplePixel = function(texture, x, y, scaleFactor){
 
-    x = x%1;
-    y = y%1;
+    scaleFactor = scaleFactor || 1;
+
+    x = scaleFactor * x%1;
+    y = scaleFactor * y%1;
+
+    x = scaleFactor * x%1;
+    y = scaleFactor * y%1;
 
     var sampleX = Math.floor(texWidth*x); // 5
     var sampleY = Math.floor(texHeight*y); // 7
