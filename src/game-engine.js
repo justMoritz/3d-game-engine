@@ -1,5 +1,7 @@
 var gameEngineJS = (function(){
 
+  var nRenderMode = 2;
+
   var eScreen;
   var eDebugOut;
 
@@ -22,8 +24,8 @@ var gameEngineJS = (function(){
   var nMapHeight = 16;
   var nMapWidth = 16;
 
-  // var fFOV = 3.14159 / 4.0;
-  var fFOV = 3.14159 / 2.0;
+  // var fFOV = Math.PI / 4.0;
+  var fFOV = Math.PI / 2.0;
   var fDepth = 16.0; // viewport depth
 
   var nLookLimit = 8;
@@ -40,9 +42,6 @@ var gameEngineJS = (function(){
 
   var nJumptimer = 0;
 
-
-  var bLookUp;
-  var bLookDown;
 
   var fLooktimer = 0;
 
@@ -88,6 +87,118 @@ var gameEngineJS = (function(){
   texture += '................';
 
 
+  // wood blanks texture
+  // var texWidth = 16;
+  // var texHeight = 16;
+  // var texture = '';
+  // texture += 'ooooo.oooooooooo';
+  // texture += 'ooo#o.o#o7777ooo';
+  // texture += '7oooo.ooooooo777';
+  // texture += 'ooooo.oooooooooo';
+  // texture += 'ooooo.ooo777oooo';
+  // texture += '77o#o.o#oooo7777';
+  // texture += 'ooooo.oooooooooo';
+  // texture += '................';
+  // texture += 'ooooooooooo.oooo';
+  // texture += 'ooo77777o+o.o#oo';
+  // texture += '777oooooooo.ooo7';
+  // texture += 'ooooooooooo.oooo';
+  // texture += 'ooooo777ooo.oooo';
+  // texture += '77777oooo#o.o#o7';
+  // texture += 'ooooooooooo.oooo';
+  // texture += '................';
+
+
+  // cobble stone
+  var texWidth = 16;
+  var texHeight = 16;
+  var texture2 = '';
+  texture2 += '##.........777.#';
+  texture2 += '777..####7....##';
+  texture2 += '777.##77777..##7';
+  texture2 += '77*.#7777777.*77';
+  texture2 += '7*..7777777*..*7';
+  texture2 += '......77***.....';
+  texture2 += '..##7*.....###..';
+  texture2 += '###777...##777.#';
+  texture2 += '##777*..##777*.7.';
+  texture2 += '7777*..77777*...';
+  texture2 += '77*.....777*....';
+  texture2 += '....##..........';
+  texture2 += '...##77......#77';
+  texture2 += '7.##77777..##777';
+  texture2 += '7.#77777*.#7777*';
+  texture2 += '...777**..7777~~';
+
+
+
+  // // cobble stone
+  // var texWidth = 16;
+  // var texHeight = 16;
+  // var texture3 = '';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+  // texture3 += '................';
+
+
+  // Perspective Store Shelve Test Looking South
+  var texWidth = 16;
+  var texHeight = 16;
+  var textureS = '';
+  textureS += '################';
+  textureS += '*************7##';
+  textureS += '************77##';
+  textureS += '...........777##';
+  textureS += '...........777##';
+  textureS += '################';
+  textureS += '*************7##';
+  textureS += '...........777##';
+  textureS += '...........777##';
+  textureS += '*************7##';
+  textureS += '################';
+  textureS += '...........777##';
+  textureS += '...........777##';
+  textureS += '************77##';
+  textureS += '*************7##';
+  textureS += '################';
+
+
+  // Perspective Store Shelve Test Looking North
+  var texWidth = 16;
+  var texHeight = 16;
+  var textureN = '';
+  textureN += '################';
+  textureN += '##7*************';
+  textureN += '##77************';
+  textureN += '##777...........';
+  textureN += '##777...........';
+  textureN += '################';
+  textureN += '##7*************';
+  textureN += '##777...........';
+  textureN += '##777...........';
+  textureN += '##7*************';
+  textureN += '################';
+  textureN += '##777...........';
+  textureN += '##777...........';
+  textureN += '##77************';
+  textureN += '##7*************';
+  textureN += '################';
+
+
+
   // sample position time width
   // sample position times height
   //
@@ -106,22 +217,22 @@ var gameEngineJS = (function(){
   /**
    * Function will get the pixel to be sampled from the sprite
    *
-   * @param  {array}  texture     The texture to be sampled
-   * @param  {float} x            The x coordinate of the sample (how much across)
-   * @param  {float} y            The y coordinate of the sample
-   * @param  {float} scaleFactor  scales the texture.
-   *                              Example: 2 will render twice the resolution (2x as large)
-   * @return {string}             Returns the pixel of the texture according to what was sampled
+   * @param  {array} texture -     The texture to be sampled
+   * @param  {float} x -           The x coordinate of the sample (how much across)
+   * @param  {float} y -           The y coordinate of the sample
+   * @param  {float} scaleFactor - scales the texture.
+   *                               Example: 2 will render twice the resolution (2x as large)
+   * @return {string}
    */
   var _getSamplePixel = function(texture, x, y, scaleFactor){
 
-    scaleFactor = scaleFactor || 1;
+    scaleFactor = scaleFactor || 2;
 
     x = scaleFactor * x%1;
     y = scaleFactor * y%1;
 
-    var sampleX = Math.floor(texWidth*x); // 5
-    var sampleY = Math.floor(texHeight*y); // 7
+    var sampleX = Math.floor(texWidth*x);
+    var sampleY = Math.floor(texHeight*y);
 
     var samplePosition = (texWidth*(sampleY)) + sampleX;
 
@@ -142,7 +253,7 @@ var gameEngineJS = (function(){
    * wow!!!!
    *
    * @param   {Array} items - The array to operate on.
-   * @param   {number} n - The number of elements to extract.
+   * @param   {number} n -    The number of elements to extract.
    * @returns {Array}
    */
   // helper function
@@ -162,19 +273,6 @@ var gameEngineJS = (function(){
     }
 
     return result;
-  }
-
-
-  function completeArray(inputArray, max){
-    var reversedInputArray = inputArray;
-    reversedInputArray.reverse();
-    var output = [];
-
-    reversedInputArray.forEach(function (item, index) {
-      output[index] = max - item;
-    });
-
-    return inputArray.concat(  output.reverse() );
   }
 
 
@@ -372,7 +470,7 @@ var gameEngineJS = (function(){
     var frame = _fPrepareFrame(screen, overlayscreen);
     // _fPrepareFrame(screen, overlayscreen);
 
-    _debugOutput( frame.length );
+    // _debugOutput( frame.length );
 
     var sOutput = '';
     // loops through each pixel and appends it to the output
@@ -392,7 +490,151 @@ var gameEngineJS = (function(){
 
   // various shaders for walls, ceilings, objects
   // _renderHelpers
+  //
+  // each texture has 4 values: 3 hues plus black
+  // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
+
+    shades: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`.',
+
+    renderWall: function(j, fDistanceToWall, sWallDirection, pixel){
+
+      var fill = '';
+
+      var b100 = '&#9608;';
+      var b75  = '&#9619;';
+      var b50  = '&#9618;';
+      var b25  = '&#9617;';
+      var b0   = '&nbsp;';
+
+      // var b100 = _rh.shades[1];
+      // var b75  = _rh.shades[8];
+      // var b50  = _rh.shades[17];
+      // var b25  = _rh.shades[22];
+      // // var b0   = _rh.shades[24];
+
+      if( sWallDirection === 'N' || sWallDirection === 'S' ){
+
+        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+
+          if( pixel === '#' ){
+            fill = b100;
+          }else if( pixel === '7' ){
+            fill = b75;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b50;
+          }else{
+            fill = b25;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+
+          if( pixel === '#' ){
+            fill = b75;
+          }else if( pixel === '7' ){
+            fill = b50;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+
+          if( pixel === '#' ){
+            fill = b50;
+          }else if( pixel === '7' ){
+            fill = b25;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 1 ){    // 1
+
+          if( pixel === '#' ){
+            fill = b25;
+          }else if( pixel === '7' ){
+            fill = b25;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else{
+          fill = '&nbsp;';
+        }
+      }
+
+      // walldirection W/E
+      else{
+
+        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+
+          if( pixel === '#' ){
+            fill = b75;
+          }else if( pixel === '7' ){
+            fill = b50;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+
+          if( pixel === '#' ){
+            fill = b50;
+          }else if( pixel === '7' ){
+            fill = b50;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+
+          if( pixel === '#' ){
+            fill = b50;
+          }else if( pixel === '7' ){
+            fill = b25;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b25;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else if(fDistanceToWall < fDepth / 1 ){    // 1
+
+          if( pixel === '#' ){
+            fill = b25;
+          }else if( pixel === '7' ){
+            fill = b25;
+          }else if( pixel === '*' || pixel === 'o'){
+            fill = b0;
+          }else{
+            fill = b0;
+          }
+
+        }
+        else{
+          fill = '&nbsp;';
+        }
+      }
+
+      return fill;
+
+    },
 
     // figures out shading for given section
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
@@ -530,12 +772,6 @@ var gameEngineJS = (function(){
 
         // _debugOutput(e.which);
 
-        // if (e.which == 82) { // r
-        //   bLookUp = true;
-        // }
-        // if (e.which == 70) { // f
-        //   bLookDown = true;
-        // }
         if (e.which == 80) { // p
           clearInterval(gameRun);
         }
@@ -564,12 +800,6 @@ var gameEngineJS = (function(){
 
       window.onkeyup = function(e) {
 
-        // if (e.which == 82) { // r
-        //   bLookUp = false;
-        // }
-        // if (e.which == 70) { // f
-        //   bLookDown = false;
-        // }
         if (e.which == 32) { // space
           bJumping = false;
           bFalling = true;
@@ -599,7 +829,7 @@ var gameEngineJS = (function(){
     mouse: function(){
       var fMouseLookFactor = 0.002;
 
-      document.body.onclick = function(){
+      eScreen.onclick = function(){
 
         document.body.requestPointerLock();
         document.onmousemove = function (e) {
@@ -684,12 +914,19 @@ var gameEngineJS = (function(){
 
   var gameRun;
 
+  var animationTimer = 0;
+
   /**
    * The basic game loop
    */
   var main = function(){
     gameRun = setInterval(gameLoop, 33);
     function gameLoop(){
+
+      animationTimer++;
+      if(animationTimer > 15){
+        animationTimer = 0;
+      }
 
       _moveHelpers.move();
 
@@ -715,21 +952,9 @@ var gameEngineJS = (function(){
       var screen = [];
       var overlayscreen = []
 
-      // var fFisheyeCounter = 0;
 
       // for the length of the screenwidth (one frame)
       for(var i = 0; i < nScreenWidth; i++){
-
-        // // changes the field of view per i, creating a cool fisheye lense type effect :o
-        // // fFOV = 3.14159 / 4.0 + fFisheyeCounter*0.005;
-        // fFOV = 3.14159 / 4.0 - fFisheyeCounter*0.0001*fLooktimer;
-
-        // if( fFisheyeCounter > nScreenWidth / 2){
-        //   fFisheyeCounter++;
-        // }else{
-        //   fFisheyeCounter--;
-        // }
-
 
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
@@ -754,6 +979,7 @@ var gameEngineJS = (function(){
         var fEyeY = Math.sin(fRayAngle);
 
         var fSampleX = 0.0;
+        var sWallDirection = 'N';
 
         var nRayLength = 0.0;
 
@@ -834,25 +1060,6 @@ var gameEngineJS = (function(){
             // }
 
 
-            // var fBlockMidX = nTestX + 0.5;
-            // var fBlockMidY = nTestY + 0.5;
-
-            // var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
-            // var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
-
-            // var fTestAngle = Math.atan2((fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX));
-
-            // if (fTestAngle >= -3.14159 * 0.25 && fTestAngle < 3.14159 * 0.25)
-            //   fSampleX = fTestPointY - nTestY;
-            // if (fTestAngle >= 3.14159 * 0.25 && fTestAngle < 3.14159 * 0.75)
-            //   fSampleX = fTestPointX - nTestX;
-            // if (fTestAngle < -3.14159 * 0.25 && fTestAngle >= -3.14159 * 0.75)
-            //   fSampleX = fTestPointX - nTestX;
-            // if (fTestAngle >= 3.14159 * 0.75 || fTestAngle < -3.14159 * 0.75)
-            //   fSampleX = fTestPointY - nTestY;
-
-
-            // Determine where the ray hit the wall by dividing each
             // 1u wide cell into quarters
             var fBlockMidX = (nTestX) + 0.5;
             var fBlockMidY = (nTestY) + 0.5;
@@ -871,53 +1078,54 @@ var gameEngineJS = (function(){
             var fTestAngle = Math.atan2( (fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX) )
             // rotate by pi over 4
 
-            if( fTestAngle >= -3.14159 * 0.25 && fTestAngle < 3.14159 * 0.25 ){
+            if( fTestAngle >= -Math.PI * 0.25 && fTestAngle < Math.PI * 0.25 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
+              sWallDirection = 'W';
             }
-            if( fTestAngle >= 3.14159 * 0.25 && fTestAngle < 3.14159 * 0.75 ){
+            if( fTestAngle >= Math.PI * 0.25 && fTestAngle < Math.PI * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
+              sWallDirection = 'N';
             }
-            if( fTestAngle < -3.14159 * 0.25 && fTestAngle >= -3.14159 * 0.75 ){
+            if( fTestAngle < -Math.PI * 0.25 && fTestAngle >= -Math.PI * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
+              sWallDirection = 'S';
             }
-            if( fTestAngle >= 3.14159 * 0.75 || fTestAngle < -3.14159 * 0.75 ){
+            if( fTestAngle >= Math.PI * 0.75 || fTestAngle < -Math.PI * 0.75 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
+              sWallDirection = 'E';
             }
 
           }
         } // end ray casting loop
 
+
+
+
+            // var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
+            // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
+            // var nFloor   = nScreenHeight - nCeiling;
+            // var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
+
+            // var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
+            // var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
+            // var nObjectFloor = nScreenHeight - nObjectCeilFG;
+            // var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
+
+            // fLooktimer = -3;
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
-
-
-
-
-
         // based on the distance to wall, determine how much floor and ceiling to show per column,
-        // var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
-        // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
-        // var nFloor   = nScreenHeight - nCeiling;
-        // var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
-
-        // // similar operation for objects
-        // var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
-        // var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
-        // var nObjectFloor = nScreenHeight - nObjectCeilFG;
-        // var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
-
-
-
-        // recalc for looking
+        // Adding in the recalc for looking (fLookTimer)
         var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         var nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
         var nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
         var nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
-        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-        var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        // similar operation for objects
+        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
+        var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15) +fLooktimer ) - (nScreenHeight / fDistanceToObject);
         var nObjectFloor = nScreenHeight - nObjectCeilFG;
-        var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / (fDistanceToInverseObject + 0);
+        var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
 
 
@@ -949,6 +1157,7 @@ var gameEngineJS = (function(){
             // case of tower block (the bit that reaches into the ceiling)
             if(sWalltype == 'T'){
               if( j > nTower ){
+
                 screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }else{
                 screen[j*nScreenWidth+i] = '&nbsp;';
@@ -977,13 +1186,63 @@ var gameEngineJS = (function(){
             else if(sWalltype == '#' || sWalltype == 'T'){
 
               var fSampleY = ( (j - nCeiling) / (nFloor - nCeiling) );
-              screen[j*nScreenWidth+i] = _getSamplePixel(texture, fSampleX, fSampleY);
 
-              if( isBoundary ){
-                screen[j*nScreenWidth+i] = '&#9617;';
+
+              /**
+               * animation timer example
+               */
+              // if( animationTimer < 5 ){
+              //   screen[j*nScreenWidth+i] = _getSamplePixel(texture, fSampleX, fSampleY);
+              // }else if( animationTimer >= 5 && animationTimer < 10 ){
+              //   screen[j*nScreenWidth+i] = _getSamplePixel(texture2, fSampleX, fSampleY);
+              // }else if( animationTimer >= 10 ){
+              //   screen[j*nScreenWidth+i] = _getSamplePixel(texture3, fSampleX, fSampleY);
+              // }
+
+              /**
+               * Render Texture Directly
+               */
+              if( nRenderMode == 1 ){
+                screen[j*nScreenWidth+i] = _getSamplePixel(texture2, fSampleX, fSampleY);
               }
 
-              // screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
+
+              /**
+               * Render Texture with Shading
+               */
+              if( nRenderMode == 2 ){
+                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(texture2, fSampleX, fSampleY, 2));
+              }
+
+              /**
+               * Different Texture based on viewport
+               */
+              // var degrees = (fPlayerA * (180/Math.PI)) % 360;
+              // _debugOutput( degrees );
+              // if( degrees > 0 && degrees < 180 ){
+              //   screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textureS, fSampleX, fSampleY, 1));
+              // }else{
+              //   screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textureN, fSampleX, fSampleY, 1));
+              // }
+
+
+              // screen[j*nScreenWidth+i] = sWallDirection;
+
+
+              /**
+               * black lines between blocks
+               */
+              // if( isBoundary ){
+              //   screen[j*nScreenWidth+i] = '&nbsp;';
+              // }
+
+
+              /**
+               * old, solid-style shading
+               */
+              if( nRenderMode == 0 ){
+                screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
+              }
             }
 
             // renders whatever char is on the map as walltype
@@ -1058,6 +1317,13 @@ var gameEngineJS = (function(){
 
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
+
+
+    document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });
+    document.getElementById("texture").addEventListener("click", function(){ nRenderMode = 1 });
+    document.getElementById("shader").addEventListener("click", function(){ nRenderMode = 2 });
+
+
   };
 
 
