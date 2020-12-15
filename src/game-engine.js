@@ -11,15 +11,17 @@ var gameEngineJS = (function(){
 
 
   var nScreenWidth = 240;
-  var nScreenHeight = 80;
+  var nScreenHeight = 60;
 
-  var nScreenWidth = 360;
-  var nScreenHeight = 80;
+  // var nScreenWidth = 360;
+  // var nScreenHeight = 80;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
   var fPlayerA = 1.15;
   var fPlayerA = 1.5;
+
+  var nDegrees = 0;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -42,22 +44,21 @@ var gameEngineJS = (function(){
 
   var nJumptimer = 0;
 
-
   var fLooktimer = 0;
 
 
   var map = "";
   map += "#############..#";
-  map += "#...........#..#";
-  map += "#...T.......#..#";
-  map += "#...T.......#..#";
-  map += "#...T..........#";
-  map += "#...T........o.#";
-  map += "#...T........o.#";
-  map += "#.....###....o.#";
+  map += "#...........U..#";
+  map += "#..W........T..#";
+  map += "#..W........U..#";
+  map += "#...W..........#";
+  map += "#...W........o.#";
+  map += "#............o.#";
+  map += "#......##....o.#";
   map += "#......##....o.#";
   map += "#..............#";
-  map += "#.......########";
+  map += "#.......$$$$$$$#";
   map += "#..............#";
   map += "#..ooooooo.....#";
   map += "#..............#";
@@ -88,70 +89,47 @@ var gameEngineJS = (function(){
 
 
   // wood blanks texture
-  // var texWidth = 16;
-  // var texHeight = 16;
-  // var texture = '';
-  // texture += 'ooooo.oooooooooo';
-  // texture += 'ooo#o.o#o7777ooo';
-  // texture += '7oooo.ooooooo777';
-  // texture += 'ooooo.oooooooooo';
-  // texture += 'ooooo.ooo777oooo';
-  // texture += '77o#o.o#oooo7777';
-  // texture += 'ooooo.oooooooooo';
-  // texture += '................';
-  // texture += 'ooooooooooo.oooo';
-  // texture += 'ooo77777o+o.o#oo';
-  // texture += '777oooooooo.ooo7';
-  // texture += 'ooooooooooo.oooo';
-  // texture += 'ooooo777ooo.oooo';
-  // texture += '77777oooo#o.o#o7';
-  // texture += 'ooooooooooo.oooo';
-  // texture += '................';
+  var texWidth = 16;
+  var texHeight = 16;
+  var texture2 = '';
+  texture2 += 'ooooo.oooooooooo';
+  texture2 += 'ooo#o.o#o7777ooo';
+  texture2 += '7oooo.ooooooo777';
+  texture2 += 'ooooo.oooooooooo';
+  texture2 += 'ooooo.ooo777oooo';
+  texture2 += '77o#o.o#oooo7777';
+  texture2 += 'ooooo.oooooooooo';
+  texture2 += '................';
+  texture2 += 'ooooooooooo.oooo';
+  texture2 += 'ooo77777o+o.o#oo';
+  texture2 += '777oooooooo.ooo7';
+  texture2 += 'ooooooooooo.oooo';
+  texture2 += 'ooooo777ooo.oooo';
+  texture2 += '77777oooo#o.o#o7';
+  texture2 += 'ooooooooooo.oooo';
+  texture2 += '................';
 
 
   // cobble stone
   var texWidth = 16;
   var texHeight = 16;
-  var texture2 = '';
-  texture2 += '##.........777.#';
-  texture2 += '777..####7....##';
-  texture2 += '777.##77777..##7';
-  texture2 += '77*.#7777777.*77';
-  texture2 += '7*..7777777*..*7';
-  texture2 += '......77***.....';
-  texture2 += '..##7*.....###..';
-  texture2 += '###777...##777.#';
-  texture2 += '##777*..##777*.7.';
-  texture2 += '7777*..77777*...';
-  texture2 += '77*.....777*....';
-  texture2 += '....##..........';
-  texture2 += '...##77......#77';
-  texture2 += '7.##77777..##777';
-  texture2 += '7.#77777*.#7777*';
-  texture2 += '...777**..7777~~';
-
-
-
-  // // cobble stone
-  // var texWidth = 16;
-  // var texHeight = 16;
-  // var texture3 = '';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
-  // texture3 += '................';
+  var texture3 = '';
+  texture3 += '##.........777.#';
+  texture3 += '777..####7....##';
+  texture3 += '777.##77777..##7';
+  texture3 += '77*.#7777777.*77';
+  texture3 += '7*..7777777*..*7';
+  texture3 += '......77***.....';
+  texture3 += '..##7*.....###..';
+  texture3 += '###777...##777.#';
+  texture3 += '##777*..##777*.7.';
+  texture3 += '7777*..77777*...';
+  texture3 += '77*.....777*....';
+  texture3 += '....##..........';
+  texture3 += '...##77......#77';
+  texture3 += '7.##77777..##777';
+  texture3 += '7.#77777*.#7777*';
+  texture3 += '...777**..7777~~';
 
 
   // Perspective Store Shelve Test Looking South
@@ -198,20 +176,24 @@ var gameEngineJS = (function(){
   textureN += '################';
 
 
+  // Array assignes textures to keys that will
+  // correspond with their coordinates on the map
+  var textures = {
+    '#': texture3,
+    'U': texture2,
+    '$': texture,
+    'T': texture3,
+    'W': {
+      'N': textureN,
+      'S': textureS,
+    },
+  };
 
-  // sample position time width
-  // sample position times height
-  //
-  //
 
   // █
   // ▓
   // ▒
   // ░
-
-// 0.25, 0.5
-// 4, 8
-//
 
 
   /**
@@ -221,10 +203,21 @@ var gameEngineJS = (function(){
    * @param  {float} x -           The x coordinate of the sample (how much across)
    * @param  {float} y -           The y coordinate of the sample
    * @param  {float} scaleFactor - scales the texture.
-   *                               Example: 2 will render twice the resolution (2x as large)
+   *                               Example: 2 will render twice the resolution
+   *                               (texture tiled 4x across one block)
    * @return {string}
    */
   var _getSamplePixel = function(texture, x, y, scaleFactor){
+
+    // _debugOutput( texture );
+    if( typeof texture == 'object'  ){
+      // Different Texture based on viewport
+      if( nDegrees > 0 && nDegrees < 180 ){
+        texture = textures['W']['S'];
+      }else{
+        texture = textures['W']['N'];
+      }
+    }
 
     scaleFactor = scaleFactor || 2;
 
@@ -640,14 +633,6 @@ var gameEngineJS = (function(){
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
       var fill = '&#9617;';
 
-      // var shades = "$ B%8&WM#ahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'."; // 67
-      // for(var sh=0; sh < shades.length; sh++){
-      //   if(fDistanceToWall < fDepth / sh / 2 ){
-      //     fill = shades[sh];
-      //   }
-      // }
-
-
       if(fDistanceToWall < fDepth / 5.5 ){   // 4
         fill = '&#9608;';
       }
@@ -662,12 +647,6 @@ var gameEngineJS = (function(){
       }else{
         fill = '&nbsp;';
       }
-
-      // var fSampleY = ( parseFloat(j) - parseFloat(nCeiling) / parseFloat(nFloor) - parseFloat(nCeiling) );
-      // fill = _getSamplePixel(fSampleX, fSampleY);
-
-      // draw X and Y of the sample routine
-
 
       if( isBoundary ){
         if(fDistanceToWall < fDepth / 5.5 ){   // 4
@@ -1022,7 +1001,7 @@ var gameEngineJS = (function(){
           }
 
           // Test for walls
-          else if(map[nTestY * nMapWidth + nTestX] == '#' || map[nTestY * nMapWidth + nTestX] == 'X' || map[nTestY * nMapWidth + nTestX] == 'T'){
+          else if( map[nTestY * nMapWidth + nTestX] != '.' ){
             bHitWall = true;
             bBreakLoop = true;
 
@@ -1065,7 +1044,6 @@ var gameEngineJS = (function(){
             var fBlockMidY = (nTestY) + 0.5;
 
 
-
             // using the distance to the wall and the player angle (Eye Vectors)
             // to determine the collusion point
             var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
@@ -1074,7 +1052,6 @@ var gameEngineJS = (function(){
 
             // now we have the location of the middle of the cell,
             // and the location of point of collision, work out angle
-
             var fTestAngle = Math.atan2( (fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX) )
             // rotate by pi over 4
 
@@ -1122,7 +1099,7 @@ var gameEngineJS = (function(){
         var nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
-        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
+        var nObjectCeiling = (nScreenHeight / (2 + fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
         var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15) +fLooktimer ) - (nScreenHeight / fDistanceToObject);
         var nObjectFloor = nScreenHeight - nObjectCeilFG;
         var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
@@ -1142,6 +1119,9 @@ var gameEngineJS = (function(){
           nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) + nScreenHeight / (fDistanceToInverseObject + 0);
         }
 
+        // Converts player turn position into degrees (used for texturing)
+        nDegrees = (fPlayerA * (180/Math.PI)) % 360;
+        _debugOutput( nDegrees );
 
 
         // draw the columns one screenheight pixel at a time
@@ -1183,7 +1163,7 @@ var gameEngineJS = (function(){
             }
 
             // Solid Walltype
-            else if(sWalltype == '#' || sWalltype == 'T'){
+            else if(sWalltype != '.' || sWalltype == 'T'){
 
               var fSampleY = ( (j - nCeiling) / (nFloor - nCeiling) );
 
@@ -1203,7 +1183,7 @@ var gameEngineJS = (function(){
                * Render Texture Directly
                */
               if( nRenderMode == 1 ){
-                screen[j*nScreenWidth+i] = _getSamplePixel(texture2, fSampleX, fSampleY);
+                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY);
               }
 
 
@@ -1211,22 +1191,8 @@ var gameEngineJS = (function(){
                * Render Texture with Shading
                */
               if( nRenderMode == 2 ){
-                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(texture2, fSampleX, fSampleY, 2));
+                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, 2));
               }
-
-              /**
-               * Different Texture based on viewport
-               */
-              // var degrees = (fPlayerA * (180/Math.PI)) % 360;
-              // _debugOutput( degrees );
-              // if( degrees > 0 && degrees < 180 ){
-              //   screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textureS, fSampleX, fSampleY, 1));
-              // }else{
-              //   screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textureN, fSampleX, fSampleY, 1));
-              // }
-
-
-              // screen[j*nScreenWidth+i] = sWallDirection;
 
 
               /**
