@@ -270,7 +270,6 @@ var gameEngineJS = (function(){
   }
 
 
-
   // gonna leave the console for errors, logging seems to kill performance
   var _debugOutput = function(input){
     eDebugOut.innerHTML = input;
@@ -283,7 +282,6 @@ var gameEngineJS = (function(){
   }
 
 
-
   var _printFiller = function(number){
     var pix = '';
     for(var i=0; i<number; i++){
@@ -293,34 +291,8 @@ var gameEngineJS = (function(){
   };
 
 
-  var _printFillerUp = function(number){
-
-    // number is always the
-
-    var printnumber = (30 - number) ;
-    var printnumber = (30 - number)  ;
-
-    // 19 (11 .)
-    // if 19, subtract 19
-    // if 14, subtract 16
-    //
-
-    // printnumber =  number ;
-
-    var pix = '';
-    for(var i=0; i<printnumber; i++){
-      pix += '.';
-    }
-
-    // if 0, draw 30
-    // if 60, draw 0
-
-    return pix;
-  };
-
-
-  // lookup table because I suuuuuuck at logic (apparently)
-  // TODO: The Logic
+  // lookup table “for fine-control” or “for perfomance”
+  // …(but really because I suuuuuuck at logic [apparently] )
   var _skipEveryXrow = function(input){
     input = Math.round(input);
     switch( Number(input) ) {
@@ -810,11 +782,13 @@ var gameEngineJS = (function(){
       };
     },
 
-    // mouse (experimental API)
+    // mouse (modern API)
     mouse: function(){
       var fMouseLookFactor = 0.002;
 
       eScreen.onclick = function(){
+
+        eScreen.classList.add('nomouse');
 
         document.body.requestPointerLock();
         document.onmousemove = function (e) {
@@ -829,10 +803,6 @@ var gameEngineJS = (function(){
             fLooktimer += fYMoveFactor;
           }
 
-          // _debugOutput( fLooktimer );
-
-          // on click hide curser
-          // document.body.onclick = document.body.requestPointerLock || document.body.mozRequestPointerLock || document.body.webkitRequestPointerLock;
         }
       };
     },
@@ -1178,7 +1148,6 @@ var gameEngineJS = (function(){
 
               var fSampleY = ( (j - nCeiling) / (nFloor - nCeiling) );
 
-
               /**
                * animation timer example
                */
@@ -1194,15 +1163,21 @@ var gameEngineJS = (function(){
                * Render Texture Directly
                */
               if( nRenderMode == 1 ){
-                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY);
+                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, 2);
               }
-
 
               /**
                * Render Texture with Shading
                */
               if( nRenderMode == 2 ){
                 screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, 2));
+              }
+
+              /**
+               * old, solid-style shading
+               */
+              if( nRenderMode == 0 ){
+                screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }
 
 
@@ -1213,13 +1188,6 @@ var gameEngineJS = (function(){
               //   screen[j*nScreenWidth+i] = '&nbsp;';
               // }
 
-
-              /**
-               * old, solid-style shading
-               */
-              if( nRenderMode == 0 ){
-                screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
-              }
             }
 
             // renders whatever char is on the map as walltype
@@ -1287,7 +1255,7 @@ var gameEngineJS = (function(){
     var sOutput = '';
     for(var i = 0; i < nScreenHeight; i++){
       for(var j = 0; j < nScreenWidth; j++){
-        sOutput += '#';
+        sOutput += '&nbsp;';
       }
       sOutput += '.<br>';
     }
