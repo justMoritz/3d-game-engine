@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>3D ASCII Game Engine</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' >
     <script type="text/javascript" src="src/game-engine.js"></script>
     <style>
       body{
@@ -11,6 +12,19 @@
         font-size: 10px;
         line-height: 1.15em;
         /*cursor: none;*/
+        text-align: center;
+        overflow: hidden;
+      }
+      #display{
+        display: inline-block;
+      }
+      #debug{
+        clear: both;
+      }
+      @media(max-width: 768px){
+        body{
+          font-size: 5px;
+        }
       }
     </style>
   </head>

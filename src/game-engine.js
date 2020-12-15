@@ -6,8 +6,8 @@ var gameEngineJS = (function(){
   var eDebugOut;
 
   // var nScreenWidth = 120;
-  var nScreenWidth = 180;
-  var nScreenHeight = 40;
+  // var nScreenWidth = 180;
+  // var nScreenHeight = 40;
 
 
   var nScreenWidth = 240;
@@ -41,6 +41,7 @@ var gameEngineJS = (function(){
   var bMoveBackward;
   var bJumping;
   var bFalling;
+  var bRunning;
 
   var nJumptimer = 0;
 
@@ -461,7 +462,6 @@ var gameEngineJS = (function(){
 
   var _fDrawFrame = function(screen, overlayscreen){
     var frame = _fPrepareFrame(screen, overlayscreen);
-    // _fPrepareFrame(screen, overlayscreen);
 
     // _debugOutput( frame.length );
 
@@ -754,6 +754,9 @@ var gameEngineJS = (function(){
         if (e.which == 80) { // p
           clearInterval(gameRun);
         }
+        if (e.which == 16) { // shift
+          bRunning = true;
+        }
         if (e.which == 32) { // space
           bJumping = true;
         }
@@ -779,6 +782,9 @@ var gameEngineJS = (function(){
 
       window.onkeyup = function(e) {
 
+        if (e.which == 16) { // shift
+          bRunning = false;
+        }
         if (e.which == 32) { // space
           bJumping = false;
           bFalling = true;
@@ -841,51 +847,56 @@ var gameEngineJS = (function(){
         fPlayerA += 0.05;
       }
 
+      var fMoveFactor = 0.1;
+      if(bRunning){
+        fMoveFactor = 0.2;
+      }
+
       if(bStrafeLeft){
         // forward arrow (w)
-        fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+        fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
       }
 
       if(bStrafeRight){
         // forward arrow (w)
-        fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+        fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+          fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
       }
 
       if(bMoveForward){
         // forward arrow (w)
-        fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+        fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+          fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
       }
 
       if(bMoveBackward){
         // backward arrow (s)
-        fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-        fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+        fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+        fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
-          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
-          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * 0.1;
+          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
+          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
       }
     },
@@ -1120,8 +1131,8 @@ var gameEngineJS = (function(){
         }
 
         // Converts player turn position into degrees (used for texturing)
-        nDegrees = (fPlayerA * (180/Math.PI)) % 360;
-        _debugOutput( nDegrees );
+        nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
+        // _debugOutput( nDegrees );
 
 
         // draw the columns one screenheight pixel at a time
@@ -1271,6 +1282,50 @@ var gameEngineJS = (function(){
   };
 
 
+  // for every row make a nScreenWidth amount of pixels
+  var _createTestScreen = function(){
+    var sOutput = '';
+    for(var i = 0; i < nScreenHeight; i++){
+      for(var j = 0; j < nScreenWidth; j++){
+        sOutput += '#';
+      }
+      sOutput += '.<br>';
+    }
+    eScreen.innerHTML = sOutput;
+  };
+
+
+  var nTrymax = 512;
+  var _testScreenSizeAndStartTheGame = function(){
+
+    // render a static test screen
+    _createTestScreen();
+
+    var widthOfDisplay = eScreen.offsetWidth;
+    var heightOfDisplay = eScreen.offsetHeight;
+
+    var widthOfViewport = window.screen.width;
+    var heightOfViewport = window.screen.height;
+
+    // check if the amount of pixels to be rendered fit, if not, repeat
+    if(widthOfDisplay > widthOfViewport ){
+      nScreenWidth = nScreenWidth-1;
+      nScreenHeight = nScreenWidth*0.25;
+
+      // try no more than nTrymax times (in case of some error)
+      if( nTrymax > 0 ){
+        nTrymax--;
+        _testScreenSizeAndStartTheGame();
+      }
+
+    }
+    // if it does, start the game
+    else{
+      main();
+    }
+  };
+
+
   var init = function( input )
   {
     // prep document
@@ -1278,8 +1333,8 @@ var gameEngineJS = (function(){
     eDebugOut = document.getElementById('debug');
 
 
-    // rendering loop
-    main();
+
+    // main();
 
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
@@ -1288,6 +1343,15 @@ var gameEngineJS = (function(){
     document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });
     document.getElementById("texture").addEventListener("click", function(){ nRenderMode = 1 });
     document.getElementById("shader").addEventListener("click", function(){ nRenderMode = 2 });
+
+    // rendering loop
+    // main();
+
+    _testScreenSizeAndStartTheGame();
+    window.addEventListener('resize', function(){
+      clearInterval(gameRun);
+      _testScreenSizeAndStartTheGame();
+    });
 
 
   };
