@@ -16,7 +16,7 @@ var gameEngineJS = (function(){
   var nDegrees = 0;
 
 
-  var fFOV = Math.PI / 2.0; // (Math.PI / 4.0 originally)
+  var fFOV = Math.PI / 2.5; // (Math.PI / 4.0 originally)
   var fDepth = 16.0; // viewport depth
 
   var nLookLimit = 8;
@@ -324,7 +324,7 @@ var gameEngineJS = (function(){
       fLookModifier = neverMoreThan;
     }
 
-    // print each row at a time
+    // interate each row at a time
     for(var row = 0; row < nScreenHeight; row++){
 
       // increment the fLookModifier every time it needs to grow (grows per row)
@@ -337,7 +337,11 @@ var gameEngineJS = (function(){
         }
       }
 
-      sOutput.push( _printFiller( fLookModifier ) );
+
+      // sOutput.push( _printFiller( fLookModifier ) );
+      for(var i=0; i<fLookModifier; i++){
+        sOutput.push( '.' );
+      }
 
       var toBeRemoved = (2*fLookModifier);
       var removeFrom = [];
@@ -383,11 +387,13 @@ var gameEngineJS = (function(){
       // sOutput += '&nbsp;&nbsp;';
 
 
-      sOutput.push( _printFiller( fLookModifier ) );
+      // sOutput.push( _printFiller( fLookModifier ) );
+      for(var i=0; i<fLookModifier; i++){
+        sOutput.push( '.' );
+      }
 
 
-
-     sOutput.push( '<br>' );
+      // sOutput.push( '<br>' );
     } // end for(row
 
     return sOutput;
@@ -398,15 +404,18 @@ var gameEngineJS = (function(){
   var _fDrawFrame = function(screen, overlayscreen){
     var frame = _fPrepareFrame(screen, overlayscreen);
 
-    // _debugOutput( frame.length );
+    _debugOutput( frame.length );
 
     var sOutput = '';
     // loops through each pixel and appends it to the output
     for(var i = 0; i < frame.length; i++){
       // H blank based on screen-width
-      if(i % (nScreenWidth - 60) == 0){
-        // sOutput += '<br>';
+      if(i % (nScreenWidth) == 0){
+        sOutput += '<br>';
       }
+
+
+      // for
       sOutput += frame[i];
     }
     eScreen.innerHTML = sOutput;
