@@ -22,3 +22,8 @@
 ...####XX#####..
 ...#...TT....#..
 ...#.........#..
+
+texturescale: 2,
+fPlayerX = 14.0;
+fPlayerY = 1.0;
+fPlayerA = 1.15;

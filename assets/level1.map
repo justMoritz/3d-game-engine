@@ -14,3 +14,8 @@
 #..............#
 #....T.T....T.T#
 ######X#....#X##
+/
+texturescale:2
+fPlayerX:14.0
+fPlayerY:1.0
+fPlayerA:1.5

@@ -91,10 +91,14 @@ var gameEngineJS = (function(){
   };
 
 
+  /**
+   * Loads
+   * @param  {[string]} level The Level file
+   * @return {[type]}       [description]
+   */
   var _loadLevel = function(level){
 
     var levelstring = level.replace(".map", "");
-
 
     var loadScriptAsync = function loadScriptAsync(uri, levelstring) {
       return new Promise(function (resolve, reject) {
@@ -123,19 +127,7 @@ var gameEngineJS = (function(){
     });
 
 
-    // var levelLoad = new Promise(function (resolve, reject) {
-
-    //   document.getElementById("map").src = "assets/" + level;
-    //   console.log(levelstring);
-    // });
-
-    // levelLoad.then(function(){
-    //   map = window[levelstring].map;
-    //   nMapHeight = window[levelstring].nMapHeight;
-    //   nMapWidth = window[levelstring].nMapWidth;
-    //   console.log(map);
-    // });
-
+    // pauses, then starts the game loop
     _testScreenSizeAndStartTheGame();
     window.addEventListener('resize', function(){
       clearInterval(gameRun);
@@ -270,13 +262,22 @@ var gameEngineJS = (function(){
       case 8: return 2; break;
 
       case -1: return 8; break;
-      case -2: return 7; break;
-      case -3: return 6; break;
-      case -4: return 5; break;
-      case -5: return 4; break;
-      case -6: return 3; break;
-      case -7: return 3; break;
-      case -8: return 3; break;
+      case -2: return 8; break;
+      case -3: return 7; break;
+      case -4: return 7; break;
+      case -5: return 6; break;
+      case -6: return 6; break;
+      case -7: return 6; break;
+      case -8: return 5; break;
+      case -9: return 5; break;
+      case -10: return 4; break;
+      case -11: return 4; break;
+      case -12: return 3; break;
+      case -13: return 3; break;
+      case -14: return 3; break;
+      case -15: return 2; break;
+      case -16: return 2; break;
+      case -17: return 2; break;
 
       default:
         return 0;
@@ -404,20 +405,49 @@ var gameEngineJS = (function(){
   var _fDrawFrame = function(screen, overlayscreen){
     var frame = _fPrepareFrame(screen, overlayscreen);
 
-    _debugOutput( frame.length );
+    // _debugOutput( frame.length );
 
     var sOutput = '';
-    // loops through each pixel and appends it to the output
-    for(var i = 0; i < frame.length; i++){
-      // H blank based on screen-width
-      if(i % (nScreenWidth) == 0){
-        sOutput += '<br>';
+
+
+    // // loops through each pixel and appends it to the output
+    // for(var i = 0; i < frame.length; i++){
+    //   // H blank based on screen-width
+    //   if(i % (nScreenWidth) == 0){
+    //     sOutput += '<br>';
+    //   }
+    //   sOutput += frame[i];
+    // }
+
+
+    // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+    var printIndex = 0;
+    var removePixels = 29;
+    for(var row = 0; row < nScreenHeight; row++){
+      for(var pix = 0; pix < nScreenWidth; pix++){
+
+        // H-blank based on screen-width
+        if(printIndex % (nScreenWidth) == 0){
+          sOutput += '<br>';
+        }
+
+        if( pix < removePixels ){
+          sOutput += '';
+        }
+        else if( pix > nScreenWidth-removePixels ){
+          sOutput += '';
+        }
+        else{
+          sOutput += frame[printIndex];
+        }
+
+        printIndex++;
       }
-
-
-      // for
-      sOutput += frame[i];
     }
+
+
+
+
     eScreen.innerHTML = sOutput;
 
   };
@@ -770,10 +800,17 @@ var gameEngineJS = (function(){
 
           // look up/down (with bounds)
           var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+
+          if( fLooktimer < 0 ){
+            fYMoveFactor = fYMoveFactor*4;
+          }
+
           fLooktimer -= fYMoveFactor;
-          if( fLooktimer > nLookLimit || fLooktimer < -nLookLimit ){
+          if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
             fLooktimer += fYMoveFactor;
           }
+
+          _debugOutput(fLooktimer)
 
         }
       };
