@@ -10,7 +10,6 @@ var gameEngineJS = (function(){
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
-  var fPlayerA = 1.15;
   var fPlayerA = 1.5;
 
   var nDegrees = 0;
@@ -46,49 +45,6 @@ var gameEngineJS = (function(){
   // ▓
   // ▒
   // ░
-
-
-  var _assetFetcher = function(inputSource, callback){
-    inputSource = "assets/" + inputSource;
-    var asset = '';
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function(){
-      if(xmlhttp.status == 200 && xmlhttp.readyState == 4){
-        asset = xmlhttp.responseText;
-        callback(asset);
-      }
-    };
-    xmlhttp.open("GET", inputSource ,true);
-    xmlhttp.send();
-  };
-
-
-  var _assetLoader = function(levelFile, callback){
-    var levelData   = '';
-
-    _assetFetcher(levelFile, function(loadedLevel){
-      levelData = loadedLevel;
-      callback(levelData);
-    });
-  }
-
-
-  var _setGlobalAssets = function(level, callback){
-
-    // parses map
-    map = level;
-    var mapAmountOfRows = level.split(/\r\n|\r|\n/).length; // count every whitespace
-    var mapWithOutWhitespaces = level.replace(/\s/g,''); // remove every whitespace
-    var mapAmountOfCols = mapWithOutWhitespaces.length / mapAmountOfRows; // count across
-
-    // set global assets
-    map = mapWithOutWhitespaces;
-    nMapWidth = mapAmountOfCols;
-    nMapHeight = mapAmountOfRows;
-
-    // start the game already
-    callback();
-  };
 
 
   /**
@@ -133,22 +89,6 @@ var gameEngineJS = (function(){
       clearInterval(gameRun);
       _testScreenSizeAndStartTheGame();
     });
-
-    // // loads assets for textures and map
-    // _assetLoader(level, function(level){
-
-    //   // when loaded, make sense of the data receieved
-    //   _setGlobalAssets(level, function(){
-
-    //     // when made sense of, start rendering loop
-    //     // main();
-    //     _testScreenSizeAndStartTheGame();
-    //     window.addEventListener('resize', function(){
-    //       clearInterval(gameRun);
-    //       _testScreenSizeAndStartTheGame();
-    //     });
-    //   });
-    // });
   };
 
 
@@ -235,16 +175,6 @@ var gameEngineJS = (function(){
   var _everyAofB = function(a, b){
     return ( a && (a % b === 0));
   }
-
-
-  var _printFiller = function(number){
-    var pix = '';
-    for(var i=0; i<number; i++){
-      pix += '.';
-    }
-    return pix;
-  };
-
 
   // lookup table “for fine-control” or “for perfomance”
   // …(but really because I suuuuuuck at logic [apparently] )
@@ -337,8 +267,7 @@ var gameEngineJS = (function(){
         }
       }
 
-
-      // sOutput.push( _printFiller( fLookModifier ) );
+      // print filler pixels
       for(var i=0; i<fLookModifier; i++){
         sOutput.push( '.' );
       }
@@ -375,29 +304,14 @@ var gameEngineJS = (function(){
         globalPrintIndex++;
       } // end for(rpix
 
-      // sOutput += row;
-      // sOutput += '&nbsp;&nbsp;fLooktimer:&nbsp;';
-      // sOutput += Math.round(fLooktimer);
-      // sOutput += '&nbsp;&nbsp;_skipEveryXrow:&nbsp;';
-      // sOutput += Math.round( _skipEveryXrow(fLooktimer) );
-      // sOutput += '&nbsp;&nbsp;fLookModifier:&nbsp;';
-      // sOutput += Math.round( fLookModifier );
-      // sOutput += '&nbsp;&nbsp;NeverMoreThan:&nbsp;';
-      // sOutput += neverMoreThan;
-      // sOutput += '&nbsp;&nbsp;';
-
-
-      // sOutput.push( _printFiller( fLookModifier ) );
+      // print filler pixels
       for(var i=0; i<fLookModifier; i++){
         sOutput.push( '.' );
       }
 
-
-      // sOutput.push( '<br>' );
     } // end for(row
 
     return sOutput;
-    // eTarget.innerHTML = sOutput;
   };
 
 
@@ -407,17 +321,6 @@ var gameEngineJS = (function(){
     // _debugOutput( frame.length );
 
     var sOutput = '';
-
-
-    // // loops through each pixel and appends it to the output
-    // for(var i = 0; i < frame.length; i++){
-    //   // H blank based on screen-width
-    //   if(i % (nScreenWidth) == 0){
-    //     sOutput += '<br>';
-    //   }
-    //   sOutput += frame[i];
-    // }
-
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
     var printIndex = 0;
@@ -443,15 +346,8 @@ var gameEngineJS = (function(){
         printIndex++;
       }
     }
-
-
-
-
     eScreen.innerHTML = sOutput;
-
   };
-
-
 
 
   // various shaders for walls, ceilings, objects
@@ -1017,9 +913,6 @@ var gameEngineJS = (function(){
             if (Math.acos(vectorPairList[1][1]) < fBound) {
               isBoundary = true;
             }
-            // if (Math.acos(vectorPairList[2][1]) < fBound) {
-            //   isBoundary = true;
-            // }
 
 
             // 1u wide cell into quarters
@@ -1059,8 +952,6 @@ var gameEngineJS = (function(){
         } // end ray casting loop
 
 
-
-
             // var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
             // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
             // var nFloor   = nScreenHeight - nCeiling;
@@ -1088,7 +979,6 @@ var gameEngineJS = (function(){
         var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
 
-
         // recalc if jumping
         if(bJumping || bFalling){
           nCeiling = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToWall;
@@ -1111,8 +1001,6 @@ var gameEngineJS = (function(){
         // Background Draw
 
         for(var j = 0; j < nScreenHeight; j++){
-
-
 
           // sky
           if( j < nCeiling){
@@ -1181,15 +1069,6 @@ var gameEngineJS = (function(){
               if( nRenderMode == 0 ){
                 screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }
-
-
-              /**
-               * black lines between blocks
-               */
-              // if( isBoundary ){
-              //   screen[j*nScreenWidth+i] = '&nbsp;';
-              // }
-
             }
 
             // renders whatever char is on the map as walltype
@@ -1237,13 +1116,10 @@ var gameEngineJS = (function(){
           else {
             // overlayscreen floor is always 0
             overlayscreen[y*nScreenWidth+i] = '0';
-
           }
+
         } // end draw column loop
-
       }  // end column loop
-
-
 
       _fDrawFrame(screen, overlayscreen);
       // _fDrawFrame(overlayscreen, false, eDebugOut);
@@ -1303,9 +1179,6 @@ var gameEngineJS = (function(){
     eDebugOut = document.getElementById('debug');
 
 
-
-    // main();
-
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
 
@@ -1323,14 +1196,12 @@ var gameEngineJS = (function(){
 
         clearInterval(gameRun);
         _loadLevel(selectedLevel);
-
       });
     }
 
 
     // initial gameload
     _loadLevel('levelfile1.map');
-
   };
 
 
