@@ -25,14 +25,14 @@ One of the most obvious limitations of rendering a 3D world not with polygons bu
 
 However, after adding mouse support, I really wanted a “mouselook” feel. I guess modern 3D games just spoiled us, and it's really hard to get un-used to that. So what to do?
 
-###### Step 1: Just Change the Height of the Ceiling and Floor
+#### Step 1: Just Change the Height of the Ceiling and Floor
 That's simple enough: While moving the mose up and down, make the ceiling and and floor taller and smaller.
 
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-look-1.gif)
 
 Except reality doesn't really look like that. This also has the uncanny feeling of being “really zoomed in”, even when you are not.
 
-##### Step 2: Skew the Image!
+#### Step 2: Skew the Image!
 We're calculating the world column by column, so there's not really a way skew a colum to fake perspective. But what we *can* do is treat the entire output as an image, and skew that!
 
 After the image is generated in step 1, the image is now an array of pixels, and we can now operate on a row- instead of a col-basis! And since we know how far up and down we are looking, all we have to is progressively shorten each row of pixels as we look up and down, and fill it with filler-pixels at the beginning and end.
@@ -41,10 +41,11 @@ This *sounds* simple, but the math for this was the piece I spent the longest am
 
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-look-2.gif)
 
-##### Step 3: Hide the Skew!
+#### Step 3: Hide the Skew!
 The last thing is to run the resulting output through another loop, and just cut off the left- and right-most pixels of each rown.
 
 ![Looking Up and Down Final Version](https://raw.githubusercontent.com/justMoritz/images/master/3d-look-final.gif)
+
 *Tada! (Almost) 3d!*
 
 ### Render Output Modes:
