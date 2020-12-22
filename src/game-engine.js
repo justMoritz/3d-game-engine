@@ -16,7 +16,7 @@ var gameEngineJS = (function(){
   var nDegrees = 0;
 
 
-  var fFOV = Math.PI / 2.5; // (Math.PI / 4.0 originally)
+  var fFOV = Math.PI / 2.25; // (Math.PI / 4.0 originally)
   var fDepth = 16.0; // viewport depth
 
   var nLookLimit = 8;
@@ -253,13 +253,13 @@ var gameEngineJS = (function(){
     switch( Number(input) ) {
       case 0: return 0; break;
       case 1: return 8; break;
-      case 2: return 7; break;
-      case 3: return 6; break;
-      case 4: return 5; break;
-      case 5: return 4; break;
-      case 6: return 3; break;
+      case 2: return 6; break;
+      case 3: return 4; break;
+      case 4: return 3; break;
+      case 5: return 2; break;
+      case 6: return 2; break;
       case 7: return 2; break;
-      case 8: return 2; break;
+      case 8: return 1; break;
 
       case -1: return 8; break;
       case -2: return 8; break;
@@ -267,17 +267,16 @@ var gameEngineJS = (function(){
       case -4: return 7; break;
       case -5: return 6; break;
       case -6: return 6; break;
-      case -7: return 6; break;
+      case -7: return 5; break;
       case -8: return 5; break;
-      case -9: return 5; break;
+      case -9: return 4; break;
       case -10: return 4; break;
-      case -11: return 4; break;
+      case -11: return 3; break;
       case -12: return 3; break;
       case -13: return 3; break;
-      case -14: return 3; break;
+      case -14: return 2; break;
       case -15: return 2; break;
       case -16: return 2; break;
-      case -17: return 2; break;
 
       default:
         return 0;
@@ -607,13 +606,13 @@ var gameEngineJS = (function(){
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
       var fill = '&#9617;';
 
-      if(fDistanceToWall < fDepth / 5.5 ){   // 4
+      if(fDistanceToWall < fDepth / 6.5 ){   // 4
         fill = '&#9608;';
       }
-      else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+      else if(fDistanceToWall < fDepth / 4.66 ){    // 3
         fill = '&#9619;';
       }
-      else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+      else if(fDistanceToWall < fDepth / 3.33 ){    // 2
         fill = '&#9618;';
       }
       else if(fDistanceToWall < fDepth / 1 ){    // 1
@@ -623,13 +622,13 @@ var gameEngineJS = (function(){
       }
 
       if( isBoundary ){
-        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+        if(fDistanceToWall < fDepth / 6.5 ){   // 4
           fill = '&#9617;';
         }
-        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+        else if(fDistanceToWall < fDepth / 4.66 ){    // 3
           fill = '&#9617;';
         }
-        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+        else if(fDistanceToWall < fDepth / 3.33 ){    // 2
           fill = '&nbsp;';
         }
         else if(fDistanceToWall < fDepth / 1 ){    // 1
@@ -663,11 +662,6 @@ var gameEngineJS = (function(){
           fill = '|';
         }
       }
-      return fill;
-    },
-
-    renderObject: function(j, fDistanceToWall){
-      var fill = '&nbsp;'
       return fill;
     },
 
@@ -784,7 +778,7 @@ var gameEngineJS = (function(){
       };
     },
 
-    // mouse (modern API)
+    // mouse
     mouse: function(){
       var fMouseLookFactor = 0.002;
 
@@ -801,10 +795,13 @@ var gameEngineJS = (function(){
           // look up/down (with bounds)
           var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
 
+          // if the looktimer is negative (looking down), increase the speed
           if( fLooktimer < 0 ){
             fYMoveFactor = fYMoveFactor*4;
           }
 
+          // the reason for the increased speed is that looking “down” becomes expotentially less,
+          // so we are artificially increasing the down-factor. It's a hack, but it works okay!
           fLooktimer -= fYMoveFactor;
           if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
             fLooktimer += fYMoveFactor;
@@ -832,7 +829,6 @@ var gameEngineJS = (function(){
       }
 
       if(bStrafeLeft){
-        // forward arrow (w)
         fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -844,7 +840,6 @@ var gameEngineJS = (function(){
       }
 
       if(bStrafeRight){
-        // forward arrow (w)
         fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -856,7 +851,6 @@ var gameEngineJS = (function(){
       }
 
       if(bMoveForward){
-        // forward arrow (w)
         fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -868,7 +862,6 @@ var gameEngineJS = (function(){
       }
 
       if(bMoveBackward){
-        // backward arrow (s)
         fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -958,7 +951,7 @@ var gameEngineJS = (function(){
         while(!bBreakLoop && nRayLength < fDepth){
 
           // increment
-          nRayLength +=0.1;
+          nRayLength += 0.1;
 
           if( !bHitObject ){
             fDistanceToObject += 0.1;
