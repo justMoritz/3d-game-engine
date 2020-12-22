@@ -133,7 +133,6 @@ var gameEngineJS = (function(){
   };
 
 
-
   /**
    * Retrieve a fixed number of elements from an array, evenly distributed but
    * always including the first and last elements.
