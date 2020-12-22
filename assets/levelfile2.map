@@ -1,0 +1,27 @@
+var map = "";
+map += "##XX##########XX##";
+map += "..................";
+map += "....oooooooooo....";
+map += "..................";
+map += "..................";
+map += "W...W..o.o.......W";
+map += "W...W..o.o...WWW.W";
+map += "W......o.o.......W";
+map += "W...W........WWW.W";
+map += "W...W..o.o.......W";
+map += "W......o.o...WWW.W";
+map += "W...W..o.o.......W";
+map += "W...W........WWW.W";
+map += "W...W..o.o.......W";
+map += "W......o.o...WWW.W";
+map += "W...W..o.o.......W";
+map += "W...W........WWW.W";
+map += "..................";
+map += "##################";
+
+levelfile2 = {
+  nMapHeight: 19,
+  nMapWidth: 18,
+  map: map,
+  texturescale: 1,
+};

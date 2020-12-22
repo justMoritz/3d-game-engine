@@ -5,16 +5,8 @@ var gameEngineJS = (function(){
   var eScreen;
   var eDebugOut;
 
-  // var nScreenWidth = 120;
-  // var nScreenWidth = 180;
-  // var nScreenHeight = 40;
-
-
   var nScreenWidth = 240;
   var nScreenHeight = 60;
-
-  // var nScreenWidth = 360;
-  // var nScreenHeight = 80;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -23,11 +15,8 @@ var gameEngineJS = (function(){
 
   var nDegrees = 0;
 
-  var nMapHeight = 16;
-  var nMapWidth = 16;
 
-  // var fFOV = Math.PI / 4.0;
-  var fFOV = Math.PI / 2.0;
+  var fFOV = Math.PI / 2.25; // (Math.PI / 4.0 originally)
   var fDepth = 16.0; // viewport depth
 
   var nLookLimit = 8;
@@ -48,153 +37,119 @@ var gameEngineJS = (function(){
   var fLooktimer = 0;
 
 
+  var nMapHeight = 16;
+  var nMapWidth = 16;
   var map = "";
-  map += "#############..#";
-  map += "#...........U..#";
-  map += "#..W........T..#";
-  map += "#..W........U..#";
-  map += "#...W..........#";
-  map += "#...W........o.#";
-  map += "#............o.#";
-  map += "#......##....o.#";
-  map += "#......##....o.#";
-  map += "#..............#";
-  map += "#.......$$$$$$$#";
-  map += "#..............#";
-  map += "#..ooooooo.....#";
-  map += "#..............#";
-  map += "#....T.T....#..#";
-  map += "######X#....#..#";
-
-
-  // large brick wall texture
-  var texWidth = 16;
-  var texHeight = 16;
-  var texture = '';
-  texture += '#####.####.####.';
-  texture += '#7#o7.#o#o.#o#o.';
-  texture += '0oooo.#ooo.#ooo.';
-  texture += '................';
-  texture += '5##.####.#####.#';
-  texture += '#7o.7#7o.7#77o.#';
-  texture += 'ooo.oooo.ooo#o.#';
-  texture += '................';
-  texture += '#####.####.####.';
-  texture += '#7#o7.#o#o.#o#o.';
-  texture += '#oooo.#ooo.#ooo.';
-  texture += '................';
-  texture += '##.####.#####.##';
-  texture += '#o.#7##.#7#7o.#7';
-  texture += 'oo.#ooo.#oooo.#o';
-  texture += '................';
-
-
-  // wood blanks texture
-  var texWidth = 16;
-  var texHeight = 16;
-  var texture2 = '';
-  texture2 += 'ooooo.oooooooooo';
-  texture2 += 'ooo#o.o#o7777ooo';
-  texture2 += '7oooo.ooooooo777';
-  texture2 += 'ooooo.oooooooooo';
-  texture2 += 'ooooo.ooo777oooo';
-  texture2 += '77o#o.o#oooo7777';
-  texture2 += 'ooooo.oooooooooo';
-  texture2 += '................';
-  texture2 += 'ooooooooooo.oooo';
-  texture2 += 'ooo77777o+o.o#oo';
-  texture2 += '777oooooooo.ooo7';
-  texture2 += 'ooooooooooo.oooo';
-  texture2 += 'ooooo777ooo.oooo';
-  texture2 += '77777oooo#o.o#o7';
-  texture2 += 'ooooooooooo.oooo';
-  texture2 += '................';
-
-
-  // cobble stone
-  var texWidth = 16;
-  var texHeight = 16;
-  var texture3 = '';
-  texture3 += '##.........777.#';
-  texture3 += '777..####7....##';
-  texture3 += '777.##77777..##7';
-  texture3 += '77*.#7777777.*77';
-  texture3 += '7*..7777777*..*7';
-  texture3 += '......77***.....';
-  texture3 += '..##7*.....###..';
-  texture3 += '###777...##777.#';
-  texture3 += '##777*..##777*.7.';
-  texture3 += '7777*..77777*...';
-  texture3 += '77*.....777*....';
-  texture3 += '....##..........';
-  texture3 += '...##77......#77';
-  texture3 += '7.##77777..##777';
-  texture3 += '7.#77777*.#7777*';
-  texture3 += '...777**..7777~~';
-
-
-  // Perspective Store Shelve Test Looking South
-  var texWidth = 16;
-  var texHeight = 16;
-  var textureS = '';
-  textureS += '################';
-  textureS += '*************7##';
-  textureS += '************77##';
-  textureS += '...........777##';
-  textureS += '...........777##';
-  textureS += '################';
-  textureS += '*************7##';
-  textureS += '...........777##';
-  textureS += '...........777##';
-  textureS += '*************7##';
-  textureS += '################';
-  textureS += '...........777##';
-  textureS += '...........777##';
-  textureS += '************77##';
-  textureS += '*************7##';
-  textureS += '################';
-
-
-  // Perspective Store Shelve Test Looking North
-  var texWidth = 16;
-  var texHeight = 16;
-  var textureN = '';
-  textureN += '################';
-  textureN += '##7*************';
-  textureN += '##77************';
-  textureN += '##777...........';
-  textureN += '##777...........';
-  textureN += '################';
-  textureN += '##7*************';
-  textureN += '##777...........';
-  textureN += '##777...........';
-  textureN += '##7*************';
-  textureN += '################';
-  textureN += '##777...........';
-  textureN += '##777...........';
-  textureN += '##77************';
-  textureN += '##7*************';
-  textureN += '################';
-
-
-  // Array assignes textures to keys that will
-  // correspond with their coordinates on the map
-  var textures = {
-    '#': texture3,
-    'U': texture2,
-    '$': texture,
-    'T': texture3,
-    'W': {
-      'N': textureN,
-      'S': textureS,
-    },
-  };
 
 
   // █
   // ▓
   // ▒
   // ░
+
+
+  var _assetFetcher = function(inputSource, callback){
+    inputSource = "assets/" + inputSource;
+    var asset = '';
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+      if(xmlhttp.status == 200 && xmlhttp.readyState == 4){
+        asset = xmlhttp.responseText;
+        callback(asset);
+      }
+    };
+    xmlhttp.open("GET", inputSource ,true);
+    xmlhttp.send();
+  };
+
+
+  var _assetLoader = function(levelFile, callback){
+    var levelData   = '';
+
+    _assetFetcher(levelFile, function(loadedLevel){
+      levelData = loadedLevel;
+      callback(levelData);
+    });
+  }
+
+
+  var _setGlobalAssets = function(level, callback){
+
+    // parses map
+    map = level;
+    var mapAmountOfRows = level.split(/\r\n|\r|\n/).length; // count every whitespace
+    var mapWithOutWhitespaces = level.replace(/\s/g,''); // remove every whitespace
+    var mapAmountOfCols = mapWithOutWhitespaces.length / mapAmountOfRows; // count across
+
+    // set global assets
+    map = mapWithOutWhitespaces;
+    nMapWidth = mapAmountOfCols;
+    nMapHeight = mapAmountOfRows;
+
+    // start the game already
+    callback();
+  };
+
+
+  /**
+   * Loads
+   * @param  {[string]} level The Level file
+   * @return {[type]}       [description]
+   */
+  var _loadLevel = function(level){
+
+    var levelstring = level.replace(".map", "");
+
+    var loadScriptAsync = function loadScriptAsync(uri, levelstring) {
+      return new Promise(function (resolve, reject) {
+        var tag = document.createElement('script');
+        tag.src = "assets/" + uri;
+        tag.id = levelstring;
+        tag.async = true;
+
+        tag.onload = function () {
+          resolve();
+        };
+
+        document.getElementById("map").src = "assets/" + level;
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      });
+    };
+
+    var scriptLoaded = loadScriptAsync(level, levelstring);
+
+    scriptLoaded.then(function(){
+        map = window[levelstring].map;
+        nMapHeight = window[levelstring].nMapHeight;
+        nMapWidth = window[levelstring].nMapWidth;
+        console.log(map);
+    });
+
+
+    // pauses, then starts the game loop
+    _testScreenSizeAndStartTheGame();
+    window.addEventListener('resize', function(){
+      clearInterval(gameRun);
+      _testScreenSizeAndStartTheGame();
+    });
+
+    // // loads assets for textures and map
+    // _assetLoader(level, function(level){
+
+    //   // when loaded, make sense of the data receieved
+    //   _setGlobalAssets(level, function(){
+
+    //     // when made sense of, start rendering loop
+    //     // main();
+    //     _testScreenSizeAndStartTheGame();
+    //     window.addEventListener('resize', function(){
+    //       clearInterval(gameRun);
+    //       _testScreenSizeAndStartTheGame();
+    //     });
+    //   });
+    // });
+  };
 
 
   /**
@@ -209,9 +164,9 @@ var gameEngineJS = (function(){
    * @return {string}
    */
   var _getSamplePixel = function(texture, x, y, scaleFactor){
-
     // _debugOutput( texture );
-    if( typeof texture == 'object'  ){
+
+    if( texture == 'DIRECTIONAL' ){
       // Different Texture based on viewport
       if( nDegrees > 0 && nDegrees < 180 ){
         texture = textures['W']['S'];
@@ -298,22 +253,30 @@ var gameEngineJS = (function(){
     switch( Number(input) ) {
       case 0: return 0; break;
       case 1: return 8; break;
-      case 2: return 7; break;
-      case 3: return 6; break;
-      case 4: return 5; break;
-      case 5: return 4; break;
-      case 6: return 3; break;
+      case 2: return 6; break;
+      case 3: return 4; break;
+      case 4: return 3; break;
+      case 5: return 2; break;
+      case 6: return 2; break;
       case 7: return 2; break;
-      case 8: return 2; break;
+      case 8: return 1; break;
 
       case -1: return 8; break;
-      case -2: return 7; break;
-      case -3: return 6; break;
-      case -4: return 5; break;
-      case -5: return 4; break;
-      case -6: return 3; break;
-      case -7: return 3; break;
-      case -8: return 3; break;
+      case -2: return 8; break;
+      case -3: return 7; break;
+      case -4: return 7; break;
+      case -5: return 6; break;
+      case -6: return 6; break;
+      case -7: return 5; break;
+      case -8: return 5; break;
+      case -9: return 4; break;
+      case -10: return 4; break;
+      case -11: return 3; break;
+      case -12: return 3; break;
+      case -13: return 3; break;
+      case -14: return 2; break;
+      case -15: return 2; break;
+      case -16: return 2; break;
 
       default:
         return 0;
@@ -361,7 +324,7 @@ var gameEngineJS = (function(){
       fLookModifier = neverMoreThan;
     }
 
-    // print each row at a time
+    // interate each row at a time
     for(var row = 0; row < nScreenHeight; row++){
 
       // increment the fLookModifier every time it needs to grow (grows per row)
@@ -374,7 +337,11 @@ var gameEngineJS = (function(){
         }
       }
 
-      sOutput.push( _printFiller( fLookModifier ) );
+
+      // sOutput.push( _printFiller( fLookModifier ) );
+      for(var i=0; i<fLookModifier; i++){
+        sOutput.push( '.' );
+      }
 
       var toBeRemoved = (2*fLookModifier);
       var removeFrom = [];
@@ -420,11 +387,13 @@ var gameEngineJS = (function(){
       // sOutput += '&nbsp;&nbsp;';
 
 
-      sOutput.push( _printFiller( fLookModifier ) );
+      // sOutput.push( _printFiller( fLookModifier ) );
+      for(var i=0; i<fLookModifier; i++){
+        sOutput.push( '.' );
+      }
 
 
-
-     sOutput.push( '<br>' );
+      // sOutput.push( '<br>' );
     } // end for(row
 
     return sOutput;
@@ -438,14 +407,46 @@ var gameEngineJS = (function(){
     // _debugOutput( frame.length );
 
     var sOutput = '';
-    // loops through each pixel and appends it to the output
-    for(var i = 0; i < frame.length; i++){
-      // H blank based on screen-width
-      if(i % (nScreenWidth - 60) == 0){
-        // sOutput += '<br>';
+
+
+    // // loops through each pixel and appends it to the output
+    // for(var i = 0; i < frame.length; i++){
+    //   // H blank based on screen-width
+    //   if(i % (nScreenWidth) == 0){
+    //     sOutput += '<br>';
+    //   }
+    //   sOutput += frame[i];
+    // }
+
+
+    // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+    var printIndex = 0;
+    var removePixels = 29;
+    for(var row = 0; row < nScreenHeight; row++){
+      for(var pix = 0; pix < nScreenWidth; pix++){
+
+        // H-blank based on screen-width
+        if(printIndex % (nScreenWidth) == 0){
+          sOutput += '<br>';
+        }
+
+        if( pix < removePixels ){
+          sOutput += '';
+        }
+        else if( pix > nScreenWidth-removePixels ){
+          sOutput += '';
+        }
+        else{
+          sOutput += frame[printIndex];
+        }
+
+        printIndex++;
       }
-      sOutput += frame[i];
     }
+
+
+
+
     eScreen.innerHTML = sOutput;
 
   };
@@ -605,13 +606,13 @@ var gameEngineJS = (function(){
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
       var fill = '&#9617;';
 
-      if(fDistanceToWall < fDepth / 5.5 ){   // 4
+      if(fDistanceToWall < fDepth / 6.5 ){   // 4
         fill = '&#9608;';
       }
-      else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+      else if(fDistanceToWall < fDepth / 4.66 ){    // 3
         fill = '&#9619;';
       }
-      else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+      else if(fDistanceToWall < fDepth / 3.33 ){    // 2
         fill = '&#9618;';
       }
       else if(fDistanceToWall < fDepth / 1 ){    // 1
@@ -621,13 +622,13 @@ var gameEngineJS = (function(){
       }
 
       if( isBoundary ){
-        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+        if(fDistanceToWall < fDepth / 6.5 ){   // 4
           fill = '&#9617;';
         }
-        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+        else if(fDistanceToWall < fDepth / 4.66 ){    // 3
           fill = '&#9617;';
         }
-        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+        else if(fDistanceToWall < fDepth / 3.33 ){    // 2
           fill = '&nbsp;';
         }
         else if(fDistanceToWall < fDepth / 1 ){    // 1
@@ -661,11 +662,6 @@ var gameEngineJS = (function(){
           fill = '|';
         }
       }
-      return fill;
-    },
-
-    renderObject: function(j, fDistanceToWall){
-      var fill = '&nbsp;'
       return fill;
     },
 
@@ -782,7 +778,7 @@ var gameEngineJS = (function(){
       };
     },
 
-    // mouse (modern API)
+    // mouse
     mouse: function(){
       var fMouseLookFactor = 0.002;
 
@@ -798,10 +794,20 @@ var gameEngineJS = (function(){
 
           // look up/down (with bounds)
           var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+
+          // if the looktimer is negative (looking down), increase the speed
+          if( fLooktimer < 0 ){
+            fYMoveFactor = fYMoveFactor*4;
+          }
+
+          // the reason for the increased speed is that looking “down” becomes expotentially less,
+          // so we are artificially increasing the down-factor. It's a hack, but it works okay!
           fLooktimer -= fYMoveFactor;
-          if( fLooktimer > nLookLimit || fLooktimer < -nLookLimit ){
+          if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
             fLooktimer += fYMoveFactor;
           }
+
+          _debugOutput(fLooktimer)
 
         }
       };
@@ -823,7 +829,6 @@ var gameEngineJS = (function(){
       }
 
       if(bStrafeLeft){
-        // forward arrow (w)
         fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -835,7 +840,6 @@ var gameEngineJS = (function(){
       }
 
       if(bStrafeRight){
-        // forward arrow (w)
         fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -847,7 +851,6 @@ var gameEngineJS = (function(){
       }
 
       if(bMoveForward){
-        // forward arrow (w)
         fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -859,7 +862,6 @@ var gameEngineJS = (function(){
       }
 
       if(bMoveBackward){
-        // backward arrow (s)
         fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -949,7 +951,7 @@ var gameEngineJS = (function(){
         while(!bBreakLoop && nRayLength < fDepth){
 
           // increment
-          nRayLength +=0.1;
+          nRayLength += 0.1;
 
           if( !bHitObject ){
             fDistanceToObject += 0.1;
@@ -1163,14 +1165,14 @@ var gameEngineJS = (function(){
                * Render Texture Directly
                */
               if( nRenderMode == 1 ){
-                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, 2);
+                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype]["texture"], fSampleX, fSampleY, textures[sWalltype]["scale"]);
               }
 
               /**
                * Render Texture with Shading
                */
               if( nRenderMode == 2 ){
-                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, 2));
+                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype]["texture"], fSampleX, fSampleY, textures[sWalltype]["scale"]));
               }
 
               /**
@@ -1312,15 +1314,22 @@ var gameEngineJS = (function(){
     document.getElementById("texture").addEventListener("click", function(){ nRenderMode = 1 });
     document.getElementById("shader").addEventListener("click", function(){ nRenderMode = 2 });
 
-    // rendering loop
-    // main();
 
-    _testScreenSizeAndStartTheGame();
-    window.addEventListener('resize', function(){
-      clearInterval(gameRun);
-      _testScreenSizeAndStartTheGame();
-    });
+    // change level debug-buttons
+    var levelbuttons = document.querySelectorAll(".levelbutton");
+    for(var i=0; i < levelbuttons.length; i++){
+      levelbuttons[i].addEventListener("click", function(){
+        var selectedLevel = this.dataset.levelvalue;
 
+        clearInterval(gameRun);
+        _loadLevel(selectedLevel);
+
+      });
+    }
+
+
+    // initial gameload
+    _loadLevel('levelfile1.map');
 
   };
 
