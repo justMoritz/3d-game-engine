@@ -20,8 +20,10 @@ map += "..................";
 map += "##################";
 
 levelfile2 = {
-  nMapHeight: 19,
+  nMapHeight: 20,
   nMapWidth: 18,
   map: map,
-  texturescale: 1,
+  fPlayerX: 3,
+  fPlayerY: 2.5,
+  fPlayerA: 1.5,
 };

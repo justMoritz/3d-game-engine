@@ -20,4 +20,7 @@ levelfile1 = {
   nMapHeight: 16,
   nMapWidth: 16,
   map: map,
+  fPlayerX: 14.0,
+  fPlayerY: 1.0,
+  fPlayerA: 1.5,
 };

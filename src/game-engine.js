@@ -56,7 +56,7 @@ var gameEngineJS = (function(){
 
     var levelstring = level.replace(".map", "");
 
-    var loadScriptAsync = function loadScriptAsync(uri, levelstring) {
+    var loadScriptAsync = function(uri, levelstring) {
       return new Promise(function (resolve, reject) {
         var tag = document.createElement('script');
         tag.src = "assets/" + uri;
@@ -76,10 +76,15 @@ var gameEngineJS = (function(){
     var scriptLoaded = loadScriptAsync(level, levelstring);
 
     scriptLoaded.then(function(){
+        // updates the level map and dimensions
         map = window[levelstring].map;
         nMapHeight = window[levelstring].nMapHeight;
         nMapWidth = window[levelstring].nMapWidth;
-        console.log(map);
+
+        // places the player at the map starting point
+        fPlayerX = window[levelstring].fPlayerX;
+        fPlayerY = window[levelstring].fPlayerY;
+        fPlayerA = window[levelstring].fPlayerA;
     });
 
 
@@ -708,7 +713,7 @@ var gameEngineJS = (function(){
             fLooktimer += fYMoveFactor;
           }
 
-          _debugOutput(fLooktimer)
+          // _debugOutput(fLooktimer);
 
         }
       };
@@ -1000,6 +1005,8 @@ var gameEngineJS = (function(){
         // Converts player turn position into degrees (used for texturing)
         nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
         // _debugOutput( nDegrees );
+        //
+        _debugOutput( fPlayerX );
 
 
         // draw the columns one screenheight pixel at a time
