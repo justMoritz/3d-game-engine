@@ -5,8 +5,8 @@ var gameEngineJS = (function(){
   var eScreen;
   var eDebugOut;
 
-  var nScreenWidth = 240;
-  var nScreenHeight = 60;
+  var nScreenWidth = 320;
+  var nScreenHeight = 80;
 
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -323,7 +323,7 @@ var gameEngineJS = (function(){
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
     var printIndex = 0;
-    var removePixels = 29;
+    var removePixels = nScreenHeight/2;
     for(var row = 0; row < nScreenHeight; row++){
       for(var pix = 0; pix < nScreenWidth; pix++){
 
@@ -1140,6 +1140,19 @@ var gameEngineJS = (function(){
   };
 
 
+  var _getWidth = function() {
+    if (self.innerWidth) {
+      return self.innerWidth;
+    }
+    if (document.documentElement && document.documentElement.clientWidth) {
+      return document.documentElement.clientWidth;
+    }
+    if (document.body) {
+      return document.body.clientWidth;
+    }
+  };
+
+
   var nTrymax = 512;
   var _testScreenSizeAndStartTheGame = function(){
 
@@ -1147,10 +1160,9 @@ var gameEngineJS = (function(){
     _createTestScreen();
 
     var widthOfDisplay = eScreen.offsetWidth;
-    var heightOfDisplay = eScreen.offsetHeight;
+    var widthOfViewport = _getWidth();
 
-    var widthOfViewport = window.screen.width;
-    var heightOfViewport = window.screen.height;
+    console.log(widthOfDisplay + ' ' + widthOfViewport);
 
     // check if the amount of pixels to be rendered fit, if not, repeat
     if(widthOfDisplay > widthOfViewport ){
