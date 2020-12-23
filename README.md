@@ -37,7 +37,7 @@ We're calculating the world column by column, so there's not really a way skew a
 
 After the image is generated in step 1, the image is now an array of pixels, and we can now operate on a row- instead of a col-basis! And since we know how far up and down we are looking, all we have to is progressively shorten each row of pixels as we look up and down, and fill it with filler-pixels at the beginning and end.
 
-This *sounds* simple, but the math for this was the piece I spent the longest amount of time on. While it's easy to determine how many pixels to remove from each row, figuring out how to distribute the number of pixels from each row required some mental gymnasitcs.
+This *sounds* simple, but the math for this was the piece I spent the longest amount of time on. While it's easy(ish) to determine how many pixels to remove from each row, figuring out how to distribute the number of pixels from each row required some mental gymnasitcs.
 
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-look-2.gif)
 
