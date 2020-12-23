@@ -103,15 +103,21 @@ var gameEngineJS = (function(){
    *                               (texture tiled 4x across one block)
    * @return {string}
    */
-  var _getSamplePixel = function(texture, x, y, scaleFactor){
+  var _getSamplePixel = function(texture, x, y){
     // _debugOutput( texture );
 
-    if( texture == 'DIRECTIONAL' ){
+    var scaleFactor = texture["scale"]  || defaultTexScale;
+    var texWidth    = texture["width"]  || defaultTexWidth;
+    var texHeight   = texture["height"] || defaultTexHeight;
+
+    var texpixels = texture['texture'];
+
+    if( texture['texture'] == 'DIRECTIONAL' ){
       // Different Texture based on viewport
       if( nDegrees > 0 && nDegrees < 180 ){
-        texture = textures['W']['S'];
+        texpixels = texture['S'];
       }else{
-        texture = textures['W']['N'];
+        texpixels = texture['N'];
       }
     }
 
@@ -128,7 +134,7 @@ var gameEngineJS = (function(){
     if( x < 0 || x > texWidth || y < 0 || y > texHeight ){
       return '+';
     }else{
-      return texture[samplePosition];
+      return texpixels[samplePosition];
     }
   };
 
@@ -1052,14 +1058,14 @@ var gameEngineJS = (function(){
                * Render Texture Directly
                */
               if( nRenderMode == 1 ){
-                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype]["texture"], fSampleX, fSampleY, textures[sWalltype]["scale"]);
+                screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY);
               }
 
               /**
                * Render Texture with Shading
                */
               if( nRenderMode == 2 ){
-                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype]["texture"], fSampleX, fSampleY, textures[sWalltype]["scale"]));
+                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY));
               }
 
               /**

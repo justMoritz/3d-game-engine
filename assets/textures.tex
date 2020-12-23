@@ -1,6 +1,8 @@
+var defaultTexWidth = 16;
+var defaultTexHeight = 16;
+var defaultTexScale = 2;
+
 // large brick wall texture
-var texWidth = 16;
-var texHeight = 16;
 var texture = "";
 texture += "#####.####.####.";
 texture += "#7#o7.#o#o.#o#o.";
@@ -21,8 +23,6 @@ texture += "................";
 
 
 // wood blanks texture
-var texWidth = 16;
-var texHeight = 16;
 var texture2 = "";
 texture2 += "ooooo.oooooooooo";
 texture2 += "ooo#o.o#o7777ooo";
@@ -67,8 +67,6 @@ texture3 += "...777**..7777~~";
 
 
 // Perspective Store Shelve Test Looking South
-var texWidth = 16;
-var texHeight = 16;
 var textureS = "";
 textureS += "################";
 textureS += "*************7##";
@@ -89,8 +87,6 @@ textureS += "################";
 
 
 // Perspective Store Shelve Test Looking North
-var texWidth = 16;
-var texHeight = 16;
 var textureN = "";
 textureN += "################";
 textureN += "##7*************";
@@ -110,19 +106,16 @@ textureN += "##7*************";
 textureN += "################";
 
 
-
-// Array assignes textures to keys that will
-// correspond with their coordinates on the map
-var textures = {
-  "#": texture3,
-  "U": texture2,
-  "$": texture,
-  "T": texture3,
-  "W": {
-    "N": textureN,
-    "S": textureS,
-  },
-};
+// Concrete Wall
+var textureC = "";
+textureC += "7#.ooooo";
+textureC += "77777#.o";
+textureC += "77777777";
+textureC += "ooooo.#7";
+textureC += "o.#7oooo";
+textureC += "o#77777.";
+textureC += "77777777";
+textureC += "ooooo.#7";
 
 
 // Array assignes textures to keys that will
@@ -137,6 +130,12 @@ var textures = {
     "height": 18,
     "width": 16,
     "scale": 4,
+  },
+  "C": {
+    "texture": textureC,
+    "height": 8,
+    "width": 8,
+    "scale": 2,
   },
   "$": {
     "texture": texture,
