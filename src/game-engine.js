@@ -1005,8 +1005,6 @@ var gameEngineJS = (function(){
         // Converts player turn position into degrees (used for texturing)
         nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
         // _debugOutput( nDegrees );
-        //
-        _debugOutput( fPlayerX );
 
 
         // draw the columns one screenheight pixel at a time
@@ -1116,8 +1114,8 @@ var gameEngineJS = (function(){
                 overlayscreen[y*nScreenWidth+i] = '0';
               }
               else{
-                overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
-                // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
+                // overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
+                overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
               overlayscreen[y*nScreenWidth+i] = '0';
