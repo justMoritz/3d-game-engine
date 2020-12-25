@@ -54,7 +54,7 @@ var gameEngineJS = (function(){
 
     var loadScriptAsync = function(uri, levelstring) {
       return new Promise(function (resolve, reject) {
-        var tag = document.createElement('script');
+        var tag = document.createElement("script");
         tag.src = "assets/" + uri;
         tag.id = levelstring;
         tag.async = true;
@@ -64,7 +64,7 @@ var gameEngineJS = (function(){
         };
 
         document.getElementById("map").src = "assets/" + level;
-        var firstScriptTag = document.getElementsByTagName('script')[0];
+        var firstScriptTag = document.getElementsByTagName("script")[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
       });
     };
@@ -86,7 +86,7 @@ var gameEngineJS = (function(){
 
     // pauses, then starts the game loop
     _testScreenSizeAndStartTheGame();
-    window.addEventListener('resize', function(){
+    window.addEventListener("resize", function(){
       clearInterval(gameRun);
       _testScreenSizeAndStartTheGame();
     });
@@ -111,14 +111,14 @@ var gameEngineJS = (function(){
     var texWidth    = texture["width"]  || defaultTexWidth;
     var texHeight   = texture["height"] || defaultTexHeight;
 
-    var texpixels = texture['texture'];
+    var texpixels = texture["texture"];
 
-    if( texture['texture'] == 'DIRECTIONAL' ){
+    if( texture["texture"] == "DIRECTIONAL" ){
       // Different Texture based on viewport
       if( nDegrees > 0 && nDegrees < 180 ){
-        texpixels = texture['S'];
+        texpixels = texture["S"];
       }else{
-        texpixels = texture['N'];
+        texpixels = texture["N"];
       }
     }
 
@@ -133,7 +133,7 @@ var gameEngineJS = (function(){
     var samplePosition = (texWidth*(sampleY)) + sampleX;
 
     if( x < 0 || x > texWidth || y < 0 || y > texHeight ){
-      return '+';
+      return "+";
     }else{
       return texpixels[samplePosition];
     }
@@ -222,7 +222,7 @@ var gameEngineJS = (function(){
 
 
   var _printCompositPixel = function(oInput, oOverlay, index){
-    var sOutput = '';
+    var sOutput = "";
     // if oOverlay !0, appends it to the output instead
     if( oOverlay && oOverlay[index] != 0){
       sOutput += oOverlay[index];
@@ -275,7 +275,7 @@ var gameEngineJS = (function(){
 
       // print filler pixels
       for(var i=0; i<fLookModifier; i++){
-        sOutput.push( '.' );
+        sOutput.push( "." );
       }
 
       var toBeRemoved = (2*fLookModifier);
@@ -301,7 +301,7 @@ var gameEngineJS = (function(){
 
         // print only if the pixel is in the list of pixels to print
         if( removeFrom.includes(rpix) ){
-          // don't print
+          // don"t print
         }else{
           // print
           sOutput.push( _printCompositPixel(oInput, oOverlay, globalPrintIndex) );
@@ -312,7 +312,7 @@ var gameEngineJS = (function(){
 
       // print filler pixels
       for(var i=0; i<fLookModifier; i++){
-        sOutput.push( '.' );
+        sOutput.push( "." );
       }
 
     } // end for(row
@@ -326,7 +326,7 @@ var gameEngineJS = (function(){
 
     // _debugOutput( frame.length );
 
-    var sOutput = '';
+    var sOutput = "";
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
     var printIndex = 0;
@@ -336,14 +336,14 @@ var gameEngineJS = (function(){
 
         // H-blank based on screen-width
         if(printIndex % (nScreenWidth) == 0){
-          sOutput += '<br>';
+          sOutput += "<br>";
         }
 
         if( pix < removePixels ){
-          sOutput += '';
+          sOutput += "";
         }
         else if( pix > nScreenWidth-removePixels ){
-          sOutput += '';
+          sOutput += "";
         }
         else{
           sOutput += frame[printIndex];
@@ -363,17 +363,17 @@ var gameEngineJS = (function(){
   // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
 
-    shades: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`.',
+    shades: "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`.",
 
     renderWall: function(j, fDistanceToWall, sWallDirection, pixel){
 
-      var fill = '';
+      var fill = "";
 
-      var b100 = '&#9608;';
-      var b75  = '&#9619;';
-      var b50  = '&#9618;';
-      var b25  = '&#9617;';
-      var b0   = '&nbsp;';
+      var b100 = "&#9608;";
+      var b75  = "&#9619;";
+      var b50  = "&#9618;";
+      var b25  = "&#9617;";
+      var b0   = "&nbsp;";
 
       // var b100 = _rh.shades[1];
       // var b75  = _rh.shades[8];
@@ -381,15 +381,15 @@ var gameEngineJS = (function(){
       // var b25  = _rh.shades[22];
       // // var b0   = _rh.shades[24];
 
-      if( sWallDirection === 'N' || sWallDirection === 'S' ){
+      if( sWallDirection === "N" || sWallDirection === "S" ){
 
         if(fDistanceToWall < fDepth / 5.5 ){   // 4
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b100;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b75;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b50;
           }else{
             fill = b25;
@@ -398,11 +398,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 3.66 ){    // 3
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b75;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b50;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -411,11 +411,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 2.33 ){    // 2
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b50;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b25;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -424,11 +424,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 1 ){    // 1
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b25;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b25;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -436,7 +436,7 @@ var gameEngineJS = (function(){
 
         }
         else{
-          fill = '&nbsp;';
+          fill = "&nbsp;";
         }
       }
 
@@ -445,11 +445,11 @@ var gameEngineJS = (function(){
 
         if(fDistanceToWall < fDepth / 5.5 ){   // 4
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b75;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b50;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -458,11 +458,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 3.66 ){    // 3
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b50;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b50;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -471,11 +471,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 2.33 ){    // 2
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b50;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b25;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b25;
           }else{
             fill = b0;
@@ -484,11 +484,11 @@ var gameEngineJS = (function(){
         }
         else if(fDistanceToWall < fDepth / 1 ){    // 1
 
-          if( pixel === '#' ){
+          if( pixel === "#" ){
             fill = b25;
-          }else if( pixel === '7' ){
+          }else if( pixel === "7" ){
             fill = b25;
-          }else if( pixel === '*' || pixel === 'o'){
+          }else if( pixel === "*" || pixel === "o"){
             fill = b0;
           }else{
             fill = b0;
@@ -496,7 +496,7 @@ var gameEngineJS = (function(){
 
         }
         else{
-          fill = '&nbsp;';
+          fill = "&nbsp;";
         }
       }
 
@@ -506,37 +506,37 @@ var gameEngineJS = (function(){
 
     // figures out shading for given section
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
-      var fill = '&#9617;';
+      var fill = "&#9617;";
 
       if(fDistanceToWall < fDepth / 6.5 ){   // 4
-        fill = '&#9608;';
+        fill = "&#9608;";
       }
       else if(fDistanceToWall < fDepth / 4.66 ){    // 3
-        fill = '&#9619;';
+        fill = "&#9619;";
       }
       else if(fDistanceToWall < fDepth / 3.33 ){    // 2
-        fill = '&#9618;';
+        fill = "&#9618;";
       }
       else if(fDistanceToWall < fDepth / 1 ){    // 1
-        fill = '&#9617;';
+        fill = "&#9617;";
       }else{
-        fill = '&nbsp;';
+        fill = "&nbsp;";
       }
 
       if( isBoundary ){
         if(fDistanceToWall < fDepth / 6.5 ){   // 4
-          fill = '&#9617;';
+          fill = "&#9617;";
         }
         else if(fDistanceToWall < fDepth / 4.66 ){    // 3
-          fill = '&#9617;';
+          fill = "&#9617;";
         }
         else if(fDistanceToWall < fDepth / 3.33 ){    // 2
-          fill = '&nbsp;';
+          fill = "&nbsp;";
         }
         else if(fDistanceToWall < fDepth / 1 ){    // 1
-          fill = '&nbsp;';
+          fill = "&nbsp;";
         }else{
-          fill = '&nbsp;';
+          fill = "&nbsp;";
         }
       }
 
@@ -549,61 +549,61 @@ var gameEngineJS = (function(){
       if( j < nDoorFrameHeight){
 
         if(fDistanceToWall < fDepth / 4){
-          fill = '&boxH;';
+          fill = "&boxH;";
         }
         else{
-          fill = '=';
+          fill = "=";
         }
 
       }else{
 
         if(fDistanceToWall < fDepth / 4){
-          fill = '&boxV;';
+          fill = "&boxV;";
         }
         else{
-          fill = '|';
+          fill = "|";
         }
       }
       return fill;
     },
 
     renderFloor: function(j){
-      var fill = '`';
+      var fill = "`";
 
       // draw floor, in different shades
       b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
       b = 1 - (j -nScreenHeight / (2- fLooktimer*0.15)) / (nScreenHeight / (2 - fLooktimer*0.15));
 
       if(b < 0.25){
-        fill = 'x';
+        fill = "x";
       }else if(b < 0.5){
-        fill = '=';
+        fill = "=";
       }else if(b < 0.75){
-        fill = '-';
+        fill = "-";
       }else if(b < 0.9){
-        fill = '`';
+        fill = "`";
       }else{
-        fill = '&nbsp;';
+        fill = "&nbsp;";
       }
 
       return fill;
     },
 
     renderCeiling: function(j){
-      var fill = '`';
+      var fill = "`";
 
       // draw floor, in different shades
       b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
       if(b < 0.25){
-        fill = '`';
+        fill = "`";
       }else if(b < 0.5){
-        fill = '-';
+        fill = "-";
       }else if(b < 0.75){
-        fill = '=';
+        fill = "=";
       }else if(b < 0.9){
-        fill = 'x';
+        fill = "x";
       }else{
-        fill = '#';
+        fill = "#";
       }
 
       return fill;
@@ -686,7 +686,7 @@ var gameEngineJS = (function(){
 
       eScreen.onclick = function(){
 
-        eScreen.classList.add('nomouse');
+        eScreen.classList.add("nomouse");
 
         document.body.requestPointerLock();
         document.onmousemove = function (e) {
@@ -703,7 +703,7 @@ var gameEngineJS = (function(){
           }
 
           // the reason for the increased speed is that looking “down” becomes expotentially less,
-          // so we are artificially increasing the down-factor. It's a hack, but it works okay!
+          // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
           fLooktimer -= fYMoveFactor;
           if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
             fLooktimer += fYMoveFactor;
@@ -735,7 +735,7 @@ var gameEngineJS = (function(){
         fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -746,7 +746,7 @@ var gameEngineJS = (function(){
         fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -757,7 +757,7 @@ var gameEngineJS = (function(){
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -768,7 +768,7 @@ var gameEngineJS = (function(){
         fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != '.'){
+        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -812,7 +812,7 @@ var gameEngineJS = (function(){
       }
 
 
-      // holds the frames we're going to send to the renderer
+      // holds the frames we"re going to send to the renderer
       var screen = [];
       var overlayscreen = [];
 
@@ -840,14 +840,14 @@ var gameEngineJS = (function(){
         var bHitObject = false;
         var bHitBackObject = false;
 
-        var sWalltype = '#';
-        var sObjectType = '0';
+        var sWalltype = "#";
+        var sObjectType = "0";
 
         var fEyeX = Math.cos(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.sin(fRayAngle);
 
         var fSampleX = 0.0;
-        var sWallDirection = 'N';
+        var sWallDirection = "N";
 
         var nRayLength = 0.0;
 
@@ -875,22 +875,22 @@ var gameEngineJS = (function(){
 
           // test if ray hits out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
-            bHitWall = true; // didn't actually, just no wall there
+            bHitWall = true; // didn"t actually, just no wall there
             fDistanceToWall = fDepth;
             bBreakLoop = true;
           }
 
           // test for objects
-          else if(map[nTestY * nMapWidth + nTestX] == 'o' || map[nTestY * nMapWidth + nTestX] == ','){
+          else if(map[nTestY * nMapWidth + nTestX] == "o" || map[nTestY * nMapWidth + nTestX] == ","){
             bHitObject = true;
             sObjectType = map[nTestY * nMapWidth + nTestX];
           }
-          else if(bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.' || bHitObject == true && map[nTestY * nMapWidth + nTestX] == '.'){
+          else if(bHitObject == true && map[nTestY * nMapWidth + nTestX] == "." || bHitObject == true && map[nTestY * nMapWidth + nTestX] == "."){
             bHitBackObject = true;
           }
 
           // Test for walls
-          else if( map[nTestY * nMapWidth + nTestX] != '.' ){
+          else if( map[nTestY * nMapWidth + nTestX] != "." ){
             bHitWall = true;
             bBreakLoop = true;
 
@@ -943,19 +943,19 @@ var gameEngineJS = (function(){
 
             if( fTestAngle >= -Math.PI * 0.25 && fTestAngle < Math.PI * 0.25 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
-              sWallDirection = 'W';
+              sWallDirection = "W";
             }
             if( fTestAngle >= Math.PI * 0.25 && fTestAngle < Math.PI * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
-              sWallDirection = 'N';
+              sWallDirection = "N";
             }
             if( fTestAngle < -Math.PI * 0.25 && fTestAngle >= -Math.PI * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
-              sWallDirection = 'S';
+              sWallDirection = "S";
             }
             if( fTestAngle >= Math.PI * 0.75 || fTestAngle < -Math.PI * 0.75 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
-              sWallDirection = 'E';
+              sWallDirection = "E";
             }
 
           }
@@ -989,21 +989,21 @@ var gameEngineJS = (function(){
           if( j < nCeiling){
 
             // case of tower block (the bit that reaches into the ceiling)
-            if(sWalltype == 'T'){
+            if(sWalltype == "T"){
               if( j > nTower ){
 
                 screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }else{
-                screen[j*nScreenWidth+i] = '&nbsp;';
+                screen[j*nScreenWidth+i] = "&nbsp;";
               }
             }
 
             // draw ceiling/sky
             else{
-              if(sWalltype == ','){
-                screen[j*nScreenWidth+i] = '1';
+              if(sWalltype == ","){
+                screen[j*nScreenWidth+i] = "1";
               }else{
-                screen[j*nScreenWidth+i] = '&nbsp;';
+                screen[j*nScreenWidth+i] = "&nbsp;";
               }
             }
           }
@@ -1012,12 +1012,12 @@ var gameEngineJS = (function(){
           else if( j > nCeiling && j <= nFloor ){
 
             // Door Walltype
-            if(sWalltype == 'X'){
+            if(sWalltype == "X"){
               screen[j*nScreenWidth+i] = _rh.renderGate(j, fDistanceToWall, nDoorFrameHeight);
             }
 
             // Solid Walltype
-            else if(sWalltype != '.' || sWalltype == 'T'){
+            else if(sWalltype != "." || sWalltype == "T"){
 
               var fSampleY = ( (j - nCeiling) / (nFloor - nCeiling) );
 
@@ -1078,13 +1078,13 @@ var gameEngineJS = (function(){
           else if( y > nObjectCeiling && y <= nObjectFloor ){
 
             // Floortile Walltype
-            if(sObjectType == 'o'){
+            if(sObjectType == "o"){
               if( y < nFObjectBackwall ){
                 overlayscreen[y*nScreenWidth+i] = "0";
               }
               else{
                 overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
-                // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
+                // overlayscreen[y*nScreenWidth+i] = "&nbsp;";
               }
             }else{
               overlayscreen[y*nScreenWidth+i] = "0";
@@ -1109,12 +1109,12 @@ var gameEngineJS = (function(){
 
   // for every row make a nScreenWidth amount of pixels
   var _createTestScreen = function(){
-    var sOutput = '';
+    var sOutput = "";
     for(var i = 0; i < nScreenHeight; i++){
       for(var j = 0; j < nScreenWidth; j++){
-        sOutput += '&nbsp;';
+        sOutput += "&nbsp;";
       }
-      sOutput += '.<br>';
+      sOutput += ".<br>";
     }
     eScreen.innerHTML = sOutput;
   };
@@ -1142,7 +1142,7 @@ var gameEngineJS = (function(){
     var widthOfDisplay = eScreen.offsetWidth;
     var widthOfViewport = _getWidth();
 
-    console.log(widthOfDisplay + ' ' + widthOfViewport);
+    console.log(widthOfDisplay + " " + widthOfViewport);
 
     // check if the amount of pixels to be rendered fit, if not, repeat
     if(widthOfDisplay > widthOfViewport ){
@@ -1166,8 +1166,8 @@ var gameEngineJS = (function(){
   var init = function( input )
   {
     // prep document
-    eScreen = document.getElementById('display');
-    eDebugOut = document.getElementById('debug');
+    eScreen = document.getElementById("display");
+    eDebugOut = document.getElementById("debug");
 
 
     _moveHelpers.keylisten();
@@ -1192,7 +1192,7 @@ var gameEngineJS = (function(){
 
 
     // initial gameload
-    _loadLevel('levelfile1.map');
+    _loadLevel("levelfile1.map");
   };
 
 
