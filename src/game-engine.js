@@ -983,9 +983,15 @@ var gameEngineJS = (function(){
         var nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
-        var nObjectCeiling = (nScreenHeight / (2 + fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
-        var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15) +fLooktimer ) - (nScreenHeight / fDistanceToObject);
-        var nObjectFloor = nScreenHeight - nObjectCeilFG;
+        // var nObjectCeiling = (nScreenHeight / (2 + fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
+        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+
+        // var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15) +fLooktimer ) - (nScreenHeight / fDistanceToObject);
+        // var nObjectCeilFG = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
+
+        var nObjectFloor = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
+        var nObjectFloor = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
+
         var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
 
