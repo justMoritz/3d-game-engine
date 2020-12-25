@@ -1,25 +1,15 @@
 var gameEngineJS = (function(){
 
-  var nRenderMode = 2;
-
+  // setup variables
   var eScreen;
   var eDebugOut;
 
   var nScreenWidth = 320;
   var nScreenHeight = 80;
 
-  var fPlayerX = 14.0;
-  var fPlayerY = 1.0;
-  var fPlayerA = 1.5;
-
-  var nDegrees = 0;
-
-
   var fFOV = Math.PI / 2.25; // (Math.PI / 4.0 originally)
   var fDepth = 16.0; // viewport depth
-
   var nLookLimit = 8;
-
 
   var bTurnLeft;
   var bTurnRight;
@@ -32,9 +22,15 @@ var gameEngineJS = (function(){
   var bRunning;
 
   var nJumptimer = 0;
-
   var fLooktimer = 0;
 
+
+  // defaults
+  var fPlayerX = 14.0;
+  var fPlayerY = 1.0;
+  var fPlayerA = 1.5;
+  var nDegrees = 0;
+  var nRenderMode = 2;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
@@ -978,7 +974,7 @@ var gameEngineJS = (function(){
         // similar operation for objects
         var nObjectCeiling = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
         var nObjectFloor = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
-        var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 4) );
+        var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
 
         // Converts player turn position into degrees (used for texturing)
