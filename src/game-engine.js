@@ -363,7 +363,7 @@ var gameEngineJS = (function(){
   // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
 
-    shades: "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`.",
+    shades: "$@B%8&WM#o*ahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`.",
 
     renderWall: function(j, fDistanceToWall, sWallDirection, pixel){
 
@@ -375,11 +375,12 @@ var gameEngineJS = (function(){
       var b25  = "&#9617;";
       var b0   = "&nbsp;";
 
-      // var b100 = _rh.shades[1];
-      // var b75  = _rh.shades[8];
-      // var b50  = _rh.shades[17];
-      // var b25  = _rh.shades[22];
-      // // var b0   = _rh.shades[24];
+      // var b100 = _rh.shades[0]; // var b100 = "$";
+      // var b75  = _rh.shades[8]; // var b75  = "#"
+      // var b50  = _rh.shades[9]; // var b50  = "o"
+      // var b25  = _rh.shades[10]; // var b25  = "*"
+      // var b0   = _rh.shades[65]; // var b0   = "."
+
 
       if( sWallDirection === "N" || sWallDirection === "S" ){
 
@@ -992,7 +993,10 @@ var gameEngineJS = (function(){
             if(sWalltype == "T"){
               if( j > nTower ){
 
-                screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
+                var fSampleY = ( (j - nCeiling + 6) / (nFloor - nCeiling + 6) );
+
+                // screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
+                screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY));
               }else{
                 screen[j*nScreenWidth+i] = "&nbsp;";
               }
