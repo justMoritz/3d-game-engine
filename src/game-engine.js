@@ -814,7 +814,11 @@ var gameEngineJS = (function(){
 
       // holds the frames we're going to send to the renderer
       var screen = [];
-      var overlayscreen = []
+      var overlayscreen = [];
+
+
+      // Converts player turn position into degrees (used for texturing)
+      nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
 
 
       // for the length of the screenwidth (one frame)
@@ -976,9 +980,6 @@ var gameEngineJS = (function(){
         var nObjectFloor = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
         var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
-
-        // Converts player turn position into degrees (used for texturing)
-        nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
 
 
         // draw the columns one screenheight-pixel at a time
