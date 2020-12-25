@@ -962,60 +962,30 @@ var gameEngineJS = (function(){
         } // end ray casting loop
 
 
-            // var nTower   = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall - 2);
-            // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
-            // var nFloor   = nScreenHeight - nCeiling;
-            // var nDoorFrameHeight = (nScreenHeight / 2) - nScreenHeight / (fDistanceToWall + 2);
-
-            // var nObjectCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToInverseObject;
-            // var nObjectCeilFG = (nScreenHeight / 2) - nScreenHeight / fDistanceToObject;
-            // var nObjectFloor = nScreenHeight - nObjectCeilFG;
-            // var nFObjectBackwall = (nScreenHeight / 2) + nScreenHeight / (fDistanceToInverseObject + 0);
-
-            // fLooktimer = -3;
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
         // based on the distance to wall, determine how much floor and ceiling to show per column,
-        // Adding in the recalc for looking (fLookTimer)
-        var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
-        var nFloor   = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
-        var nTower   = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
-        var nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
+        // Adding in the recalc for looking (fLookTimer) and jumping (nJumptimer)
+        // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
+        // // var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
+        var nCeiling = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
+        var nFloor   = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / fDistanceToWall;
+
+        // similar for towers and gates
+        var nTower   = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall - 2);
+        var nDoorFrameHeight = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
-        // var nObjectCeiling = (nScreenHeight / (2 + fLooktimer*0.15) + fLooktimer) - (nScreenHeight / fDistanceToInverseObject);
-        var nObjectCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        var nObjectCeiling = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
+        var nObjectFloor = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
+        var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 4) );
 
-        // var nObjectCeilFG = (nScreenHeight / (2 + fLooktimer*0.15) +fLooktimer ) - (nScreenHeight / fDistanceToObject);
-        // var nObjectCeilFG = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToInverseObject;
-
-        var nObjectFloor = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
-        var nObjectFloor = (nScreenHeight / (2 - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
-
-        var nFObjectBackwall = (nScreenHeight / (2 - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
-
-
-        // recalc if jumping
-        if(bJumping || bFalling){
-          nCeiling = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToWall;
-          nFloor   = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) + nScreenHeight / fDistanceToWall;
-          nTower   = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / (fDistanceToWall - 2);
-          nDoorFrameHeight = (nScreenHeight / (2 - fLooktimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / (fDistanceToWall + 2);
-
-          nObjectCeiling = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToInverseObject;
-          nObjectCeilFG = (nScreenHeight / (2 + nJumptimer*0.15) -(fLooktimer*0.15) ) - nScreenHeight / fDistanceToObject;
-          nObjectFloor = nScreenHeight - nObjectCeilFG;
-          nFObjectBackwall = (nScreenHeight / (2 - nJumptimer*0.15) -(fLooktimer*0.15) ) + nScreenHeight / (fDistanceToInverseObject + 0);
-        }
 
         // Converts player turn position into degrees (used for texturing)
         nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
-        // _debugOutput( nDegrees );
 
 
-        // draw the columns one screenheight pixel at a time
-        // Background Draw
-
+        // draw the columns one screenheight-pixel at a time
         for(var j = 0; j < nScreenHeight; j++){
 
           // sky
@@ -1065,34 +1035,30 @@ var gameEngineJS = (function(){
               //   screen[j*nScreenWidth+i] = _getSamplePixel(texture3, fSampleX, fSampleY);
               // }
 
-              /**
-               * Render Texture Directly
-               */
+
+              // Render Texture Directly
               if( nRenderMode == 1 ){
                 screen[j*nScreenWidth+i] = _getSamplePixel(textures[sWalltype], fSampleX, fSampleY);
               }
 
-              /**
-               * Render Texture with Shading
-               */
+
+              // Render Texture with Shading
               if( nRenderMode == 2 ){
                 screen[j*nScreenWidth+i] = _rh.renderWall(j, fDistanceToWall, sWallDirection, _getSamplePixel(textures[sWalltype], fSampleX, fSampleY));
               }
 
-              /**
-               * old, solid-style shading
-               */
+
+              // old, solid-style shading
               if( nRenderMode == 0 ){
                 screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
               }
             }
 
-            // renders whatever char is on the map as walltype
+            // render whatever char is on the map as walltype
             else{
               screen[j*nScreenWidth+i] = sWalltype;
             }
-
-          }
+          } // end solid block
 
 
           // floor
@@ -1117,11 +1083,11 @@ var gameEngineJS = (function(){
             // Floortile Walltype
             if(sObjectType == 'o'){
               if( y < nFObjectBackwall ){
-                overlayscreen[y*nScreenWidth+i] = '0';
+                overlayscreen[y*nScreenWidth+i] = '1';
               }
               else{
-                // overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
-                overlayscreen[y*nScreenWidth+i] = '&nbsp;';
+                overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
+                // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
               overlayscreen[y*nScreenWidth+i] = '0';
