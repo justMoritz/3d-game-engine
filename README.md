@@ -85,15 +85,13 @@ Certain blocks can be rendered taller than other blocks. This is done by renderi
 ![Towers](https://raw.githubusercontent.com/justMoritz/images/master/3d-towers-min.png)
 
 ### Objects:
-This one is still on my // TODO list. The engine technically supports objects: Items that are neither walls nor the planes that are the ceiling and the sky, and I originally intended them to be water.
+The engine als supports what I internally call objects: Items that are neither walls nor the planes that are the ceiling and the sky. They could be water, or holes, I don't have a use-case for them yet.
 They work by
 - calculating the distance to the front *and* the back of a block
 - rendering them into a unique screen of their own
 - overlaying and combinging the two screens at render time
 
 ![Objects Composit Image](https://raw.githubusercontent.com/justMoritz/images/master/3d-composit-min.png)
-
-However, I haven't quite figured out their math when looking up and down yet, and they will break if you do...
 
 ### Animated Textures:
 This one is actually quite simple: Every [few] frames, change the texture of a block. This code is alreay in the engine, but I have not done anything with it yet, since I don't have any good animated textures yet…
@@ -106,12 +104,4 @@ This one is actually quite simple: Every [few] frames, change the texture of a b
 ## TODO
 - Fix issues
 - Sprites?
-- Remove bugs
 - build a half-fun game with decent art
-
-
-
-
-
-
-
