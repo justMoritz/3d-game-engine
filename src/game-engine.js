@@ -1074,7 +1074,7 @@ var gameEngineJS = (function(){
           // sky
           if( y < nObjectCeiling){
             // sky is always 0 on overlayscreen
-            overlayscreen[y*nScreenWidth+i] = '0';
+            overlayscreen[y*nScreenWidth+i] = "0";
           }
 
           // solid block
@@ -1083,21 +1083,21 @@ var gameEngineJS = (function(){
             // Floortile Walltype
             if(sObjectType == 'o'){
               if( y < nFObjectBackwall ){
-                overlayscreen[y*nScreenWidth+i] = '1';
+                overlayscreen[y*nScreenWidth+i] = "0";
               }
               else{
                 overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
                 // overlayscreen[y*nScreenWidth+i] = '&nbsp;';
               }
             }else{
-              overlayscreen[y*nScreenWidth+i] = '0';
+              overlayscreen[y*nScreenWidth+i] = "0";
             }
           }
 
           // floor
           else {
             // overlayscreen floor is always 0
-            overlayscreen[y*nScreenWidth+i] = '0';
+            overlayscreen[y*nScreenWidth+i] = "0";
           }
 
         } // end draw column loop
