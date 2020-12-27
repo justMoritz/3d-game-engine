@@ -23,5 +23,5 @@ levelfile1 = {
   fPlayerX: 14.0,
   fPlayerY: 1.0,
   fPlayerA: 1.5,
-  exitsto: 'levelfile2.map',
+  exitsto: "levelfile2.map",
 };
