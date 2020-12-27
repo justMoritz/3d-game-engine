@@ -37,12 +37,10 @@ var gameEngineJS = (function(){
   var map = "";
   var sLevelstring = "";
 
-
   // █
   // ▓
   // ▒
   // ░
-
 
   /**
    * Loads
@@ -1191,6 +1189,7 @@ var gameEngineJS = (function(){
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
 
+    // TODO: move to in-game menu
     document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });
     document.getElementById("texture").addEventListener("click", function(){ nRenderMode = 1 });
     document.getElementById("shader").addEventListener("click", function(){ nRenderMode = 2 });
