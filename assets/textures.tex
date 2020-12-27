@@ -3,67 +3,67 @@ var defaultTexHeight = 16;
 var defaultTexScale = 2;
 
 // large brick wall texture
-var texture = "";
-texture += "#####.####.####.";
-texture += "#7#o7.#o#o.#o#o.";
-texture += "0oooo.#ooo.#ooo.";
-texture += "................";
-texture += "5##.####.#####.#";
-texture += "#7o.7#7o.7#77o.#";
-texture += "ooo.oooo.ooo#o.#";
-texture += "................";
-texture += "#####.####.####.";
-texture += "#7#o7.#o#o.#o#o.";
-texture += "#oooo.#ooo.#ooo.";
-texture += "................";
-texture += "##.####.#####.##";
-texture += "#o.#7##.#7#7o.#7";
-texture += "oo.#ooo.#oooo.#o";
-texture += "................";
+var brick = "";
+brick += "#####.####.####.";
+brick += "#7#o7.#o#o.#o#o.";
+brick += "0oooo.#ooo.#ooo.";
+brick += "................";
+brick += "5##.####.#####.#";
+brick += "#7o.7#7o.7#77o.#";
+brick += "ooo.oooo.ooo#o.#";
+brick += "................";
+brick += "#####.####.####.";
+brick += "#7#o7.#o#o.#o#o.";
+brick += "#oooo.#ooo.#ooo.";
+brick += "................";
+brick += "##.####.#####.##";
+brick += "#o.#7##.#7#7o.#7";
+brick += "oo.#ooo.#oooo.#o";
+brick += "................";
 
 
-// wood blanks texture
-var texture2 = "";
-texture2 += "ooooo.oooooooooo";
-texture2 += "ooo#o.o#o7777ooo";
-texture2 += "7oooo.ooooooo777";
-texture2 += "ooooo.oooooooooo";
-texture2 += "ooooo.ooo777oooo";
-texture2 += "77o#o.o#oooo7777";
-texture2 += "ooooo.oooooooooo";
-texture2 += "................";
-texture2 += "ooooooooooo.oooo";
-texture2 += "ooo77777o+o.o#oo";
-texture2 += "777oooooooo.ooo7";
-texture2 += "ooooooooooo.oooo";
-texture2 += "ooooo777ooo.oooo";
-texture2 += "77777oooo#o.o#o7";
-texture2 += "ooooooooooo.oooo";
-texture2 += "................";
-texture2 += "................";
-texture2 += "................";
+// wood planks texture
+var woodplanks = "";
+woodplanks += "ooooo.oooooooooo";
+woodplanks += "ooo#o.o#o7777ooo";
+woodplanks += "7oooo.ooooooo777";
+woodplanks += "ooooo.oooooooooo";
+woodplanks += "ooooo.ooo777oooo";
+woodplanks += "77o#o.o#oooo7777";
+woodplanks += "ooooo.oooooooooo";
+woodplanks += "................";
+woodplanks += "ooooooooooo.oooo";
+woodplanks += "ooo77777o+o.o#oo";
+woodplanks += "777oooooooo.ooo7";
+woodplanks += "ooooooooooo.oooo";
+woodplanks += "ooooo777ooo.oooo";
+woodplanks += "77777oooo#o.o#o7";
+woodplanks += "ooooooooooo.oooo";
+woodplanks += "................";
+woodplanks += "................";
+woodplanks += "................";
 
 
 // cobble stone
 var texWidth = 16;
 var texHeight = 16;
-var texture3 = "";
-texture3 += "##.........777.#";
-texture3 += "777..####7....##";
-texture3 += "777.##77777..##7";
-texture3 += "77*.#7777777.*77";
-texture3 += "7*..7777777*..*7";
-texture3 += "......77***.....";
-texture3 += "..##7*.....###..";
-texture3 += "###777...##777.#";
-texture3 += "##777*..##777*.7.";
-texture3 += "7777*..77777*...";
-texture3 += "77*.....777*....";
-texture3 += "....##..........";
-texture3 += "...##77......#77";
-texture3 += "7.##77777..##777";
-texture3 += "7.#77777*.#7777*";
-texture3 += "...777**..7777~~";
+var cobblestone = "";
+cobblestone += "##.........777.#";
+cobblestone += "777..####7....##";
+cobblestone += "777.##77777..##7";
+cobblestone += "77*.#7777777.*77";
+cobblestone += "7*..7777777*..*7";
+cobblestone += "......77***.....";
+cobblestone += "..##7*.....###..";
+cobblestone += "###777...##777.#";
+cobblestone += "##777*..##777*.7.";
+cobblestone += "7777*..77777*...";
+cobblestone += "77*.....777*....";
+cobblestone += "....##..........";
+cobblestone += "...##77......#77";
+cobblestone += "7.##77777..##777";
+cobblestone += "7.#77777*.#7777*";
+cobblestone += "...777**..7777~~";
 
 
 // Perspective Store Shelve Test Looking South
@@ -122,11 +122,11 @@ textureC += "ooooo.#7";
 // correspond with their coordinates on the map
 var textures = {
   "#": {
-    "texture": texture3,
+    "texture": cobblestone,
     "scale": 2,
   },
   "U": {
-    "texture": texture2,
+    "texture": woodplanks,
     "height": 18,
     "width": 16,
     "scale": 4,
@@ -135,14 +135,14 @@ var textures = {
     "texture": textureC,
     "height": 8,
     "width": 8,
-    "scale": 2,
+    "scale": 4,
   },
   "$": {
-    "texture": texture,
+    "texture": brick,
     "scale": 2,
   },
   "T": {
-    "texture": texture3,
+    "texture": cobblestone,
     "scale": 2,
   },
   "W": {
