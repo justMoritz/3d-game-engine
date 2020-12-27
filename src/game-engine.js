@@ -82,6 +82,9 @@ var gameEngineJS = (function(){
         fPlayerX = window[sLevelstring].fPlayerX;
         fPlayerY = window[sLevelstring].fPlayerY;
         fPlayerA = window[sLevelstring].fPlayerA;
+
+        document.querySelector("body").style.color = window[sLevelstring].color;
+        document.querySelector("body").style.background = window[sLevelstring].background;
     });
 
 
@@ -1166,8 +1169,8 @@ var gameEngineJS = (function(){
 
     // check if the amount of pixels to be rendered fit, if not, repeat
     if(widthOfDisplay > widthOfViewport ){
-      nScreenWidth = nScreenWidth-1;
-      nScreenHeight = nScreenWidth*0.25;
+      nScreenWidth = nScreenWidth - 1;
+      nScreenHeight = nScreenWidth * 0.22;
 
       // try no more than nTrymax times (in case of some error)
       if( nTrymax > 0 ){
