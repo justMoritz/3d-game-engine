@@ -865,22 +865,25 @@ var gameEngineJS = (function(){
 
         var nRayLength = 0.0;
 
+        // var nGrainControl = 0.1;
+        var nGrainControl = 0.05;
+
         /**
          * Ray Casting Loop
          */
         while(!bBreakLoop && nRayLength < fDepth){
 
           // increment
-          nRayLength += 0.1;
+          nRayLength += nGrainControl;
 
           if( !bHitObject ){
-            fDistanceToObject += 0.1;
+            fDistanceToObject += nGrainControl;
           }
           if( !bHitBackObject ){
-            fDistanceToInverseObject += 0.1;
+            fDistanceToInverseObject += nGrainControl;
           }
           if( !bHitWall ){
-            fDistanceToWall += 0.1;
+            fDistanceToWall += nGrainControl;
           }
 
           // ray position
