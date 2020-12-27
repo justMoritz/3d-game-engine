@@ -35,6 +35,7 @@ var gameEngineJS = (function(){
   var nMapHeight = 16;
   var nMapWidth = 16;
   var map = "";
+  var sLevelstring = "";
 
 
   // █
@@ -50,13 +51,15 @@ var gameEngineJS = (function(){
    */
   var _loadLevel = function(level){
 
-    var levelstring = level.replace(".map", "");
+    clearInterval(gameRun);
 
-    var loadScriptAsync = function(uri, levelstring) {
+    sLevelstring = level.replace(".map", ""); // sets global string
+
+    var loadScriptAsync = function(uri, sLevelstring) {
       return new Promise(function (resolve, reject) {
         var tag = document.createElement("script");
         tag.src = "assets/" + uri;
-        tag.id = levelstring;
+        tag.id = sLevelstring;
         tag.async = true;
 
         tag.onload = function () {
@@ -69,18 +72,18 @@ var gameEngineJS = (function(){
       });
     };
 
-    var scriptLoaded = loadScriptAsync(level, levelstring);
+    var scriptLoaded = loadScriptAsync(level, sLevelstring);
 
     scriptLoaded.then(function(){
         // updates the level map and dimensions
-        map = window[levelstring].map;
-        nMapHeight = window[levelstring].nMapHeight;
-        nMapWidth = window[levelstring].nMapWidth;
+        map = window[sLevelstring].map;
+        nMapHeight = window[sLevelstring].nMapHeight;
+        nMapWidth = window[sLevelstring].nMapWidth;
 
         // places the player at the map starting point
-        fPlayerX = window[levelstring].fPlayerX;
-        fPlayerY = window[levelstring].fPlayerY;
-        fPlayerA = window[levelstring].fPlayerA;
+        fPlayerX = window[sLevelstring].fPlayerX;
+        fPlayerY = window[sLevelstring].fPlayerY;
+        fPlayerA = window[sLevelstring].fPlayerA;
     });
 
 
@@ -218,7 +221,6 @@ var gameEngineJS = (function(){
         return 0;
     }
   };
-
 
 
   var _printCompositPixel = function(oInput, oOverlay, index){
@@ -716,8 +718,16 @@ var gameEngineJS = (function(){
       };
     },
 
+    checkExit: function(){
+      // if we hit an exit
+      if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == "X"){
+        _loadLevel( window[sLevelstring].exitsto );
+      }
+    },
+
     // called once per frame, handles movement computation
     move: function(){
+
       if(bTurnLeft){
         fPlayerA -= 0.05;
       }
@@ -737,6 +747,7 @@ var gameEngineJS = (function(){
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          _moveHelpers.checkExit();
           fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -748,6 +759,7 @@ var gameEngineJS = (function(){
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          _moveHelpers.checkExit();
           fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -759,6 +771,7 @@ var gameEngineJS = (function(){
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          _moveHelpers.checkExit();
           fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
@@ -770,10 +783,12 @@ var gameEngineJS = (function(){
 
         // converts coordinates into integer space and check if it is a wall (#), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          _moveHelpers.checkExit();
           fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         }
       }
+
     },
   };
 
@@ -1173,27 +1188,12 @@ var gameEngineJS = (function(){
     eScreen = document.getElementById("display");
     eDebugOut = document.getElementById("debug");
 
-
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
-
 
     document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });
     document.getElementById("texture").addEventListener("click", function(){ nRenderMode = 1 });
     document.getElementById("shader").addEventListener("click", function(){ nRenderMode = 2 });
-
-
-    // change level debug-buttons
-    var levelbuttons = document.querySelectorAll(".levelbutton");
-    for(var i=0; i < levelbuttons.length; i++){
-      levelbuttons[i].addEventListener("click", function(){
-        var selectedLevel = this.dataset.levelvalue;
-
-        clearInterval(gameRun);
-        _loadLevel(selectedLevel);
-      });
-    }
-
 
     // initial gameload
     _loadLevel("levelfile1.map");
