@@ -85,6 +85,25 @@ var gameEngineJS = (function(){
 
         document.querySelector("body").style.color = window[sLevelstring].color;
         document.querySelector("body").style.background = window[sLevelstring].background;
+
+        listObjects = {
+          "1": {
+            "x": "14.0",
+            "y": "3.5",
+            "height": sprites.B.height,
+            "width": sprites.B.width,
+            "s": sprites.B.sprite,
+            "name": "B",
+          },
+          "2": {
+            "x": "3.5",
+            "y": "3.5",
+            "height": sprites.P.height,
+            "width": sprites.P.width,
+            "s": sprites.P.sprite,
+            "name": "P",
+          },
+        };
     });
 
 
@@ -1122,6 +1141,89 @@ var gameEngineJS = (function(){
 
         } // end draw column loop
       }  // end column loop
+
+
+
+
+
+
+
+
+      // draw sprites
+      for(var si=0; si < Object.keys(listObjects).length; si++ ){
+        var sprite = listObjects[Object.keys(listObjects)[si]];
+
+        // can object be seen?
+        var fVecX = sprite["x"] - fPlayerX;
+        var fVecY = sprite["y"] - fPlayerY;
+        var fDistanceFromPlayer = Math.sqrt(fVecX*fVecX + fVecY*fVecY);
+
+        // calculate angle between sprite and player, to see if in fov
+        var fEyeX = Math.cos(fPlayerA);
+        var fEyeY = Math.sin(fPlayerA);
+
+        var fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX) ;
+        if (fSpriteAngle < -Math.PI){
+          fSpriteAngle += 2.0 * Math.PI;
+        }
+        if (fSpriteAngle > Math.PI){
+          fSpriteAngle -= 2.0 * Math.PI;
+        }
+
+        var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
+        // var bInPlayerView = true;
+
+
+        if( bInPlayerView && fDistanceFromPlayer >= 0.5 ){
+
+          // very similar to background floor and ceiling
+          var fSpriteCeiling = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (parseFloat(fDistanceFromPlayer) );
+          var fSpriteFloor = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / (parseFloat(fDistanceFromPlayer) );
+
+          var fSpriteCeiling = Math.round(fSpriteCeiling);
+          var fSpriteFloor = Math.round(fSpriteFloor);
+
+          var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
+          var fSpriteAspectRatio = parseFloat(sprite["height"]) / parseFloat(sprite["width"]*1.66);
+          var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
+          var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
+
+
+          for(var sx = 0; sx < fSpriteWidth; sx++ ){
+            for(var sy = 0; sy < fSpriteHeight; sy++){
+              var fSampleX = sx / fSpriteWidth;
+              var fSampleY = sy / fSpriteHeight;
+
+              sSpriteGlyph = _getSamplePixel(sprites["P"], fSampleX, fSampleY);
+
+
+              sSpriteGlyph = _rh.renderWall( j, fDistanceFromPlayer, "W", _getSamplePixel(sprites[ sprite["name"] ], fSampleX, fSampleY) );
+              // sSpriteGlyph = _getSamplePixel(sprites["P"], fSampleX, fSampleY);
+
+              var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
+
+              if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth){
+                if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" ){
+
+                  var yccord = fSpriteCeiling + sy;
+                  var xccord = nSpriteColumn;
+
+                  overlayscreen[ yccord*nScreenWidth + xccord] = sSpriteGlyph;
+                }
+              }
+
+
+
+            }
+          }
+
+
+
+
+        }
+
+      }
+
 
       _fDrawFrame(screen, overlayscreen);
       // _fDrawFrame(overlayscreen, false, eDebugOut);
