@@ -33,5 +33,5 @@ levelfile3 = {
   fPlayerA: 1.5,
   exitsto: "levelfile1.map",
   color: "brown",
-  background: "blue",
+  background: "rebeccapurple",
 };

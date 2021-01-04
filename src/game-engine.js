@@ -24,6 +24,8 @@ var gameEngineJS = (function(){
   var nJumptimer = 0;
   var fLooktimer = 0;
 
+  var fDepthBuffer = [];
+
 
   // defaults
   var fPlayerX = 14.0;
@@ -82,28 +84,11 @@ var gameEngineJS = (function(){
         fPlayerX = window[sLevelstring].fPlayerX;
         fPlayerY = window[sLevelstring].fPlayerY;
         fPlayerA = window[sLevelstring].fPlayerA;
+        oLevelSprites = window[sLevelstring].sprites;
 
         document.querySelector("body").style.color = window[sLevelstring].color;
         document.querySelector("body").style.background = window[sLevelstring].background;
 
-        listObjects = {
-          "1": {
-            "x": "14.0",
-            "y": "3.5",
-            "height": sprites.B.height,
-            "width": sprites.B.width,
-            "s": sprites.B.sprite,
-            "name": "B",
-          },
-          "2": {
-            "x": "3.5",
-            "y": "3.5",
-            "height": sprites.P.height,
-            "width": sprites.P.width,
-            "s": sprites.P.sprite,
-            "name": "P",
-          },
-        };
     });
 
 
@@ -1020,6 +1005,7 @@ var gameEngineJS = (function(){
         var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
 
 
+        fDepthBuffer[i] = fDistanceToWall;
 
         // draw the columns one screenheight-pixel at a time
         for(var j = 0; j < nScreenHeight; j++){
@@ -1150,8 +1136,14 @@ var gameEngineJS = (function(){
 
 
       // draw sprites
-      for(var si=0; si < Object.keys(listObjects).length; si++ ){
-        var sprite = listObjects[Object.keys(listObjects)[si]];
+      for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
+
+        // the sprite in the level-side
+        var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+        // reference to the global-side sprite
+        var currentSpriteObject = allSprites[sprite['name']];
+
 
         // can object be seen?
         var fVecX = sprite["x"] - fPlayerX;
@@ -1184,31 +1176,37 @@ var gameEngineJS = (function(){
           var fSpriteFloor = Math.round(fSpriteFloor);
 
           var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-          var fSpriteAspectRatio = parseFloat(sprite["height"]) / parseFloat(sprite["width"]*1.66);
+          var fSpriteAspectRatio = parseFloat(currentSpriteObject["height"]) / parseFloat(currentSpriteObject["width"]*1.66);
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
 
           for(var sx = 0; sx < fSpriteWidth; sx++ ){
             for(var sy = 0; sy < fSpriteHeight; sy++){
+
+              // sample sprite
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
 
-              sSpriteGlyph = _getSamplePixel(sprites["P"], fSampleX, fSampleY);
-
-
-              sSpriteGlyph = _rh.renderWall( j, fDistanceFromPlayer, "W", _getSamplePixel(sprites[ sprite["name"] ], fSampleX, fSampleY) );
-              // sSpriteGlyph = _getSamplePixel(sprites["P"], fSampleX, fSampleY);
+              // assign based on render mode
+              if( nRenderMode == 2 || nRenderMode == 0 ){
+                sSpriteGlyph = _rh.renderWall( j, fDistanceFromPlayer, "W", _getSamplePixel(currentSpriteObject, fSampleX, fSampleY) );
+              }
+              else{
+                sSpriteGlyph = _getSamplePixel(currentSpriteObject, fSampleX, fSampleY);
+              }
 
               var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
 
               if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth){
-                if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" ){
+                if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
+                  // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
-
                   overlayscreen[ yccord*nScreenWidth + xccord] = sSpriteGlyph;
+
+                  fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
               }
 

@@ -37,55 +37,92 @@ pogel += ".#777#7777#.";
 pogel += ".##########.";
 
 // P#gel
-var pogel2 = "";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "............";
-pogel2 += "...**..**...";
-pogel2 += "..*##**##*..";
-pogel2 += ".*###7###7*.";
-pogel2 += ".*########7*";
-pogel2 += "*####7####7*";
-pogel2 += "*##*#7#*##7*";
-pogel2 += "*####7####7*";
-pogel2 += ".*7#777##7*.";
-pogel2 += "..*77777**..";
-pogel2 += "...*7777*...";
-pogel2 += "...*777*....";
-pogel2 += "....*77*....";
-pogel2 += "...*#7#7*...";
-pogel2 += "..*7####7*..";
-pogel2 += "..*7####7*..";
-pogel2 += "..*######*..";
-pogel2 += "..*7###77*..";
-pogel2 += "...*7#77*...";
-pogel2 += "...*77#*....";
-pogel2 += "...*#7#*....";
-pogel2 += ".***7*7***..";
-pogel2 += ".*777*7777*.";
-pogel2 += ".*777*7777*.";
-pogel2 += ".**********.";
+var pogelfront = "";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "............";
+pogelfront += "...**..**...";
+pogelfront += "..*##**##*..";
+pogelfront += ".*###7###7*.";
+pogelfront += ".*########7*";
+pogelfront += "*####7####7*";
+pogelfront += "*##*#7#*##7*";
+pogelfront += "*####7####7*";
+pogelfront += ".*7#777##7*.";
+pogelfront += "..*77777**..";
+pogelfront += "...*7777*...";
+pogelfront += "...*777*....";
+pogelfront += "....*77*....";
+pogelfront += "...*#7#7*...";
+pogelfront += "..*7####7*..";
+pogelfront += "..*7####7*..";
+pogelfront += "..*######*..";
+pogelfront += "..*7###77*..";
+pogelfront += "...*7#77*...";
+pogelfront += "...*77#*....";
+pogelfront += "...*#7#*....";
+pogelfront += ".***7*7***..";
+pogelfront += ".*777*7777*.";
+pogelfront += ".*777*7777*.";
+pogelfront += ".**********.";
 
+
+// P#gel
+var pogelback = "";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "............";
+pogelback += "...**..**...";
+pogelback += "..*#***77*..";
+pogelback += ".*###*###7*.";
+pogelback += ".*###**###7*";
+pogelback += "*####**###7*";
+pogelback += "*####**7##7*";
+pogelback += "*#####*7##7*";
+pogelback += ".*7####777*.";
+pogelback += "..*7###77*..";
+pogelback += "...*777**...";
+pogelback += "....*#*.....";
+pogelback += "....*#*.....";
+pogelback += "....*7*.....";
+pogelback += "...*#7#7*...";
+pogelback += "..*7####7*..";
+pogelback += "..*7####7*..";
+pogelback += "..*######*..";
+pogelback += "..*7###77*..";
+pogelback += "...*7#77*...";
+pogelback += "...*77#*....";
+pogelback += "...*#7#*....";
+pogelback += ".***7*7***..";
+pogelback += ".*777*7777*.";
+pogelback += ".*777*7777*.";
+pogelback += ".**********.";
 
 
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
-var sprites = {
+var allSprites = {
   "P": {
-    "texture": pogel,
+    "texture": pogelback,
     "height": 34,
     "width": 12,
     "scale": 1,
   },
   "B": {
-    "texture": pogel2,
+    "texture": pogelfront,
     "height": 34,
     "width": 12,
     "scale": 1,

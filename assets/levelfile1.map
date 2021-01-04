@@ -24,4 +24,18 @@ levelfile1 = {
   fPlayerY: 1.0,
   fPlayerA: 1.5,
   exitsto: "levelfile2.map",
+  color: "white",
+  background: "black",
+  sprites: {
+    "1": {
+      "x": "14.0",
+      "y": "3.5",
+      "name": "B",
+    },
+    "evilpogel": {
+      "x": "3.5",
+      "y": "3.5",
+      "name": "P",
+    },
+  },
 };
