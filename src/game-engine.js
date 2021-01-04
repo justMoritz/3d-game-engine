@@ -1142,7 +1142,7 @@ var gameEngineJS = (function(){
         var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
         // reference to the global-side sprite
-        var currentSpriteObject = allSprites[sprite['name']];
+        var currentSpriteObject = allSprites[sprite["name"]];
 
 
         // can object be seen?
