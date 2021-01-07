@@ -839,7 +839,7 @@ var gameEngineJS = (function(){
 
 
       // Converts player turn position into degrees (used for texturing)
-      nDegrees = Math.floor(fPlayerA * (180/Math.PI)) % 360;
+      nDegrees = Math.floor( fPlayerA * (180/Math.PI)) % 360;
 
 
       // for the length of the screenwidth (one frame)
@@ -1002,10 +1002,12 @@ var gameEngineJS = (function(){
         // similar operation for objects
         var nObjectCeiling = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / fDistanceToObject;
         var nObjectFloor = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / fDistanceToObject;
-        var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) );
+        var nFObjectBackwall = (nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15) ) + (nScreenHeight / (fDistanceToInverseObject + 0) ); // 0 makes the object flat, higher the number, the higher the object :)
 
 
+        // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
+
 
         // draw the columns one screenheight-pixel at a time
         for(var j = 0; j < nScreenHeight; j++){
@@ -1169,14 +1171,14 @@ var gameEngineJS = (function(){
         if( bInPlayerView && fDistanceFromPlayer >= 0.5 ){
 
           // very similar to background floor and ceiling
-          var fSpriteCeiling = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (parseFloat(fDistanceFromPlayer) );
+          var fSpriteCeiling = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (parseFloat(fDistanceFromPlayer) ) * currentSpriteObject["hghtFctr"];
           var fSpriteFloor = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / (parseFloat(fDistanceFromPlayer) );
 
           var fSpriteCeiling = Math.round(fSpriteCeiling);
           var fSpriteFloor = Math.round(fSpriteFloor);
 
           var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-          var fSpriteAspectRatio = parseFloat(currentSpriteObject["height"]) / parseFloat(currentSpriteObject["width"]*1.66);
+          var fSpriteAspectRatio = parseFloat(currentSpriteObject["height"]) / parseFloat(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
@@ -1188,13 +1190,47 @@ var gameEngineJS = (function(){
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
 
+
+              // sample angled Glyphs if available
+              if( "angles" in currentSpriteObject ){
+
+                // accounts for the direction the sprite is facing
+                nSampleDegrees = (Number(nDegrees) + Number(sprite["a"]) ) % 360 ;
+
+                var sSamplePixel = '';
+                if(nSampleDegrees >= -360-45 && nSampleDegrees < -270-45 || nSampleDegrees >= 0-45 && nSampleDegrees < 90-45){
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
+                }
+                else if(nSampleDegrees >= -270-45 && nSampleDegrees < -180-45 || nSampleDegrees >= 90-45 && nSampleDegrees < 180-45){
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
+                }
+                else if(nSampleDegrees >= -180-45 && nSampleDegrees < -90-45 || nSampleDegrees >= 180-45 && nSampleDegrees < 270-45){
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
+                }
+                // else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                // }
+                else{
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                }
+              }
+
+              // if not, use basic sprite
+              else{
+                sSamplePixel = _getSamplePixel(currentSpriteObject, fSampleX, fSampleY);
+              }
+
+
               // assign based on render mode
               if( nRenderMode == 2 || nRenderMode == 0 ){
-                sSpriteGlyph = _rh.renderWall( j, fDistanceFromPlayer, "W", _getSamplePixel(currentSpriteObject, fSampleX, fSampleY) );
+                sSpriteGlyph = _rh.renderWall( j, fDistanceFromPlayer, "W", sSamplePixel );
               }
               else{
-                sSpriteGlyph = _getSamplePixel(currentSpriteObject, fSampleX, fSampleY);
+                sSpriteGlyph = sSamplePixel;
               }
+
+
+              // _debugOutput( nDegrees );
 
               var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
 

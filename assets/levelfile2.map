@@ -29,5 +29,21 @@ levelfile2 = {
   exitsto: "levelfile3.map",
   color: "pink",
   background: "blue",
-  sprites: {},
+  sprites: {
+    "1": {
+      "x": "14.0",
+      "y": "3.5",
+      "name": "B",
+    },
+    "2": {
+      "x": "3.5",
+      "y": "3.5",
+      "name": "B",
+    },
+    "3": {
+      "x": "11",
+      "y": "8",
+      "name": "B",
+    },
+  },
 };
