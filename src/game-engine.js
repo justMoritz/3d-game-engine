@@ -44,6 +44,11 @@ var gameEngineJS = (function(){
   // ▒
   // ░
 
+
+  function randomIntFromInterval(min, max) { // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   /**
    * Loads
    * @param  {[string]} level The Level file
@@ -84,7 +89,23 @@ var gameEngineJS = (function(){
         fPlayerX = window[sLevelstring].fPlayerX;
         fPlayerY = window[sLevelstring].fPlayerY;
         fPlayerA = window[sLevelstring].fPlayerA;
-        oLevelSprites = window[sLevelstring].sprites;
+
+        // load sprites
+        // oLevelSprites = window[sLevelstring].sprites;
+
+        // generates random Pogels :oooo
+        oLevelSprites = {};
+        for( var m = 0; m < 100; m++){
+          var oRandomSprite = {
+              "x": randomIntFromInterval(0, nMapWidth),
+              "y": randomIntFromInterval(0, nMapHeight),
+              "a": "0",
+              "r": randomIntFromInterval(0, Math.PI*2),
+              "name": "P",
+              "move": true
+          }
+          oLevelSprites[m] = oRandomSprite ;
+        }
 
         document.querySelector("body").style.color = window[sLevelstring].color;
         document.querySelector("body").style.background = window[sLevelstring].background;
@@ -797,9 +818,44 @@ var gameEngineJS = (function(){
     },
   };
 
-  var gameRun;
 
+
+  var _moveSprites = function(){
+
+    // for each sprite object
+    for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
+      var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+      // if the sprite's move flag is set
+      if( sprite["move"] ){
+        var fMovementSpeed = 0.05;
+
+        // move the sprite along it's radiant line
+        sprite["x"] = parseFloat(sprite["x"]) + parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
+        sprite["y"] = parseFloat(sprite["y"]) + parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+
+        // sprite has hit any other type other than blank
+        if( map[Math.round(sprite["y"]) * nMapWidth + Math.round(sprite["x"])] != '.' ){
+
+          // reverse last movement
+          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+
+          // change the angle and visible angle (buggy)
+          sprite["r"] = parseFloat(sprite["r"]) + Math.PI/4;
+          sprite["a"] = Math.floor( sprite["r"] * (180/Math.PI)) % 360  + 0; // Todo: FIX :/
+
+          // TODO, maybe turn a random amount of degreens between 45 and 90?
+        }
+      }
+
+    }
+  };
+
+
+  var gameRun;
   var animationTimer = 0;
+
 
   /**
    * The basic game loop
@@ -814,6 +870,11 @@ var gameEngineJS = (function(){
       }
 
       _moveHelpers.move();
+
+      // if(animationTimer == 10){
+        _moveSprites();
+      // }
+
 
       // allows jumping for only a certain amount of time
       if(bJumping){
@@ -1132,11 +1193,6 @@ var gameEngineJS = (function(){
 
 
 
-
-
-
-
-
       // draw sprites
       for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
 
@@ -1230,8 +1286,6 @@ var gameEngineJS = (function(){
               }
 
 
-              // _debugOutput( nDegrees );
-
               var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
 
               if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth){
@@ -1245,15 +1299,13 @@ var gameEngineJS = (function(){
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
               }
-
-
-
             }
           }
+        } // end if
 
-
-
-
+        // player was hit
+        else{
+          // clearInterval(gameRun);
         }
 
       }
@@ -1300,8 +1352,6 @@ var gameEngineJS = (function(){
 
     var widthOfDisplay = eScreen.offsetWidth;
     var widthOfViewport = _getWidth();
-
-    console.log(widthOfDisplay + " " + widthOfViewport);
 
     // check if the amount of pixels to be rendered fit, if not, repeat
     if(widthOfDisplay > widthOfViewport ){
