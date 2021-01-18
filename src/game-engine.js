@@ -1,5 +1,12 @@
 var gameEngineJS = (function(){
 
+  // constants
+  var PI_00 = parseFloat(Math.PI * 0.0);
+  var PI_05 = parseFloat(Math.PI * 0.5);
+  var PI_10 = parseFloat(Math.PI * 1.0);
+  var PI_15 = parseFloat(Math.PI * 1.5);
+  var PI_20 = parseFloat(Math.PI * 2.0);
+
   // setup variables
   var eScreen;
   var eDebugOut;
@@ -850,8 +857,7 @@ var gameEngineJS = (function(){
 
           // TODO, maybe turn a random amount of degreens between 45 and 90?
         }
-      }
-
+      } // end if sprite move
     }
   };
 
@@ -1241,7 +1247,17 @@ var gameEngineJS = (function(){
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
+          // visible Sprite Angle
+          var fNiceAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
+          // normalize
+          if (fNiceAngle < 0){
+            fNiceAngle += 2.0 * Math.PI;
+          }
+          if (fNiceAngle > 2.0 * Math.PI){
+            fNiceAngle -= 2.0 * Math.PI;
+          }
 
+          // loops through the sprite pixels
           for(var sx = 0; sx < fSpriteWidth; sx++ ){
             for(var sy = 0; sy < fSpriteHeight; sy++){
 
@@ -1249,29 +1265,68 @@ var gameEngineJS = (function(){
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
 
-
               // sample angled Glyphs if available
               if( "angles" in currentSpriteObject ){
 
-                // accounts for the direction the sprite is facing
-                nSampleDegrees = (Number(nDegrees) + Number(sprite["a"]) ) % 360 ;
-
                 var sSamplePixel = '';
-                if(nSampleDegrees >= -360-45 && nSampleDegrees < -270-45 || nSampleDegrees >= 0-45 && nSampleDegrees < 90-45){
+
+                // var fObjectAngle = Math.atan2(sprite["y"], sprite["x"]) - fPlayerA;
+                // if (fObjectAngle < -Math.PI){ fObjectAngle += 2.0 * Math.PI; }
+                // if (fObjectAngle > Math.PI){ fObjectAngle -= 2.0 * Math.PI; }
+
+
+                // accounts for the direction the sprite is facing
+                // nSampleDegrees = (Number(nDegrees) + Number(sprite["a"]) ) % 360 ;
+
+                // var fCurSpriteAngleR = (Number(sprite["r"]) % Math.PI*2) + (fPlayerA % Math.PI*2) ;
+                // var fCurSpriteAngleR = (Number(sprite["r"]) % Math.PI*2);
+
+                // _debugOutput(
+                //   'fNiceAngle: ' + fNiceAngle +
+                //   ' <br>PI_00: ' + PI_00 +
+                //   ' <br>PI_05: ' + PI_05 +
+                //   ' <br>PI_10: ' + PI_10 +
+                //   ' <br>PI_15: ' + PI_15 +
+                //   ' <br>PI_20: ' + PI_20 +
+                //   '<br> is? ' + (fNiceAngle < PI_15)
+                // );
+
+                if( fNiceAngle >= PI_00 && fNiceAngle < PI_05 ){
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                }
+                else if( parseFloat(fNiceAngle) >= parseFloat(PI_05) && parseFloat(fNiceAngle) < parseFloat(PI_10) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
                 }
-                else if(nSampleDegrees >= -270-45 && nSampleDegrees < -180-45 || nSampleDegrees >= 90-45 && nSampleDegrees < 180-45){
+                else if( parseFloat(fNiceAngle) >= parseFloat(PI_10) && parseFloat(fNiceAngle) < parseFloat(PI_15) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
                 }
-                else if(nSampleDegrees >= -180-45 && nSampleDegrees < -90-45 || nSampleDegrees >= 180-45 && nSampleDegrees < 270-45){
+                else if( parseFloat(fNiceAngle) >= parseFloat(PI_15) && parseFloat(fNiceAngle) < parseFloat(PI_20) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
                 }
-                else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                }
-                else{
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                }
+                // else{
+                //   sSamplePixel = "#";
+                // }
+
+
+                // if(nSampleDegrees >= -360-45 && nSampleDegrees < -270-45 || nSampleDegrees >= 0-45 && nSampleDegrees < 90-45){
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
+                // }
+                // else if(nSampleDegrees >= -270-45 && nSampleDegrees < -180-45 || nSampleDegrees >= 90-45 && nSampleDegrees < 180-45){
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
+                // }
+                // else if(nSampleDegrees >= -180-45 && nSampleDegrees < -90-45 || nSampleDegrees >= 180-45 && nSampleDegrees < 270-45){
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
+                // }
+                // else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                // }
+                // else{
+                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                // }
+
+
+
+
               }
 
               // if not, use basic sprite
