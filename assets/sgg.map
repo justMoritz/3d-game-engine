@@ -1,0 +1,42 @@
+var map = "";
+map += "#o#####oooo#####.#";
+map += "o...#........#...o";
+map += "#................#";
+map += "o...#...oo...#...o";
+map += "#...#...oo...#...#";
+map += "o...#...oo...#...o";
+map += "#...#...oo...#...#";
+map += "o...#...oo...#...o";
+map += "#...#........#...#";
+map += "#####........#####";
+map += "..................";
+map += "..................";
+
+sgg = {
+  nMapHeight: 12,
+  nMapWidth: 18,
+  map: map,
+  fPlayerX: 14.0,
+  fPlayerY: 1.0,
+  fPlayerA: 1.5,
+  exitsto: "levelfile2.map",
+  color: "white",
+  background: "black",
+  sprites: {
+    "1": {
+      "x": "14.0",
+      "y": "3.5",
+      "name": "P",
+    },
+    // "evilpogel": {
+    //   "x": "3.5",
+    //   "y": "3.5",
+    //   "name": "B",
+    // },
+    // "sidepogel": {
+    //   "x": "11",
+    //   "y": "8",
+    //   "name": "B",
+    // },
+  },
+};
