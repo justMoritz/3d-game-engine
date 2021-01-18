@@ -107,7 +107,6 @@ var gameEngineJS = (function(){
             var oRandomSprite = {
                 "x": randomIntFromInterval(0, nMapWidth),
                 "y": randomIntFromInterval(0, nMapHeight),
-                "a": Math.floor( randAngle * (180/Math.PI)) % 360  + 0,
                 "r": randAngle,
                 "name": "P",
                 "move": true
@@ -851,9 +850,8 @@ var gameEngineJS = (function(){
           sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
           sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
 
-          // change the angle and visible angle (buggy)
+          // change the angle and visible angle
           sprite["r"] = parseFloat(sprite["r"]) + Math.PI/4;
-          sprite["a"] = Math.floor( sprite["r"] * (180/Math.PI)) % 360  + 0; // Todo: FIX :/
 
           // TODO, maybe turn a random amount of degreens between 45 and 90?
         }
@@ -1248,13 +1246,13 @@ var gameEngineJS = (function(){
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
           // visible Sprite Angle
-          var fNiceAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
+          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
           // normalize
-          if (fNiceAngle < 0){
-            fNiceAngle += 2.0 * Math.PI;
+          if (fSpriteBeautyAngle < 0){
+            fSpriteBeautyAngle += 2.0 * Math.PI;
           }
-          if (fNiceAngle > 2.0 * Math.PI){
-            fNiceAngle -= 2.0 * Math.PI;
+          if (fSpriteBeautyAngle > 2.0 * Math.PI){
+            fSpriteBeautyAngle -= 2.0 * Math.PI;
           }
 
           // loops through the sprite pixels
@@ -1270,37 +1268,16 @@ var gameEngineJS = (function(){
 
                 var sSamplePixel = '';
 
-                // var fObjectAngle = Math.atan2(sprite["y"], sprite["x"]) - fPlayerA;
-                // if (fObjectAngle < -Math.PI){ fObjectAngle += 2.0 * Math.PI; }
-                // if (fObjectAngle > Math.PI){ fObjectAngle -= 2.0 * Math.PI; }
-
-
-                // accounts for the direction the sprite is facing
-                // nSampleDegrees = (Number(nDegrees) + Number(sprite["a"]) ) % 360 ;
-
-                // var fCurSpriteAngleR = (Number(sprite["r"]) % Math.PI*2) + (fPlayerA % Math.PI*2) ;
-                // var fCurSpriteAngleR = (Number(sprite["r"]) % Math.PI*2);
-
-                // _debugOutput(
-                //   'fNiceAngle: ' + fNiceAngle +
-                //   ' <br>PI_00: ' + PI_00 +
-                //   ' <br>PI_05: ' + PI_05 +
-                //   ' <br>PI_10: ' + PI_10 +
-                //   ' <br>PI_15: ' + PI_15 +
-                //   ' <br>PI_20: ' + PI_20 +
-                //   '<br> is? ' + (fNiceAngle < PI_15)
-                // );
-
-                if( fNiceAngle >= PI_00 && fNiceAngle < PI_05 ){
+                if( fSpriteBeautyAngle >= PI_00 && fSpriteBeautyAngle < PI_05 ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
                 }
-                else if( parseFloat(fNiceAngle) >= parseFloat(PI_05) && parseFloat(fNiceAngle) < parseFloat(PI_10) ){
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_05) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_10) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
                 }
-                else if( parseFloat(fNiceAngle) >= parseFloat(PI_10) && parseFloat(fNiceAngle) < parseFloat(PI_15) ){
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_10) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_15) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
                 }
-                else if( parseFloat(fNiceAngle) >= parseFloat(PI_15) && parseFloat(fNiceAngle) < parseFloat(PI_20) ){
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_15) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_20) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
                 }
                 // else{
