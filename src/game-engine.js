@@ -95,12 +95,13 @@ var gameEngineJS = (function(){
 
         // generates random Pogels :oooo
         oLevelSprites = {};
-        for( var m = 0; m < 100; m++){
+        for( var m = 0; m < 50; m++){
+          var randAngle = randomIntFromInterval(0, Math.PI*2);
           var oRandomSprite = {
               "x": randomIntFromInterval(0, nMapWidth),
               "y": randomIntFromInterval(0, nMapHeight),
-              "a": "0",
-              "r": randomIntFromInterval(0, Math.PI*2),
+              "a": Math.floor( randAngle * (180/Math.PI)) % 360  + 0,
+              "r": randAngle,
               "name": "P",
               "move": true
           }
@@ -1263,9 +1264,9 @@ var gameEngineJS = (function(){
                 else if(nSampleDegrees >= -180-45 && nSampleDegrees < -90-45 || nSampleDegrees >= 180-45 && nSampleDegrees < 270-45){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
                 }
-                // else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                // }
+                else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
+                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
+                }
                 else{
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
                 }
