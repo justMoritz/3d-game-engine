@@ -26,7 +26,6 @@ var gameEngineJS = (function(){
 
   var fDepthBuffer = [];
 
-
   // defaults
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
@@ -43,7 +42,6 @@ var gameEngineJS = (function(){
   // ▓
   // ▒
   // ░
-
 
   function randomIntFromInterval(min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -91,22 +89,26 @@ var gameEngineJS = (function(){
         fPlayerA = window[sLevelstring].fPlayerA;
 
         // load sprites
-        // oLevelSprites = window[sLevelstring].sprites;
+        oLevelSprites = window[sLevelstring].sprites;
 
-        // generates random Pogels :oooo
-        oLevelSprites = {};
-        for( var m = 0; m < 50; m++){
-          var randAngle = randomIntFromInterval(0, Math.PI*2);
-          var oRandomSprite = {
-              "x": randomIntFromInterval(0, nMapWidth),
-              "y": randomIntFromInterval(0, nMapHeight),
-              "a": Math.floor( randAngle * (180/Math.PI)) % 360  + 0,
-              "r": randAngle,
-              "name": "P",
-              "move": true
+        if( oLevelSprites == "autogen" ){
+
+          // generates random Pogels :oooo
+          oLevelSprites = {};
+          for( var m = 0; m < 50; m++){
+            var randAngle = randomIntFromInterval(0, Math.PI*2);
+            var oRandomSprite = {
+                "x": randomIntFromInterval(0, nMapWidth),
+                "y": randomIntFromInterval(0, nMapHeight),
+                "a": Math.floor( randAngle * (180/Math.PI)) % 360  + 0,
+                "r": randAngle,
+                "name": "P",
+                "move": true
+            }
+            oLevelSprites[m] = oRandomSprite ;
           }
-          oLevelSprites[m] = oRandomSprite ;
         }
+
 
         document.querySelector("body").style.color = window[sLevelstring].color;
         document.querySelector("body").style.background = window[sLevelstring].background;
