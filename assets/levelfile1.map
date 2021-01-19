@@ -23,33 +23,34 @@ levelfile1 = {
   fPlayerX: 14.0,
   fPlayerY: 0.5,
   fPlayerA: 1.5,
+  fPlayerA: 2.1,
   exitsto: "levelfile2.map",
   color: "white",
   background: "black",
-  sprites: "autogen",
-  // sprites: {
-  //   "1": {
-  //     "x": "13.75",
-  //     "y": "4.5",
-  //     "a": "180",
-  //     "r": "1.0",
-  //     "name": "P",
-  //     "move": true
-  //   },
-  //   // "2": {
-  //   //   "x": "3.5",
-  //   //   "y": "3.5",
-  //   //   "a": "0",
-  //   //   "name": "P",
-  //   //   "move": true
-  //   // },
-  //   // "3": {
-  //   //   "x": "11",
-  //   //   "y": "8",
-  //   //   "a": "180",
-  //   //   "r": "2",
-  //   //   "name": "P",
-  //   //   "move": true
-  //   // },
-  // },
+  // sprites: "autogen",
+  sprites: {
+    "1": {
+      "x": "13.75",
+      "y": "2.5",
+      "a": "180",
+      "r": "3.2",
+      "name": "P",
+      "move": true
+    },
+    // "2": {
+    //   "x": "3.5",
+    //   "y": "3.5",
+    //   "a": "0",
+    //   "name": "P",
+    //   "move": true
+    // },
+    // "3": {
+    //   "x": "11",
+    //   "y": "8",
+    //   "a": "180",
+    //   "r": "2",
+    //   "name": "P",
+    //   "move": true
+    // },
+  },
 };
