@@ -1245,7 +1245,7 @@ var gameEngineJS = (function(){
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
-          // visible Sprite Angle
+          // The angle the sprite is facing relative to the player
           var fSpriteBeautyAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
           // normalize
           if (fSpriteBeautyAngle < 0){
@@ -1262,6 +1262,7 @@ var gameEngineJS = (function(){
               // sample sprite
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
+
 
               // sample angled Glyphs if available
               if( "angles" in currentSpriteObject ){
@@ -1280,30 +1281,6 @@ var gameEngineJS = (function(){
                 else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_15) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_20) ){
                   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
                 }
-                // else{
-                //   sSamplePixel = "#";
-                // }
-
-
-                // if(nSampleDegrees >= -360-45 && nSampleDegrees < -270-45 || nSampleDegrees >= 0-45 && nSampleDegrees < 90-45){
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
-                // }
-                // else if(nSampleDegrees >= -270-45 && nSampleDegrees < -180-45 || nSampleDegrees >= 90-45 && nSampleDegrees < 180-45){
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
-                // }
-                // else if(nSampleDegrees >= -180-45 && nSampleDegrees < -90-45 || nSampleDegrees >= 180-45 && nSampleDegrees < 270-45){
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
-                // }
-                // else if(nSampleDegrees >= -90-45 && nSampleDegrees < 0-45 || nSampleDegrees >= 270-45 && nSampleDegrees < 360-45){
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                // }
-                // else{
-                //   sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                // }
-
-
-
-
               }
 
               // if not, use basic sprite
@@ -1324,6 +1301,7 @@ var gameEngineJS = (function(){
               var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
 
               if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth){
+                // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
                   // render to overlay
