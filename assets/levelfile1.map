@@ -20,10 +20,10 @@ levelfile1 = {
   nMapHeight: 16,
   nMapWidth: 16,
   map: map,
-  fPlayerX: 14.0,
-  fPlayerY: 0.5,
-  fPlayerA: 1.5,
-  fPlayerA: 2.1,
+  fPlayerX: 14.5,
+  fPlayerY: 1.5,
+  fPlayerA: 2.0,
+  // fPlayerA: 4.7,
   exitsto: "levelfile2.map",
   color: "white",
   background: "black",
@@ -31,26 +31,25 @@ levelfile1 = {
   sprites: {
     "1": {
       "x": "13.75",
-      "y": "2.5",
-      "a": "180",
-      "r": "3.2",
+      "y": "4.5",
+      "r": "4.5",
       "name": "P",
       "move": true
     },
-    // "2": {
-    //   "x": "3.5",
-    //   "y": "3.5",
-    //   "a": "0",
-    //   "name": "P",
-    //   "move": true
-    // },
-    // "3": {
-    //   "x": "11",
-    //   "y": "8",
-    //   "a": "180",
-    //   "r": "2",
-    //   "name": "P",
-    //   "move": true
-    // },
+    "2": {
+      "x": "3.5",
+      "y": "3.5",
+      "a": "0",
+      "name": "P",
+      "move": true
+    },
+    "3": {
+      "x": "11",
+      "y": "8",
+      "a": "180",
+      "r": "2",
+      "name": "P",
+      "move": true
+    },
   },
 };

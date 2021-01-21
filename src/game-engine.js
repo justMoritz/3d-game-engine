@@ -361,8 +361,6 @@ var gameEngineJS = (function(){
   var _fDrawFrame = function(screen, overlayscreen){
     var frame = _fPrepareFrame(screen, overlayscreen);
 
-    // _debugOutput( frame.length );
-
     var sOutput = "";
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
@@ -747,8 +745,6 @@ var gameEngineJS = (function(){
             fLooktimer += fYMoveFactor;
           }
 
-          // _debugOutput(fLooktimer);
-
         }
       };
     },
@@ -843,15 +839,28 @@ var gameEngineJS = (function(){
         sprite["x"] = parseFloat(sprite["x"]) + parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
         sprite["y"] = parseFloat(sprite["y"]) + parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
 
+        // collision coordinates (attempting to center sprite)
+        var fCollideY = parseFloat(sprite["y"]) - 0.5;
+        var fCollideX = parseFloat(sprite["x"]) + 0.25;
+
+        var fCollideY2 = parseFloat(sprite["y"]) + 0.25;
+        var fCollideX2 = parseFloat(sprite["x"]) - 0.5;
+
         // sprite has hit any other type other than blank
-        if( map[Math.round(sprite["y"]) * nMapWidth + Math.round(sprite["x"])] != '.' ){
+        if( map[ parseInt(fCollideY) * nMapWidth + parseInt(fCollideX)] != '.' || map[ parseInt(fCollideY2) * nMapWidth + parseInt(fCollideX2)] != '.' ){
 
           // reverse last movement
           sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
           sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
 
+          // repeat may help unstuck sprites
+          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+
           // change the angle and visible angle
-          sprite["r"] = parseFloat(sprite["r"]) + Math.PI/4;
+          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/2 ) % Math.PI*2; // still buggie
 
           // TODO, maybe turn a random amount of degreens between 45 and 90?
         }
@@ -878,7 +887,7 @@ var gameEngineJS = (function(){
 
       _moveHelpers.move();
 
-      // if(animationTimer == 10){
+      // if(animationTimer == 3 || animationTimer == 6 || animationTimer == 9 || animationTimer == 15){
         _moveSprites();
       // }
 
@@ -1231,9 +1240,11 @@ var gameEngineJS = (function(){
         // var bInPlayerView = true;
 
 
+        // only proceed if sprite is visible
         if( bInPlayerView && fDistanceFromPlayer >= 0.5 ){
 
-          // very similar to background floor and ceiling
+          // very similar operation to background floor and ceiling.
+          // Sprite height is default 1, but we can adjust with the factor passed in the sprite object/
           var fSpriteCeiling = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (parseFloat(fDistanceFromPlayer) ) * currentSpriteObject["hghtFctr"];
           var fSpriteFloor = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / (parseFloat(fDistanceFromPlayer) );
 
@@ -1304,10 +1315,16 @@ var gameEngineJS = (function(){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
+                // debug
+                // if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" ){
+                //   if (fDepthBuffer[nSpriteColumn] < fDistanceFromPlayer ){
+                //     sSpriteGlyph = 'm';
+                //   }
+
                   // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
-                  overlayscreen[ yccord*nScreenWidth + xccord] = sSpriteGlyph;
+                  overlayscreen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
 
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
