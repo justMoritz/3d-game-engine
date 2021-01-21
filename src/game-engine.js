@@ -716,37 +716,171 @@ var gameEngineJS = (function(){
       };
     },
 
-    // mouse
-    mouse: function(){
+    //
+    //
+    /**
+     * Y-Movement
+     * @param  {float}  fMoveInput   the movement from touch or mouse-input
+     * @param  {float}  fMoveAdjust  factor by which to multiply the recieved input
+     *
+     * Ultimately modifies the
+     *  `fLooktimer`
+     * variable, which is global :)
+     */
+    yMoveUpdate: function(fMoveInput, fMoveAdjust ){
+      // look up/down (with bounds)
+      // var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+      var fYMoveFactor = fMoveInput * fMoveAdjust;
+
+      // if the looktimer is negative (looking down), increase the speed
+      if( fLooktimer < 0 ){
+        fYMoveFactor = fYMoveFactor*4;
+      }
+
+      // the reason for the increased speed is that looking “down” becomes expotentially less,
+      // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
+      fLooktimer -= fYMoveFactor;
+      if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
+        fLooktimer += fYMoveFactor;
+      }
+    },
+
+    mouseLook: function(){
       var fMouseLookFactor = 0.002;
 
-      eScreen.onclick = function(){
+      document.body.requestPointerLock();
+      document.onmousemove = function (e) {
 
-        eScreen.classList.add("nomouse");
+        // look left/right
+        fPlayerA   += ( (e.movementX*fMouseLookFactor) || (e.mozMovementX*fMouseLookFactor) || (e.webkitMovementX*fMouseLookFactor) || 0);
 
-        document.body.requestPointerLock();
-        document.onmousemove = function (e) {
+        // look up and down
+        _moveHelpers.yMoveUpdate( ( e.movementY || e.mozMovementY || e.webkitMovementY || 0), 0.05 );
 
-          // look left/right
-          fPlayerA   += ( (e.movementX*fMouseLookFactor) || (e.mozMovementX*fMouseLookFactor) || (e.webkitMovementX*fMouseLookFactor) || 0);
+      }
+    },
 
-          // look up/down (with bounds)
-          var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+    // mouse
+    mouseinit: function(){
+      touchinputlook.onclick = _moveHelpers.mouseLook;
+      touchinputmove.onclick = _moveHelpers.mouseLook;
+    },
 
-          // if the looktimer is negative (looking down), increase the speed
-          if( fLooktimer < 0 ){
-            fYMoveFactor = fYMoveFactor*4;
-          }
+    oTouch: {
+      move: {
+        x: 0,
+        y: 0,
+        bFirstTouch: true,
+      },
+      look: {
+        x: 0,
+        y: 0,
+        bFirstTouch: true,
+      },
+    },
 
-          // the reason for the increased speed is that looking “down” becomes expotentially less,
-          // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
-          fLooktimer -= fYMoveFactor;
-          if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
-            fLooktimer += fYMoveFactor;
-          }
+    /**
+     * Calculates the difference between touch events fired
+     * @param  {object} prev  information about the state
+     * @param  {event}  e     the event
+     * @return {object}       x and y coordinates
+     */
+    touchCalculate: function(prev, e){
+      var oDifference = {};
 
-        }
+      // fetch and compare touch-points
+      // always [0] because no multitouch in look-area
+      var fInputX = e.changedTouches[0].clientX;
+      var fInputY = e.changedTouches[0].clientY;
+
+      var differenceX = fInputX - prev.x;
+      var differenceY = fInputY - prev.y;
+
+      prev.x = fInputX;
+      prev.y = fInputY;
+
+      oDifference = {
+        x: differenceX,
+        y: differenceY,
       };
+
+      return oDifference;
+    },
+
+    // initialize the touch listeners for walk and move areas
+    touchinit: function(){
+
+      // look (left hand of screen)
+      eTouchLook.addEventListener('touchmove', function(e){
+
+        // fetches differences from input
+        var oDifferences = _moveHelpers.touchCalculate( _moveHelpers.oTouch.look, e);
+
+        // makes sure no crazy
+        if( oDifferences.x < 10 && oDifferences.x > -10 ){
+          _moveHelpers.oTouch.look.bFirstTouch = false;
+        }
+
+        if( !_moveHelpers.oTouch.look.bFirstTouch ){
+
+          // left and right
+          fPlayerA += oDifferences.x * 0.005;
+
+          // up and down
+          _moveHelpers.yMoveUpdate(oDifferences.y, 0.1);
+        }
+      });
+
+      // reset look
+      eTouchLook.addEventListener('touchend', function(){
+        _moveHelpers.oTouch.look.x = 0;
+        _moveHelpers.oTouch.look.y = 0;
+        _moveHelpers.oTouch.look.bFirstTouch = true;
+      });
+
+
+      // move (right hand of screen)
+      eTouchMove.addEventListener('touchmove', function(e){
+        var oDifferences = _moveHelpers.touchCalculate( _moveHelpers.oTouch.move, e);
+
+        // makes sure no crazy
+        if( oDifferences.x < 10 && oDifferences.x > -10 ){
+          _moveHelpers.oTouch.move.bFirstTouch = false;
+        }
+
+        if( !_moveHelpers.oTouch.move.bFirstTouch ){
+
+          // walk
+          fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
+          fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
+
+          // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
+          if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+            _moveHelpers.checkExit();
+            fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
+            fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
+          }
+
+          // strafe
+          fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
+          fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
+
+          // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
+          if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+            _moveHelpers.checkExit();
+            fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
+            fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
+          }
+        }
+      });
+
+      // reset move
+      eTouchMove.addEventListener('touchend', function(){
+        _moveHelpers.oTouch.move.x = 0;
+        _moveHelpers.oTouch.move.y = 0;
+        _moveHelpers.oTouch.move.bFirstTouch = true;
+      });
+
     },
 
     checkExit: function(){
@@ -776,7 +910,7 @@ var gameEngineJS = (function(){
         fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -788,7 +922,7 @@ var gameEngineJS = (function(){
         fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -800,7 +934,7 @@ var gameEngineJS = (function(){
         fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -812,7 +946,7 @@ var gameEngineJS = (function(){
         fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (#), if so, reverse
+        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -1315,12 +1449,6 @@ var gameEngineJS = (function(){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
-                // debug
-                // if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" ){
-                //   if (fDepthBuffer[nSpriteColumn] < fDistanceFromPlayer ){
-                //     sSpriteGlyph = 'm';
-                //   }
-
                   // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
@@ -1407,9 +1535,12 @@ var gameEngineJS = (function(){
     // prep document
     eScreen = document.getElementById("display");
     eDebugOut = document.getElementById("debug");
+    eTouchLook = document.getElementById("touchinputlook");
+    eTouchMove = document.getElementById("touchinputmove");
 
     _moveHelpers.keylisten();
-    _moveHelpers.mouse();
+    _moveHelpers.mouseinit();
+    _moveHelpers.touchinit();
 
     // TODO: move to in-game menu
     document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });

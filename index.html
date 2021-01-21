@@ -7,6 +7,7 @@
     <script id="gameEngine" type="text/javascript" src="src/game-engine.js"></script>
     <script id="textures" type="text/javascript" src="assets/textures.tex"></script>
     <script id="textures" type="text/javascript" src="assets/sprites.tex"></script>
+    <!-- <script id="textures" type="text/javascript" src="assets/pogelfont.tex"></script> -->
     <script id="map" type="text/javascript" src="assets/levelfile1.map"></script>
 
     <style>
@@ -16,11 +17,27 @@
         font-family: 'Consolas',Courier, monospace;
         font-size: 8px;
         line-height: 1.15em;
-        text-align: center;
         overflow: hidden;
+        text-align: center;
+      }
+      #game{
+        position: relative;
       }
       #display{
         display: inline-block;
+      }
+      #touchinputmove,
+      #touchinputlook{
+        height: 100%;
+        position: absolute;
+        top: 0;
+        width: 50%;
+      }
+      #touchinputmove{
+        right: 0;
+      }
+      #touchinputlook{
+        left: 0;
       }
       .nomouse{
         cursor: none;
@@ -39,6 +56,8 @@
 
     <div id="game">
       <div id="display"></div>
+      <div id="touchinputlook"></div>
+      <div id="touchinputmove"></div>
     </div>
 
 
