@@ -1449,12 +1449,6 @@ var gameEngineJS = (function(){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
-                // debug
-                // if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" ){
-                //   if (fDepthBuffer[nSpriteColumn] < fDistanceFromPlayer ){
-                //     sSpriteGlyph = 'm';
-                //   }
-
                   // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
