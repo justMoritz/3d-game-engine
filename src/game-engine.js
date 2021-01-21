@@ -716,6 +716,35 @@ var gameEngineJS = (function(){
       };
     },
 
+    //
+    //
+    /**
+     * Y-Movement
+     * @param  {float}  fMoveInput   the movement from touch or mouse-input
+     * @param  {float}  fMoveAdjust  factor by which to multiply the recieved input
+     *
+     * Ultimately modifies the
+     *  `fLooktimer`
+     * variable, which is global :)
+     */
+    yMoveUpdate: function(fMoveInput, fMoveAdjust ){
+      // look up/down (with bounds)
+      // var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
+      var fYMoveFactor = fMoveInput * fMoveAdjust;
+
+      // if the looktimer is negative (looking down), increase the speed
+      if( fLooktimer < 0 ){
+        fYMoveFactor = fYMoveFactor*4;
+      }
+
+      // the reason for the increased speed is that looking “down” becomes expotentially less,
+      // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
+      fLooktimer -= fYMoveFactor;
+      if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
+        fLooktimer += fYMoveFactor;
+      }
+    },
+
     // mouse
     mouse: function(){
       var fMouseLookFactor = 0.002;
@@ -730,23 +759,54 @@ var gameEngineJS = (function(){
           // look left/right
           fPlayerA   += ( (e.movementX*fMouseLookFactor) || (e.mozMovementX*fMouseLookFactor) || (e.webkitMovementX*fMouseLookFactor) || 0);
 
-          // look up/down (with bounds)
-          var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
-
-          // if the looktimer is negative (looking down), increase the speed
-          if( fLooktimer < 0 ){
-            fYMoveFactor = fYMoveFactor*4;
-          }
-
-          // the reason for the increased speed is that looking “down” becomes expotentially less,
-          // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
-          fLooktimer -= fYMoveFactor;
-          if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
-            fLooktimer += fYMoveFactor;
-          }
+          // look up and down
+          _moveHelpers.yMoveUpdate( ( e.movementY || e.mozMovementY || e.webkitMovementY || 0), 0.05 );
 
         }
       };
+    },
+
+    touch: function(){
+
+      var fPrevX = 0;
+      var fPrevY = 0;
+      var bFirstTouch = true;
+
+      eScreen.addEventListener('touchmove', function(e){
+
+        // fetch and compare touch-points
+        // always [0] because no multitouch in look-area
+        var fInputX = e.changedTouches[0].clientX;
+        var fInputY = e.changedTouches[0].clientY;
+
+        var differenceX = fInputX - fPrevX;
+        var differenceY = fInputY - fPrevY;
+
+        fPrevX = fInputX;
+        fPrevY = fInputY;
+
+        // look left/right
+        if( differenceX < 10 && differenceX > -10 ){
+          bFirstTouch = false;
+        }
+
+        if( !bFirstTouch ){
+
+          // left and right
+          fPlayerA += differenceX * 0.005;
+
+          // up and down
+          _moveHelpers.yMoveUpdate(differenceY, 0.1);
+        }
+
+      });
+
+      eScreen.addEventListener('touchend', function(){
+        fPrevX = 0;
+        fPrevY = 0;
+        bFirstTouch = true;
+      });
+
     },
 
     checkExit: function(){
@@ -1410,6 +1470,7 @@ var gameEngineJS = (function(){
 
     _moveHelpers.keylisten();
     _moveHelpers.mouse();
+    _moveHelpers.touch();
 
     // TODO: move to in-game menu
     document.getElementById("solid").addEventListener("click", function(){ nRenderMode = 0 });
