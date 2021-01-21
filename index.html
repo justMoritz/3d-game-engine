@@ -15,16 +15,18 @@
         background: black;
         color: white;
         font-family: 'Consolas',Courier, monospace;
-        font-size: 8px;
+        font-size: 6px;
         line-height: 1.15em;
         overflow: hidden;
         text-align: center;
+        touch-action: none;
       }
       #game{
         position: relative;
       }
       #display{
         display: inline-block;
+        pointer-events: none;
       }
       #touchinputmove,
       #touchinputlook{
@@ -32,12 +34,13 @@
         position: absolute;
         top: 0;
         width: 50%;
+        touch-action: pan-left, pan-right, pan-up, pan-down;
       }
       #touchinputmove{
-        right: 0;
+        left: 0;
       }
       #touchinputlook{
-        left: 0;
+        right: 0;
       }
       .nomouse{
         cursor: none;
@@ -47,7 +50,7 @@
       }
       @media(max-width: 768px){
         body{
-          font-size: 5px;
+          font-size: 3px;
         }
       }
     </style>

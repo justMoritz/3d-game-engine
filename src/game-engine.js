@@ -50,9 +50,30 @@ var gameEngineJS = (function(){
   // ▒
   // ░
 
-  function randomIntFromInterval(min, max) { // min and max included
+  function _randomIntFromInterval(min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+
+
+  // generates only pogels that can be placed
+  _generateRandomCoordinates = function(){
+
+    var x = parseFloat(_randomIntFromInterval(0, nMapWidth)) + 0.25;
+    var y = parseFloat(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+
+    while( map[ parseInt(y) * nMapWidth + parseInt(x)] != '.' ){
+      var x = parseFloat(_randomIntFromInterval(0, nMapWidth)) + 0.25;
+      var y = parseFloat(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+    }
+
+    var oCoordinates = {
+      x: x,
+      y: y,
+    };
+
+    return oCoordinates;
+  };
+
 
   /**
    * Loads
@@ -102,11 +123,12 @@ var gameEngineJS = (function(){
 
           // generates random Pogels :oooo
           oLevelSprites = {};
-          for( var m = 0; m < 50; m++){
-            var randAngle = randomIntFromInterval(0, Math.PI*2);
+          for( var m = 0; m < Math.round( nMapWidth * nMapWidth / 10 ); m++){
+            var randAngle = _randomIntFromInterval(0, Math.PI*2);
+            var randomCoordinates = _generateRandomCoordinates();
             var oRandomSprite = {
-                "x": randomIntFromInterval(0, nMapWidth),
-                "y": randomIntFromInterval(0, nMapHeight),
+                "x": randomCoordinates.x,
+                "y": randomCoordinates.y,
                 "r": randAngle,
                 "name": "P",
                 "move": true
