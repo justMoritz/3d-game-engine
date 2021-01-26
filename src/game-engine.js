@@ -27,6 +27,7 @@ var gameEngineJS = (function(){
   var bJumping;
   var bFalling;
   var bRunning;
+  var bPaused;
 
   var nJumptimer = 0;
   var fLooktimer = 0;
@@ -680,7 +681,13 @@ var gameEngineJS = (function(){
         // _debugOutput(e.which);
 
         if (e.which == 80) { // p
-          clearInterval(gameRun);
+          if( bPaused ){
+            _testScreenSizeAndStartTheGame();
+            bPaused = false;
+          }else{
+            clearInterval(gameRun);
+            bPaused = true;
+          }
         }
         if (e.which == 16) { // shift
           bRunning = true;
@@ -745,9 +752,7 @@ var gameEngineJS = (function(){
      * @param  {float}  fMoveInput   the movement from touch or mouse-input
      * @param  {float}  fMoveFactor  factor by which to multiply the recieved input
      *
-     * Ultimately modifies the
-     *  `fLooktimer`
-     * variable, which is global :)
+     * Ultimately modifies the `fLooktimer` variable, which is global :)
      */
     yMoveUpdate: function(fMoveInput, fMoveFactor ){
       // look up/down (with bounds)
@@ -786,7 +791,7 @@ var gameEngineJS = (function(){
       touchinputmove.onclick = _moveHelpers.mouseLook;
     },
 
-    // object to hold and track touch-inputs
+    // holds and tracks touch-inputs
     oTouch: {
       move: {
         x: 0,
@@ -990,7 +995,7 @@ var gameEngineJS = (function(){
 
       // if the sprite's move flag is set
       if( sprite["move"] ){
-        var fMovementSpeed = 0.05;
+        var fMovementSpeed = 0.01;
 
         // move the sprite along it's radiant line
         sprite["x"] = parseFloat(sprite["x"]) + parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
@@ -1025,6 +1030,49 @@ var gameEngineJS = (function(){
   };
 
 
+  function compare( a, b ) {
+    if ( a["z"] < b["z"] ){
+      return -1;
+    }
+    if ( a["z"] > b["z"] ){
+      return 1;
+    }
+    return 0;
+  }
+
+  /**
+   * Sorts the Sprite list based on distance from the player
+   */
+  var _updateSpriteBuffer = function(){
+
+    // calculates the distance to the player
+    for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
+      var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+      var X = fPlayerX - sprite["x"];
+      var Y = fPlayerX - sprite["y"];
+      var Dsq = Math.pow(X, 2) + Math.pow(Y, 2);
+      var fDistance = Math.sqrt(Dsq);
+      sprite["z"] = fDistance;
+    }
+
+    // converts array of objects to list
+    var newList = [];
+    for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
+      newList.push(oLevelSprites[Object.keys(oLevelSprites)[sj]]);
+    }
+
+    // sorts the list
+    newList.sort( compare );
+
+    // make object from array again
+    oLevelSprites = {};
+    for(var sk=0; sk < Object.keys(newList).length; sk++ ){
+      oLevelSprites[sk] = newList[sk]
+    }
+  };
+
+
   /**
    * The basic game loop
    */
@@ -1039,9 +1087,8 @@ var gameEngineJS = (function(){
 
       _moveHelpers.move();
 
-      // if(animationTimer == 3 || animationTimer == 6 || animationTimer == 9 || animationTimer == 15){
-        _moveSprites();
-      // }
+      // _updateSpriteBuffer();
+      _moveSprites();
 
 
       // allows jumping for only a certain amount of time
@@ -1410,7 +1457,7 @@ var gameEngineJS = (function(){
 
               // animation-cycle available, determine the current cycle
               // TODO: randomize cycle position
-              if( "walkframes" in currentSpriteObject ){
+              if( sprite["move"] && "walkframes" in currentSpriteObject ){
                 if( animationTimer < 5 ){
                   sAnimationFrame = "W1";
                 }else if( animationTimer >= 5 && animationTimer < 10 ){
@@ -1469,7 +1516,7 @@ var gameEngineJS = (function(){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
-                  // render to overlay
+                  // render pixels to screen
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
                   screen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
