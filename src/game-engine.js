@@ -45,6 +45,9 @@ var gameEngineJS = (function(){
   var map = "";
   var sLevelstring = "";
 
+  var gameRun;
+  var animationTimer = 0;
+
   // █
   // ▓
   // ▒
@@ -72,6 +75,27 @@ var gameEngineJS = (function(){
     };
 
     return oCoordinates;
+  };
+
+
+  // generate random Sprites
+  var _generateRandomSprites = function( nNumberOfSprites ){
+    var nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 )
+    // generates random Pogels :oooo
+    var oRandomLevelSprites = {};
+    for( var m = 0; m < nNumberOfSprites; m++){
+      var randAngle = _randomIntFromInterval(0, Math.PI*2);
+      var randomCoordinates = _generateRandomCoordinates();
+      var oRandomSprite = {
+          "x": randomCoordinates.x,
+          "y": randomCoordinates.y,
+          "r": randAngle,
+          "name": "P",
+          "move": true
+      }
+      oRandomLevelSprites[m] = oRandomSprite ;
+    }
+    return oRandomLevelSprites;
   };
 
 
@@ -103,44 +127,28 @@ var gameEngineJS = (function(){
       });
     };
 
-    var scriptLoaded = loadScriptAsync(level, sLevelstring);
+    var levelLoaded = loadScriptAsync(level, sLevelstring);
 
-    scriptLoaded.then(function(){
-        // updates the level map and dimensions
-        map = window[sLevelstring].map;
-        nMapHeight = window[sLevelstring].nMapHeight;
-        nMapWidth = window[sLevelstring].nMapWidth;
+    levelLoaded.then(function(){
+      // updates the level map and dimensions
+      map = window[sLevelstring].map;
+      nMapHeight = window[sLevelstring].nMapHeight;
+      nMapWidth = window[sLevelstring].nMapWidth;
 
-        // places the player at the map starting point
-        fPlayerX = window[sLevelstring].fPlayerX;
-        fPlayerY = window[sLevelstring].fPlayerY;
-        fPlayerA = window[sLevelstring].fPlayerA;
+      // places the player at the map starting point
+      fPlayerX = window[sLevelstring].fPlayerX;
+      fPlayerY = window[sLevelstring].fPlayerY;
+      fPlayerA = window[sLevelstring].fPlayerA;
 
-        // load sprites
-        oLevelSprites = window[sLevelstring].sprites;
+      // load sprites
+      oLevelSprites = window[sLevelstring].sprites;
 
-        if( oLevelSprites == "autogen" ){
+      if( oLevelSprites == "autogen" ){
+        oLevelSprites = _generateRandomSprites();
+      }
 
-          // generates random Pogels :oooo
-          oLevelSprites = {};
-          for( var m = 0; m < Math.round( nMapWidth * nMapWidth / 10 ); m++){
-            var randAngle = _randomIntFromInterval(0, Math.PI*2);
-            var randomCoordinates = _generateRandomCoordinates();
-            var oRandomSprite = {
-                "x": randomCoordinates.x,
-                "y": randomCoordinates.y,
-                "r": randAngle,
-                "name": "P",
-                "move": true
-            }
-            oLevelSprites[m] = oRandomSprite ;
-          }
-        }
-
-
-        document.querySelector("body").style.color = window[sLevelstring].color;
-        document.querySelector("body").style.background = window[sLevelstring].background;
-
+      document.querySelector("body").style.color = window[sLevelstring].color;
+      document.querySelector("body").style.background = window[sLevelstring].background;
     });
 
 
@@ -165,7 +173,6 @@ var gameEngineJS = (function(){
    * @return {string}
    */
   var _getSamplePixel = function(texture, x, y){
-    // _debugOutput( texture );
 
     var scaleFactor = texture["scale"]  || defaultTexScale;
     var texWidth    = texture["width"]  || defaultTexWidth;
@@ -231,7 +238,7 @@ var gameEngineJS = (function(){
   }
 
 
-  // gonna leave the console for errors, logging seems to kill performance
+  // leaving the console for errors, logging seems to kill performance
   var _debugOutput = function(input){
     eDebugOut.innerHTML = input;
   };
@@ -242,8 +249,9 @@ var gameEngineJS = (function(){
     return ( a && (a % b === 0));
   }
 
-  // lookup table “for fine-control” or “for perfomance”
-  // …(but really because I suuuuuuck at logic [apparently] )
+
+  // lookup-table “for fine-control” or “for perfomance”
+  // …(but really because I couldn't figure out the logic [apparently] )
   var _skipEveryXrow = function(input){
     input = Math.round(input);
     switch( Number(input) ) {
@@ -280,13 +288,20 @@ var gameEngineJS = (function(){
   };
 
 
-  var _printCompositPixel = function(oInput, oOverlay, index){
+  /**
+   * Determines with Pixels to use, sInput
+   * @param  {string} oInput    Main Pixel
+   * @param  {string} sOverlay  Overlay Pixel
+   * @param  {int} nIndex       Index
+   * @return {[string]}         Final Pixel
+   */
+  var _printCompositPixel = function(sInput, sOverlay, nIndex){
     var sOutput = "";
-    // if oOverlay !0, appends it to the output instead
-    if( oOverlay && oOverlay[index] != 0){
-      sOutput += oOverlay[index];
+    // if sOverlay !0, appends it to the output instead
+    if( sOverlay && sOverlay[nIndex] != 0){
+      sOutput += sOverlay[nIndex];
     }else{
-      sOutput += oInput[index];
+      sOutput += sInput[nIndex];
     }
     return sOutput;
   };
@@ -303,15 +318,12 @@ var gameEngineJS = (function(){
     var eTarget  = eTarget || eScreen;
     var sOutput = [];
 
-
     // this is the maximum of variation created by the lookup timer, aka the final lookmodifier value
     var neverMoreThan = Math.round(nScreenHeight / _skipEveryXrow(fLooktimer) - 1);
-
 
     // used to skew the image
     var globalPrintIndex = 0;
     var fLookModifier = 0;
-
 
     // if looking up, the starting point is the max number of pixesl to indent,
     // which will be decremented, otherwise it remains 0, which will be incremented
@@ -324,7 +336,6 @@ var gameEngineJS = (function(){
 
       // increment the fLookModifier every time it needs to grow (grows per row)
       if ( _everyAofB(row, _skipEveryXrow(fLooktimer)) ) {
-
         if( fLooktimer > 0 ){ // looking up
           fLookModifier--;
         }else{
@@ -340,7 +351,6 @@ var gameEngineJS = (function(){
       var toBeRemoved = (2*fLookModifier);
       var removeFrom = [];
 
-
       //  make a new array that contains the indices of the elements to print
       // (removes X amount of elements from array)
       var items = [];
@@ -353,7 +363,6 @@ var gameEngineJS = (function(){
       // [1,2, ,4,5, ,7,8]
       //   [1,2,4,5,7,8]
       removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
-
 
       // loops through each rows of pixels
       for(var rpix = 0; rpix < nScreenWidth; rpix++){
@@ -420,8 +429,6 @@ var gameEngineJS = (function(){
   // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
 
-    shades: "$@B%8&WM#o*ahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`.",
-
     renderWall: function(j, fDistanceToWall, sWallDirection, pixel){
 
       var fill = "";
@@ -432,16 +439,9 @@ var gameEngineJS = (function(){
       var b25  = "&#9617;";
       var b0   = "&nbsp;";
 
-      // var b100 = _rh.shades[0]; // var b100 = "$";
-      // var b75  = _rh.shades[8]; // var b75  = "#"
-      // var b50  = _rh.shades[9]; // var b50  = "o"
-      // var b25  = _rh.shades[10]; // var b25  = "*"
-      // var b0   = _rh.shades[65]; // var b0   = "."
-
-
       if( sWallDirection === "N" || sWallDirection === "S" ){
 
-        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+        if(fDistanceToWall < fDepth / 5.5 ){
 
           if( pixel === "#" ){
             fill = b100;
@@ -454,7 +454,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+        else if(fDistanceToWall < fDepth / 3.66 ){
 
           if( pixel === "#" ){
             fill = b75;
@@ -467,7 +467,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+        else if(fDistanceToWall < fDepth / 2.33 ){
 
           if( pixel === "#" ){
             fill = b50;
@@ -480,7 +480,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 1 ){    // 1
+        else if(fDistanceToWall < fDepth / 1 ){
 
           if( pixel === "#" ){
             fill = b25;
@@ -501,7 +501,7 @@ var gameEngineJS = (function(){
       // walldirection W/E
       else{
 
-        if(fDistanceToWall < fDepth / 5.5 ){   // 4
+        if(fDistanceToWall < fDepth / 5.5 ){
 
           if( pixel === "#" ){
             fill = b75;
@@ -514,7 +514,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 3.66 ){    // 3
+        else if(fDistanceToWall < fDepth / 3.66 ){
 
           if( pixel === "#" ){
             fill = b50;
@@ -527,7 +527,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 2.33 ){    // 2
+        else if(fDistanceToWall < fDepth / 2.33 ){
 
           if( pixel === "#" ){
             fill = b50;
@@ -540,7 +540,7 @@ var gameEngineJS = (function(){
           }
 
         }
-        else if(fDistanceToWall < fDepth / 1 ){    // 1
+        else if(fDistanceToWall < fDepth / 1 ){
 
           if( pixel === "#" ){
             fill = b25;
@@ -566,32 +566,32 @@ var gameEngineJS = (function(){
     renderSolidWall: function(j, fDistanceToWall, isBoundary){
       var fill = "&#9617;";
 
-      if(fDistanceToWall < fDepth / 6.5 ){   // 4
+      if(fDistanceToWall < fDepth / 6.5 ){
         fill = "&#9608;";
       }
-      else if(fDistanceToWall < fDepth / 4.66 ){    // 3
+      else if(fDistanceToWall < fDepth / 4.66 ){
         fill = "&#9619;";
       }
-      else if(fDistanceToWall < fDepth / 3.33 ){    // 2
+      else if(fDistanceToWall < fDepth / 3.33 ){
         fill = "&#9618;";
       }
-      else if(fDistanceToWall < fDepth / 1 ){    // 1
+      else if(fDistanceToWall < fDepth / 1 ){
         fill = "&#9617;";
       }else{
         fill = "&nbsp;";
       }
 
       if( isBoundary ){
-        if(fDistanceToWall < fDepth / 6.5 ){   // 4
+        if(fDistanceToWall < fDepth / 6.5 ){
           fill = "&#9617;";
         }
-        else if(fDistanceToWall < fDepth / 4.66 ){    // 3
+        else if(fDistanceToWall < fDepth / 4.66 ){
           fill = "&#9617;";
         }
-        else if(fDistanceToWall < fDepth / 3.33 ){    // 2
+        else if(fDistanceToWall < fDepth / 3.33 ){
           fill = "&nbsp;";
         }
-        else if(fDistanceToWall < fDepth / 1 ){    // 1
+        else if(fDistanceToWall < fDepth / 1 ){
           fill = "&nbsp;";
         }else{
           fill = "&nbsp;";
@@ -650,7 +650,7 @@ var gameEngineJS = (function(){
     renderCeiling: function(j){
       var fill = "`";
 
-      // draw floor, in different shades
+      // draw ceiling, in different shades
       b = 1 - (j -nScreenHeight / 2) / (nScreenHeight / 2);
       if(b < 0.25){
         fill = "`";
@@ -743,27 +743,26 @@ var gameEngineJS = (function(){
     /**
      * Y-Movement
      * @param  {float}  fMoveInput   the movement from touch or mouse-input
-     * @param  {float}  fMoveAdjust  factor by which to multiply the recieved input
+     * @param  {float}  fMoveFactor  factor by which to multiply the recieved input
      *
      * Ultimately modifies the
      *  `fLooktimer`
      * variable, which is global :)
      */
-    yMoveUpdate: function(fMoveInput, fMoveAdjust ){
+    yMoveUpdate: function(fMoveInput, fMoveFactor ){
       // look up/down (with bounds)
-      // var fYMoveFactor = ( (e.movementY*0.05) || (e.mozMovementY*0.05) || (e.webkitMovementY*0.05) || 0);
-      var fYMoveFactor = fMoveInput * fMoveAdjust;
+      var fYMoveBy = fMoveInput * fMoveFactor;
 
       // if the looktimer is negative (looking down), increase the speed
       if( fLooktimer < 0 ){
-        fYMoveFactor = fYMoveFactor*4;
+        fYMoveBy = fYMoveBy*4;
       }
 
       // the reason for the increased speed is that looking “down” becomes expotentially less,
-      // so we are artificially increasing the down-factor. It"s a hack, but it works okay!
-      fLooktimer -= fYMoveFactor;
+      // so we are artificially increasing the down-factor. It's a hack, but it works okay!
+      fLooktimer -= fYMoveBy;
       if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
-        fLooktimer += fYMoveFactor;
+        fLooktimer += fYMoveBy;
       }
     },
 
@@ -778,7 +777,6 @@ var gameEngineJS = (function(){
 
         // look up and down
         _moveHelpers.yMoveUpdate( ( e.movementY || e.mozMovementY || e.webkitMovementY || 0), 0.05 );
-
       }
     },
 
@@ -788,6 +786,7 @@ var gameEngineJS = (function(){
       touchinputmove.onclick = _moveHelpers.mouseLook;
     },
 
+    // object to hold and track touch-inputs
     oTouch: {
       move: {
         x: 0,
@@ -811,7 +810,7 @@ var gameEngineJS = (function(){
       var oDifference = {};
 
       // fetch and compare touch-points
-      // always [0] because no multitouch in look-area
+      // always [0] because no multitouch
       var fInputX = e.changedTouches[0].clientX;
       var fInputY = e.changedTouches[0].clientY;
 
@@ -860,7 +859,6 @@ var gameEngineJS = (function(){
         _moveHelpers.oTouch.look.bFirstTouch = true;
       });
 
-
       // move (right hand of screen)
       eTouchMove.addEventListener('touchmove', function(e){
         var oDifferences = _moveHelpers.touchCalculate( _moveHelpers.oTouch.move, e);
@@ -870,6 +868,7 @@ var gameEngineJS = (function(){
           _moveHelpers.oTouch.move.bFirstTouch = false;
         }
 
+        // first touch will be a huge difference, that's why we only move after the first touch
         if( !_moveHelpers.oTouch.move.bFirstTouch ){
 
           // walk
@@ -980,7 +979,9 @@ var gameEngineJS = (function(){
   };
 
 
-
+  /**
+   * Function that handles movement of all sprites
+   */
   var _moveSprites = function(){
 
     // for each sprite object
@@ -1016,17 +1017,12 @@ var gameEngineJS = (function(){
           sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
 
           // change the angle and visible angle
-          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/2 ) % Math.PI*2; // still buggie
-
           // TODO, maybe turn a random amount of degreens between 45 and 90?
+          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/1.5 ) % Math.PI*2; // still buggie
         }
       } // end if sprite move
     }
   };
-
-
-  var gameRun;
-  var animationTimer = 0;
 
 
   /**
@@ -1328,38 +1324,15 @@ var gameEngineJS = (function(){
         } // end draw column loop
 
 
-        // Overlay Draw
+        // Object-Draw (removed overlayscreen)
         for(var y = 0; y < nScreenHeight; y++){
-
-          // sky
-          if( y < nObjectCeiling){
-            // sky is always 0 on overlayscreen
-            overlayscreen[y*nScreenWidth+i] = "0";
-          }
-
-          // solid block
-          else if( y > nObjectCeiling && y <= nObjectFloor ){
-
-            // Floortile Walltype
+          if( y > nObjectCeiling && y <= nObjectFloor ){
             if(sObjectType == "o"){
-              if( y < nFObjectBackwall ){
-                overlayscreen[y*nScreenWidth+i] = "0";
+              if( y >=  nFObjectBackwall ){
+                screen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
               }
-              else{
-                overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
-                // overlayscreen[y*nScreenWidth+i] = "&nbsp;";
-              }
-            }else{
-              overlayscreen[y*nScreenWidth+i] = "0";
             }
           }
-
-          // floor
-          else {
-            // overlayscreen floor is always 0
-            overlayscreen[y*nScreenWidth+i] = "0";
-          }
-
         } // end draw column loop
       }  // end column loop
 
@@ -1474,7 +1447,7 @@ var gameEngineJS = (function(){
                   // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
-                  overlayscreen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
+                  screen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
 
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
@@ -1491,8 +1464,7 @@ var gameEngineJS = (function(){
       }
 
 
-      _fDrawFrame(screen, overlayscreen);
-      // _fDrawFrame(overlayscreen, false, eDebugOut);
+      _fDrawFrame(screen, false);
 
     }
   };
