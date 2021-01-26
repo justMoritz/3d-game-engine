@@ -370,6 +370,10 @@ pogelrightW2 += ".....***7**7777*..";
 pogelrightW2 += ".....***7**77***..";
 pogelrightW2 += ".....*********....";
 
+var pogelHeight = 25;
+var pogelWidth =  18;
+var pogelScale =  1;
+
 
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
@@ -409,85 +413,87 @@ var allSprites = {
 
   "P": {
     "texture": pogelfront,
+    "walkframes": true,
+    "height": 25,
+    "width": 18,
+    "scale": 1,
+    "aspctRt": 1.66,
+    "hghtFctr": 0.4,
     "angles":{
       "F": {
         "texture": pogelfront,
         "height": 25,
         "width": 18,
         "scale": 1,
-      },
-      "FW1": {
-        "texture": pogelfrontW1,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
-      },
-      "FW2": {
-        "texture": pogelfrontW2,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
+        "W1": {
+          "texture": pogelfrontW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelfrontW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
       },
       "B": {
         "texture": pogelback,
         "height": 25,
         "width": 18,
         "scale": 1,
+        "W1": {
+          "texture": pogelbackW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelbackW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
       },
-      "BW1": {
-        "texture": pogelbackW1,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
-      },
-      "BW2": {
-        "texture": pogelbackW2,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
-      },
+
       "L": {
         "texture": pogelleft,
         "height": 25,
         "width": 18,
         "scale": 1,
-      },
-      "LW1": {
-        "texture": pogelleftW1,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
-      },
-      "LW2": {
-        "texture": pogelleftW2,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
+        "W1": {
+          "texture": pogelleftW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelleftW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
       },
       "R": {
         "texture": pogelright,
         "height": 25,
         "width": 18,
         "scale": 1,
-      },
-      "RW1": {
-        "texture": pogelrightW1,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
-      },
-      "RW2": {
-        "texture": pogelrightW2,
-        "height": 25,
-        "width": 18,
-        "scale": 1,
+        "W1": {
+          "texture": pogelrightW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelrightW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
       },
     },
-    "height": 25,
-    "width": 18,
-    "scale": 1,
-    "aspctRt": 1.66,
-    "hghtFctr": 0.4,
   },
 };
 

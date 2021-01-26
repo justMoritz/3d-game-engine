@@ -27,29 +27,29 @@ levelfile1 = {
   exitsto: "levelfile2.map",
   color: "white",
   background: "black",
-  sprites: "autogen",
-  // sprites: {
-  //   "1": {
-  //     "x": "13.75",
-  //     "y": "4.5",
-  //     "r": "4.5",
-  //     "name": "P",
-  //     "move": true
-  //   },
-  //   "2": {
-  //     "x": "3.5",
-  //     "y": "3.5",
-  //     "a": "0.1",
-  //     "name": "P",
-  //     "move": true
-  //   },
-  //   "3": {
-  //     "x": "11",
-  //     "y": "8",
-  //     "a": "180",
-  //     "r": "2.1",
-  //     "name": "P",
-  //     "move": true
-  //   },
-  // },
+  // sprites: "autogen",
+  sprites: {
+    "1": {
+      "x": "13.75",
+      "y": "4.5",
+      "r": "4.5",
+      "name": "P",
+      "move": true
+    },
+    "2": {
+      "x": "3.5",
+      "y": "3.5",
+      "a": "0.1",
+      "name": "P",
+      "move": true
+    },
+    "3": {
+      "x": "11",
+      "y": "8",
+      "a": "180",
+      "r": "2.1",
+      "name": "P",
+      "move": true
+    },
+  },
 };
