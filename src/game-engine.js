@@ -1403,28 +1403,53 @@ var gameEngineJS = (function(){
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
 
+              var sSamplePixel = '';
 
-              // sample angled Glyphs if available
-              if( "angles" in currentSpriteObject ){
+              var sSpAngle = false;
+              var sAnimationFrame = false;
 
-                var sSamplePixel = '';
-
-                if( fSpriteBeautyAngle >= PI_00 && fSpriteBeautyAngle < PI_05 ){
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["B"], fSampleX, fSampleY);
-                }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_05) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_10) ){
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["L"], fSampleX, fSampleY);
-                }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_10) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_15) ){
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["F"], fSampleX, fSampleY);
-                }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_15) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_20) ){
-                  sSamplePixel = _getSamplePixel(currentSpriteObject["angles"]["R"], fSampleX, fSampleY);
+              // animation-cycle available, determine the current cycle
+              // TODO: randomize cycle position
+              if( "walkframes" in currentSpriteObject ){
+                if( animationTimer < 5 ){
+                  sAnimationFrame = "W1";
+                }else if( animationTimer >= 5 && animationTimer < 10 ){
+                  sAnimationFrame = "W2";
+                }else if( animationTimer >= 10 ){
+                  sAnimationFrame = false;
                 }
               }
 
-              // if not, use basic sprite
+              // sample-angled glyph is available
+              if( "angles" in currentSpriteObject ){
+
+                if( fSpriteBeautyAngle >= PI_00 && fSpriteBeautyAngle < PI_05 ){
+                  sSpAngle = "B";
+                }
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_05) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_10) ){
+                  sSpAngle = "L";
+                }
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_10) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_15) ){
+                  sSpAngle = "F";
+                }
+                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_15) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_20) ){
+                  sSpAngle = "R";
+                }
+              }
+
+
+              // check if object has both, angles, or animations
+              if( sSpAngle && sAnimationFrame ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle][sAnimationFrame], fSampleX, fSampleY);
+              }
+              else if( sSpAngle ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle], fSampleX, fSampleY);
+              }
+              else if( sAnimationFrame ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject[sAnimationFrame], fSampleX, fSampleY);
+              }
               else{
+                // if not, use basic sprite
                 sSamplePixel = _getSamplePixel(currentSpriteObject, fSampleX, fSampleY);
               }
 
