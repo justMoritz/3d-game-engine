@@ -1422,7 +1422,6 @@ var gameEngineJS = (function(){
 
               // sample-angled glyph is available
               if( "angles" in currentSpriteObject ){
-                bHasAngle = true;
 
                 if( fSpriteBeautyAngle >= PI_00 && fSpriteBeautyAngle < PI_05 ){
                   sSpAngle = "B";
@@ -1444,6 +1443,9 @@ var gameEngineJS = (function(){
               }
               else if( sSpAngle ){
                 sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle], fSampleX, fSampleY);
+              }
+              else if( sAnimationFrame ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject[sAnimationFrame], fSampleX, fSampleY);
               }
               else{
                 // if not, use basic sprite
