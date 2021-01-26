@@ -1016,7 +1016,7 @@ var gameEngineJS = (function(){
           sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
 
           // change the angle and visible angle
-          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/2 ) % Math.PI*2; // still buggie
+          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/1.5 ) % Math.PI*2; // still buggie
 
           // TODO, maybe turn a random amount of degreens between 45 and 90?
         }
@@ -1328,38 +1328,15 @@ var gameEngineJS = (function(){
         } // end draw column loop
 
 
-        // Overlay Draw
+        // Object-Draw (removed overlayscreen)
         for(var y = 0; y < nScreenHeight; y++){
-
-          // sky
-          if( y < nObjectCeiling){
-            // sky is always 0 on overlayscreen
-            overlayscreen[y*nScreenWidth+i] = "0";
-          }
-
-          // solid block
-          else if( y > nObjectCeiling && y <= nObjectFloor ){
-
-            // Floortile Walltype
+          if( y > nObjectCeiling && y <= nObjectFloor ){
             if(sObjectType == "o"){
-              if( y < nFObjectBackwall ){
-                overlayscreen[y*nScreenWidth+i] = "0";
+              if( y >=  nFObjectBackwall ){
+                screen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
               }
-              else{
-                overlayscreen[y*nScreenWidth+i] = _rh.renderSolidWall(y, fDistanceToObject, isBoundary);
-                // overlayscreen[y*nScreenWidth+i] = "&nbsp;";
-              }
-            }else{
-              overlayscreen[y*nScreenWidth+i] = "0";
             }
           }
-
-          // floor
-          else {
-            // overlayscreen floor is always 0
-            overlayscreen[y*nScreenWidth+i] = "0";
-          }
-
         } // end draw column loop
       }  // end column loop
 
@@ -1474,7 +1451,7 @@ var gameEngineJS = (function(){
                   // render to overlay
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
-                  overlayscreen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
+                  screen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
 
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
@@ -1491,7 +1468,7 @@ var gameEngineJS = (function(){
       }
 
 
-      _fDrawFrame(screen, overlayscreen);
+      _fDrawFrame(screen, false);
       // _fDrawFrame(overlayscreen, false, eDebugOut);
 
     }
