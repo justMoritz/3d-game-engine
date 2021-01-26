@@ -92,7 +92,8 @@ var gameEngineJS = (function(){
           "y": randomCoordinates.y,
           "r": randAngle,
           "name": "P",
-          "move": true
+          "move": true,
+          "speed": _randomIntFromInterval(0, 9) * 0.01,
       }
       oRandomLevelSprites[m] = oRandomSprite ;
     }
@@ -995,7 +996,8 @@ var gameEngineJS = (function(){
 
       // if the sprite's move flag is set
       if( sprite["move"] ){
-        var fMovementSpeed = 0.01;
+        // var fMovementSpeed = 0.01;
+        var fMovementSpeed = sprite["speed"] || 0.03;
 
         // move the sprite along it's radiant line
         sprite["x"] = parseFloat(sprite["x"]) + parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
@@ -1063,7 +1065,7 @@ var gameEngineJS = (function(){
     }
 
     // sorts the list
-    newList.sort( compare );
+    newList = newList.sort( compare );
 
     // make object from array again
     oLevelSprites = {};
