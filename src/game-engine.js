@@ -1438,6 +1438,7 @@ var gameEngineJS = (function(){
               }
 
 
+              // check if object has both, angles, or animations
               if( sSpAngle && sAnimationFrame ){
                 sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle][sAnimationFrame], fSampleX, fSampleY);
               }
