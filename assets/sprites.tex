@@ -370,6 +370,67 @@ pogelrightW2 += ".....*777**7777*..";
 pogelrightW2 += ".....*777**77***..";
 pogelrightW2 += ".....*********....";
 
+var obetrl = "";
+obetrl += "..*********.....";
+obetrl += "..*7777777*.....";
+obetrl += "..*7777777*.....";
+obetrl += "...*777777*.....";
+obetrl += "...*777777****..";
+obetrl += "....*77777*777*.";
+obetrl += "...*77****77777*";
+obetrl += "..*7##*###*777*.";
+obetrl += "..*7#*####*777*.";
+obetrl += ".*7#**##*#*77*..";
+obetrl += ".*7##*####*77*..";
+obetrl += ".*7##*###*777*..";
+obetrl += "..*77#***#777*..";
+obetrl += ".*7777####7**...";
+obetrl += "*777777*##7*....";
+obetrl += "*77777*7##7*....";
+obetrl += "*777**77#77*....";
+obetrl += ".*7*777777##*...";
+obetrl += "..****77#7##7*..";
+obetrl += ".....**7#*7##*..";
+obetrl += "....*7###*#7#*..";
+obetrl += "...*77##7*##7*..";
+obetrl += "...*7##7**#7#*..";
+obetrl += "....*#777777*...";
+obetrl += "...**#**777*....";
+obetrl += "..**77*77**.....";
+obetrl += "..*777777*......";
+obetrl += "..********......";
+
+
+var obetrlB = "";
+obetrlB += "..*********.....";
+obetrlB += "..*7777777*.....";
+obetrlB += "..*7777777*.....";
+obetrlB += "...*777777*.....";
+obetrlB += "...*77777*****..";
+obetrlB += "....*777*77777*.";
+obetrlB += "...*7***777777*";
+obetrlB += "..*7##7*777777*.";
+obetrlB += "..*7#777*77777*.";
+obetrlB += ".*7#7777*7777*..";
+obetrlB += ".*7##7777*777*..";
+obetrlB += "..*7##777*****..";
+obetrlB += "..*77####777*....";
+obetrlB += ".*77######7*....";
+obetrlB += "*777######7*....";
+obetrlB += "*777#####77*....";
+obetrlB += "*7777###777*....";
+obetrlB += ".*7*777#*#7#*...";
+obetrlB += "...***7*#7##7*..";
+obetrlB += ".....*7*7##7#*..";
+obetrlB += "....*7##*#7##*..";
+obetrlB += "...*77###*##7*..";
+obetrlB += "...*#***##*7*...";
+obetrlB += "....*##7777*....";
+obetrlB += "...**#**777*....";
+obetrlB += "..**77*77**.....";
+obetrlB += "..*777777*......";
+obetrlB += "..********......";
+
 var pogelHeight = 25;
 var pogelWidth =  18;
 var pogelScale =  1;
@@ -378,39 +439,40 @@ var pogelScale =  1;
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
 var allSprites = {
-  "B": {
-    "texture": pogelback,
-    "height": 25,
-    "width": 18,
+  "O": {
+    "texture": obetrl,
+    "height": 28,
+    "width": 16,
     "scale": 1,
     "aspctRt": 1.66,
-    "hghtFctr": 0.4,
+    "hghtFctr": 0.7,
+    "angles":{
+      "F": {
+        "texture": obetrlB,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+      },
+      "L": {
+        "texture": obetrlB,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+      },
+      "B": {
+        "texture": obetrlB,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+      },
+      "R": {
+        "texture": obetrlB,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+      },
+    }
   },
-  "F": {
-    "texture": pogelfront,
-    "height": 25,
-    "width": 18,
-    "scale": 1,
-    "aspctRt": 1.66,
-    "hghtFctr": 0.4,
-  },
-  "L": {
-    "texture": pogelleft,
-    "height": 25,
-    "width": 18,
-    "scale": 1,
-    "aspctRt": 1.66,
-    "hghtFctr": 0.4,
-  },
-  "R": {
-    "texture": pogelright,
-    "height": 25,
-    "width": 18,
-    "scale": 1,
-    "aspctRt": 1.66,
-    "hghtFctr": 0.4,
-  },
-
   "P": {
     "texture": pogelfront,
     "walkframes": true,
@@ -422,9 +484,9 @@ var allSprites = {
     "angles":{
       "F": {
         "texture": pogelfront,
-          "height": 25,
-          "width": 18,
-          "scale": 1,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
         "W1": {
           "texture": pogelfrontW1,
           "height": 25,
