@@ -1,11 +1,12 @@
 var gameEngineJS = (function(){
 
   // constants
-  var PI_00 = parseFloat(Math.PI * 0.0);
-  var PI_05 = parseFloat(Math.PI * 0.5);
-  var PI_10 = parseFloat(Math.PI * 1.0);
-  var PI_15 = parseFloat(Math.PI * 1.5);
-  var PI_20 = parseFloat(Math.PI * 2.0);
+  var PI___ = parseFloat(Math.PI);
+  var PI_00 = parseFloat(PI___ * 0.0);
+  var PI_05 = parseFloat(PI___ * 0.5);
+  var PI_10 = parseFloat(PI___ * 1.0);
+  var PI_15 = parseFloat(PI___ * 1.5);
+  var PI_20 = parseFloat(PI___ * 2.0);
 
   // setup variables
   var eScreen;
@@ -14,7 +15,7 @@ var gameEngineJS = (function(){
   var nScreenWidth = 320;
   var nScreenHeight = 80;
 
-  var fFOV = Math.PI / 2.25; // (Math.PI / 4.0 originally)
+  var fFOV = PI___ / 2.25; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -85,7 +86,7 @@ var gameEngineJS = (function(){
     // generates random Pogels :oooo
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
-      var randAngle = _randomIntFromInterval(0, Math.PI*2);
+      var randAngle = _randomIntFromInterval(0, PI___*2);
       var randomCoordinates = _generateRandomCoordinates();
       var oRandomSprite = {
           "x": randomCoordinates.x,
@@ -1025,14 +1026,14 @@ var gameEngineJS = (function(){
 
           // change the angle and visible angle
           // TODO, maybe turn a random amount of degreens between 45 and 90?
-          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/1.5 ) % Math.PI*2; // still buggie
+          sprite["r"] = (parseFloat(sprite["r"]) + PI___/1.5 ) % PI___*2; // still buggie
         }
       } // end if sprite move
     }
   };
 
 
-  function compare( a, b ) {
+  function compare( b, a ) {
     if ( a["z"] < b["z"] ){
       return -1;
     }
@@ -1051,10 +1052,14 @@ var gameEngineJS = (function(){
     for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
       var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
-      var X = fPlayerX - sprite["x"];
-      var Y = fPlayerX - sprite["y"];
-      var Dsq = Math.pow(X, 2) + Math.pow(Y, 2);
-      var fDistance = Math.sqrt(Dsq);
+      // var X = fPlayerX - sprite["x"];
+      // var Y = fPlayerX - sprite["y"];
+      // var Dsq = Math.pow(X, 2) + Math.pow(Y, 2);
+      // var fDistance = Math.sqrt(Dsq);
+
+      // works better?
+      var fDistance = Math.hypot(sprite["x"]-fPlayerX, sprite["y"]-fPlayerY)
+
       sprite["z"] = fDistance;
     }
 
@@ -1066,12 +1071,14 @@ var gameEngineJS = (function(){
 
     // sorts the list
     newList = newList.sort( compare );
+    // console.log( newList );
 
     // make object from array again
     oLevelSprites = {};
     for(var sk=0; sk < Object.keys(newList).length; sk++ ){
       oLevelSprites[sk] = newList[sk]
     }
+    // console.log( oLevelSprites );
   };
 
 
@@ -1089,7 +1096,7 @@ var gameEngineJS = (function(){
 
       _moveHelpers.move();
 
-      // _updateSpriteBuffer();
+      _updateSpriteBuffer();
       _moveSprites();
 
 
@@ -1117,7 +1124,7 @@ var gameEngineJS = (function(){
 
 
       // Converts player turn position into degrees (used for texturing)
-      nDegrees = Math.floor( fPlayerA * (180/Math.PI)) % 360;
+      nDegrees = Math.floor( fPlayerA * (180/PI___)) % 360;
 
 
       // for the length of the screenwidth (one frame)
@@ -1243,19 +1250,19 @@ var gameEngineJS = (function(){
             var fTestAngle = Math.atan2( (fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX) )
             // rotate by pi over 4
 
-            if( fTestAngle >= -Math.PI * 0.25 && fTestAngle < Math.PI * 0.25 ){
+            if( fTestAngle >= -PI___ * 0.25 && fTestAngle < PI___ * 0.25 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
               sWallDirection = "W";
             }
-            if( fTestAngle >= Math.PI * 0.25 && fTestAngle < Math.PI * 0.75 ){
+            if( fTestAngle >= PI___ * 0.25 && fTestAngle < PI___ * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
               sWallDirection = "N";
             }
-            if( fTestAngle < -Math.PI * 0.25 && fTestAngle >= -Math.PI * 0.75 ){
+            if( fTestAngle < -PI___ * 0.25 && fTestAngle >= -PI___ * 0.75 ){
               fSampleX = fTestPointX - parseFloat(nTestX);
               sWallDirection = "S";
             }
-            if( fTestAngle >= Math.PI * 0.75 || fTestAngle < -Math.PI * 0.75 ){
+            if( fTestAngle >= PI___ * 0.75 || fTestAngle < -PI___ * 0.75 ){
               fSampleX = fTestPointY - parseFloat(nTestY);
               sWallDirection = "E";
             }
@@ -1407,11 +1414,11 @@ var gameEngineJS = (function(){
         var fEyeY = Math.sin(fPlayerA);
 
         var fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX) ;
-        if (fSpriteAngle < -Math.PI){
-          fSpriteAngle += 2.0 * Math.PI;
+        if (fSpriteAngle < -PI___){
+          fSpriteAngle += 2.0 * PI___;
         }
-        if (fSpriteAngle > Math.PI){
-          fSpriteAngle -= 2.0 * Math.PI;
+        if (fSpriteAngle > PI___){
+          fSpriteAngle -= 2.0 * PI___;
         }
 
         var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
@@ -1435,13 +1442,13 @@ var gameEngineJS = (function(){
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
 
           // The angle the sprite is facing relative to the player
-          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
+          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PI___ / 4.0;
           // normalize
           if (fSpriteBeautyAngle < 0){
-            fSpriteBeautyAngle += 2.0 * Math.PI;
+            fSpriteBeautyAngle += 2.0 * PI___;
           }
-          if (fSpriteBeautyAngle > 2.0 * Math.PI){
-            fSpriteBeautyAngle -= 2.0 * Math.PI;
+          if (fSpriteBeautyAngle > 2.0 * PI___){
+            fSpriteBeautyAngle -= 2.0 * PI___;
           }
 
           // loops through the sprite pixels
