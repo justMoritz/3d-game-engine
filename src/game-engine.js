@@ -1,11 +1,27 @@
+/**
+ * Some Performance enhancers:
+ *  - cache π, and various calculations involving π
+ *    https://stackoverflow.com/questions/8885323/speed-of-the-math-object-in-javascript
+ *
+ *  - replace parseInt, Math.floor with bitwise NOT operator ~~
+ *  - replace parseFloat with bitwise + operator
+ *    https://stackoverflow.com/questions/38702724/math-floor-vs-math-trunc-javascript
+ *
+ *  - TODO: Inline more function calls in high-frequency loops
+ *  - TODO: Limit Object Access in high-frequency loops
+ */
+
 var gameEngineJS = (function(){
 
   // constants
-  var PI_00 = parseFloat(Math.PI * 0.0);
-  var PI_05 = parseFloat(Math.PI * 0.5);
-  var PI_10 = parseFloat(Math.PI * 1.0);
-  var PI_15 = parseFloat(Math.PI * 1.5);
-  var PI_20 = parseFloat(Math.PI * 2.0);
+  var PI___   = +(Math.PI);
+  var PI_0    = 0.0;
+  var PIx0_25 = +(PI___ * 0.25);
+  var PIx05   = +(PI___ * 0.5);
+  var PIx0_75 = +(PI___ * 0.75);
+  var PIx1    = PI___;
+  var PIx1_5  = +(PI___ * 1.5);
+  var PIx2    = +(PI___ * 2.0);
 
   // setup variables
   var eScreen;
@@ -14,7 +30,7 @@ var gameEngineJS = (function(){
   var nScreenWidth = 320;
   var nScreenHeight = 80;
 
-  var fFOV = Math.PI / 2.25; // (Math.PI / 4.0 originally)
+  var fFOV = PI___ / 2.25; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -27,6 +43,7 @@ var gameEngineJS = (function(){
   var bJumping;
   var bFalling;
   var bRunning;
+  var bPaused;
 
   var nJumptimer = 0;
   var fLooktimer = 0;
@@ -54,24 +71,24 @@ var gameEngineJS = (function(){
   // ░
 
   function _randomIntFromInterval(min, max) { // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
+    return ~~(Math.random() * (max - min + 1) + min);
   }
 
 
   // generates only pogels that can be placed
   _generateRandomCoordinates = function(){
 
-    var x = parseFloat(_randomIntFromInterval(0, nMapWidth)) + 0.25;
-    var y = parseFloat(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+    var x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
+    var y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
 
-    while( map[ parseInt(y) * nMapWidth + parseInt(x)] != '.' ){
-      var x = parseFloat(_randomIntFromInterval(0, nMapWidth)) + 0.25;
-      var y = parseFloat(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+    while( map[ ~~(y) * nMapWidth + ~~(x)] != "." ){
+      x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
+      y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
     }
 
     var oCoordinates = {
-      x: x,
-      y: y,
+      "x": x,
+      "y": y
     };
 
     return oCoordinates;
@@ -80,18 +97,19 @@ var gameEngineJS = (function(){
 
   // generate random Sprites
   var _generateRandomSprites = function( nNumberOfSprites ){
-    var nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 )
+    nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 );
     // generates random Pogels :oooo
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
-      var randAngle = _randomIntFromInterval(0, Math.PI*2);
+      var randAngle = _randomIntFromInterval(0, PIx2);
       var randomCoordinates = _generateRandomCoordinates();
       var oRandomSprite = {
           "x": randomCoordinates.x,
           "y": randomCoordinates.y,
           "r": randAngle,
           "name": "P",
-          "move": true
+          "move": true,
+          "speed": _randomIntFromInterval(0, 5) * 0.01,
       }
       oRandomLevelSprites[m] = oRandomSprite ;
     }
@@ -194,8 +212,8 @@ var gameEngineJS = (function(){
     x = scaleFactor * x%1;
     y = scaleFactor * y%1;
 
-    var sampleX = Math.floor(texWidth*x);
-    var sampleY = Math.floor(texHeight*y);
+    var sampleX = ~~(texWidth*x);
+    var sampleY = ~~(texHeight*y);
 
     var samplePosition = (texWidth*(sampleY)) + sampleX;
 
@@ -230,7 +248,7 @@ var gameEngineJS = (function(){
     var interval = totalItems / neededCount;
 
     for (var i = 0; i < neededCount; i++) {
-      var evenIndex = Math.floor(i * interval + interval / 2);
+      var evenIndex = ~~(i * interval + interval / 2);
       result.push(allItems[evenIndex]);
     }
 
@@ -251,7 +269,7 @@ var gameEngineJS = (function(){
 
 
   // lookup-table “for fine-control” or “for perfomance”
-  // …(but really because I couldn't figure out the logic [apparently] )
+  // …(but really because I couldn"t figure out the logic [apparently] )
   var _skipEveryXrow = function(input){
     input = Math.round(input);
     switch( Number(input) ) {
@@ -389,8 +407,9 @@ var gameEngineJS = (function(){
   };
 
 
-  var _fDrawFrame = function(screen, overlayscreen){
+  var _fDrawFrame = function(screen, overlayscreen, target){
     var frame = _fPrepareFrame(screen, overlayscreen);
+    var target = target || eScreen;
 
     var sOutput = "";
 
@@ -418,7 +437,7 @@ var gameEngineJS = (function(){
         printIndex++;
       }
     }
-    eScreen.innerHTML = sOutput;
+    target.innerHTML = sOutput;
   };
 
 
@@ -680,7 +699,13 @@ var gameEngineJS = (function(){
         // _debugOutput(e.which);
 
         if (e.which == 80) { // p
-          clearInterval(gameRun);
+          if( bPaused ){
+            _testScreenSizeAndStartTheGame();
+            bPaused = false;
+          }else{
+            clearInterval(gameRun);
+            bPaused = true;
+          }
         }
         if (e.which == 16) { // shift
           bRunning = true;
@@ -745,9 +770,7 @@ var gameEngineJS = (function(){
      * @param  {float}  fMoveInput   the movement from touch or mouse-input
      * @param  {float}  fMoveFactor  factor by which to multiply the recieved input
      *
-     * Ultimately modifies the
-     *  `fLooktimer`
-     * variable, which is global :)
+     * Ultimately modifies the `fLooktimer` variable, which is global :)
      */
     yMoveUpdate: function(fMoveInput, fMoveFactor ){
       // look up/down (with bounds)
@@ -759,7 +782,7 @@ var gameEngineJS = (function(){
       }
 
       // the reason for the increased speed is that looking “down” becomes expotentially less,
-      // so we are artificially increasing the down-factor. It's a hack, but it works okay!
+      // so we are artificially increasing the down-factor. it's a hack, but it works okay!
       fLooktimer -= fYMoveBy;
       if( fLooktimer > nLookLimit*0.7 || fLooktimer < -nLookLimit*2 ){
         fLooktimer += fYMoveBy;
@@ -786,7 +809,7 @@ var gameEngineJS = (function(){
       touchinputmove.onclick = _moveHelpers.mouseLook;
     },
 
-    // object to hold and track touch-inputs
+    // holds and tracks touch-inputs
     oTouch: {
       move: {
         x: 0,
@@ -832,7 +855,7 @@ var gameEngineJS = (function(){
     touchinit: function(){
 
       // look (left hand of screen)
-      eTouchLook.addEventListener('touchmove', function(e){
+      eTouchLook.addEventListener("touchmove", function(e){
 
         // fetches differences from input
         var oDifferences = _moveHelpers.touchCalculate( _moveHelpers.oTouch.look, e);
@@ -853,14 +876,14 @@ var gameEngineJS = (function(){
       });
 
       // reset look
-      eTouchLook.addEventListener('touchend', function(){
+      eTouchLook.addEventListener("touchend", function(){
         _moveHelpers.oTouch.look.x = 0;
         _moveHelpers.oTouch.look.y = 0;
         _moveHelpers.oTouch.look.bFirstTouch = true;
       });
 
       // move (right hand of screen)
-      eTouchMove.addEventListener('touchmove', function(e){
+      eTouchMove.addEventListener("touchmove", function(e){
         var oDifferences = _moveHelpers.touchCalculate( _moveHelpers.oTouch.move, e);
 
         // makes sure no crazy
@@ -868,7 +891,7 @@ var gameEngineJS = (function(){
           _moveHelpers.oTouch.move.bFirstTouch = false;
         }
 
-        // first touch will be a huge difference, that's why we only move after the first touch
+        // first touch will be a huge difference, that"s why we only move after the first touch
         if( !_moveHelpers.oTouch.move.bFirstTouch ){
 
           // walk
@@ -876,7 +899,7 @@ var gameEngineJS = (function(){
           fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
 
           // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-          if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
             _moveHelpers.checkExit();
             fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
             fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * oDifferences.x * 0.05;
@@ -887,7 +910,7 @@ var gameEngineJS = (function(){
           fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
 
           // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-          if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+          if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
             _moveHelpers.checkExit();
             fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
             fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * -oDifferences.y * 0.05;
@@ -896,7 +919,7 @@ var gameEngineJS = (function(){
       });
 
       // reset move
-      eTouchMove.addEventListener('touchend', function(){
+      eTouchMove.addEventListener("touchend", function(){
         _moveHelpers.oTouch.move.x = 0;
         _moveHelpers.oTouch.move.y = 0;
         _moveHelpers.oTouch.move.bFirstTouch = true;
@@ -906,7 +929,7 @@ var gameEngineJS = (function(){
 
     checkExit: function(){
       // if we hit an exit
-      if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] == "X"){
+      if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] == "X"){
         _loadLevel( window[sLevelstring].exitsto );
       }
     },
@@ -932,7 +955,7 @@ var gameEngineJS = (function(){
         fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+        if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -944,7 +967,7 @@ var gameEngineJS = (function(){
         fPlayerY += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+        if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -956,7 +979,7 @@ var gameEngineJS = (function(){
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+        if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX -= ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -968,7 +991,7 @@ var gameEngineJS = (function(){
         fPlayerY -= ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if(map[parseInt(fPlayerY) * nMapWidth + parseInt(fPlayerX)] != "."){
+        if(map[~~(fPlayerY) * nMapWidth + ~~(fPlayerX)] != "."){
           _moveHelpers.checkExit();
           fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
           fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
@@ -988,39 +1011,98 @@ var gameEngineJS = (function(){
     for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
       var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
-      // if the sprite's move flag is set
+      // if the sprite"s move flag is set
       if( sprite["move"] ){
-        var fMovementSpeed = 0.05;
+        // var fMovementSpeed = 0.01;
+        var fMovementSpeed = sprite["speed"] || 0.03;
 
         // move the sprite along it's radiant line
-        sprite["x"] = parseFloat(sprite["x"]) + parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
-        sprite["y"] = parseFloat(sprite["y"]) + parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+        sprite["x"] = +(sprite["x"]) + +(Math.cos(sprite["r"])) * fMovementSpeed;
+        sprite["y"] = +(sprite["y"]) + +(Math.sin(sprite["r"])) * fMovementSpeed;
 
         // collision coordinates (attempting to center sprite)
-        var fCollideY = parseFloat(sprite["y"]) - 0.5;
-        var fCollideX = parseFloat(sprite["x"]) + 0.25;
+        var fCollideY = +(sprite["y"]) - 0.5;
+        var fCollideX = +(sprite["x"]) + 0.25;
 
-        var fCollideY2 = parseFloat(sprite["y"]) + 0.25;
-        var fCollideX2 = parseFloat(sprite["x"]) - 0.5;
+        var fCollideY2 = +(sprite["y"]) + 0.25;
+        var fCollideX2 = +(sprite["x"]) - 0.5;
 
-        // sprite has hit any other type other than blank
-        if( map[ parseInt(fCollideY) * nMapWidth + parseInt(fCollideX)] != '.' || map[ parseInt(fCollideY2) * nMapWidth + parseInt(fCollideX2)] != '.' ){
+        if( map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
 
           // reverse last movement
-          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
 
           // repeat may help unstuck sprites
-          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
-          sprite["x"] = parseFloat(sprite["x"]) - parseFloat(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = parseFloat(sprite["y"]) - parseFloat(Math.sin(sprite["r"])) * fMovementSpeed;
+          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
 
           // change the angle and visible angle
-          // TODO, maybe turn a random amount of degreens between 45 and 90?
-          sprite["r"] = (parseFloat(sprite["r"]) + Math.PI/1.5 ) % Math.PI*2; // still buggie
+          sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // TODO: sometimes buggie
         }
+
+        // if sprite is close to the player, and facing the player, turn around
+        if( sprite["z"] < 1 && sprite["a"] !== "B" ){
+          sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
+        }
+
+        // TODO: sprites hitting each other
+        // for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
+        //   var jsprite = oLevelSprites[Object.keys(oLevelSprites)[sj]];
+        //   if( jsprite["z"] - sprite["z"] > 2 ){
+        //     jsprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
+        //   }
+        // }
+
       } // end if sprite move
+    }
+  };
+
+
+  /**
+   * Sorts List
+   */
+  function _sortSpriteList( b, a ) {
+    if ( a["z"] < b["z"] ){
+      return -1;
+    }
+    if ( a["z"] > b["z"] ){
+      return 1;
+    }
+    return 0;
+  }
+
+
+  /**
+   * Sorts the Sprite list based on distance from the player
+   */
+  var _updateSpriteBuffer = function(){
+
+    // calculates the distance to the player
+    for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
+      var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+      // the distance between the sprite and the player
+      var fDistance = Math.hypot(sprite["x"]-fPlayerX, sprite["y"]-fPlayerY);
+
+      sprite["z"] = fDistance;
+    }
+
+    // converts array of objects to list
+    var newList = [];
+    for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
+      newList.push(oLevelSprites[Object.keys(oLevelSprites)[sj]]);
+    }
+
+    // sorts the list
+    newList = newList.sort( _sortSpriteList );
+
+    // make object from array again
+    oLevelSprites = {};
+    for(var sk=0; sk < Object.keys(newList).length; sk++ ){
+      oLevelSprites[sk] = newList[sk]
     }
   };
 
@@ -1032,17 +1114,32 @@ var gameEngineJS = (function(){
     gameRun = setInterval(gameLoop, 33);
     function gameLoop(){
 
+      /**
+       * Game-function related
+       */
+
       animationTimer++;
       if(animationTimer > 15){
         animationTimer = 0;
       }
 
+      _updateSpriteBuffer();
+      _moveSprites();
+
+
+      /**
+       * Player-movement related
+       */
+
       _moveHelpers.move();
 
-      // if(animationTimer == 3 || animationTimer == 6 || animationTimer == 9 || animationTimer == 15){
-        _moveSprites();
-      // }
-
+      // normalize player angle
+      if (fPlayerA < 0){
+        fPlayerA += PIx2;
+      }
+      if (fPlayerA > PIx2){
+        fPlayerA -= PIx2;
+      }
 
       // allows jumping for only a certain amount of time
       if(bJumping){
@@ -1053,6 +1150,7 @@ var gameEngineJS = (function(){
         bJumping = false;
         nJumptimer = 6;
       }
+
       // falling back down after jump
       if(bFalling){
         nJumptimer--;
@@ -1062,13 +1160,19 @@ var gameEngineJS = (function(){
       }
 
 
+      /**
+       * Drawing related
+       */
+
+
       // holds the frames we"re going to send to the renderer
       var screen = [];
+      var spritescreen = [];
       var overlayscreen = [];
 
 
       // Converts player turn position into degrees (used for texturing)
-      nDegrees = Math.floor( fPlayerA * (180/Math.PI)) % 360;
+      nDegrees = ~~( fPlayerA * (180/PI___)) % 360;
 
 
       // for the length of the screenwidth (one frame)
@@ -1123,8 +1227,8 @@ var gameEngineJS = (function(){
           }
 
           // ray position
-          var nTestX = parseInt( ((fPlayerX) + fEyeX * nRayLength) );
-          var nTestY = parseInt( ((fPlayerY) + fEyeY * nRayLength) );
+          var nTestX = ~~( ((fPlayerX) + fEyeX * nRayLength) );
+          var nTestY = ~~( ((fPlayerY) + fEyeY * nRayLength) );
 
           // test if ray hits out of bounds
           if(nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight){
@@ -1157,8 +1261,8 @@ var gameEngineJS = (function(){
             var vectorPairList = [];
             for (var tx = 0; tx < 2; tx++) {
               for (var ty = 0; ty < 2; ty++) {
-                var vy = parseFloat(nTestY) + ty - fPlayerY;
-                var vx = parseFloat(nTestX) + tx - fPlayerX;
+                var vy = +(nTestY) + ty - fPlayerY;
+                var vx = +(nTestX) + tx - fPlayerX;
                 var d = Math.sqrt(vx*vx + vy*vy);
 
                 var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
@@ -1194,20 +1298,21 @@ var gameEngineJS = (function(){
             var fTestAngle = Math.atan2( (fTestPointY - fBlockMidY), (fTestPointX - fBlockMidX) )
             // rotate by pi over 4
 
-            if( fTestAngle >= -Math.PI * 0.25 && fTestAngle < Math.PI * 0.25 ){
-              fSampleX = fTestPointY - parseFloat(nTestY);
+
+            if( fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25 ){
+              fSampleX = fTestPointY - +(nTestY);
               sWallDirection = "W";
             }
-            if( fTestAngle >= Math.PI * 0.25 && fTestAngle < Math.PI * 0.75 ){
-              fSampleX = fTestPointX - parseFloat(nTestX);
+            if( fTestAngle >= PIx0_25 && fTestAngle < PIx0_75 ){
+              fSampleX = fTestPointX - +(nTestX);
               sWallDirection = "N";
             }
-            if( fTestAngle < -Math.PI * 0.25 && fTestAngle >= -Math.PI * 0.75 ){
-              fSampleX = fTestPointX - parseFloat(nTestX);
+            if( fTestAngle < -PIx0_25 && fTestAngle >= -PIx0_75 ){
+              fSampleX = fTestPointX - +(nTestX);
               sWallDirection = "S";
             }
-            if( fTestAngle >= Math.PI * 0.75 || fTestAngle < -Math.PI * 0.75 ){
-              fSampleX = fTestPointY - parseFloat(nTestY);
+            if( fTestAngle >= PIx0_75 || fTestAngle < -PIx0_75 ){
+              fSampleX = fTestPointY - +(nTestY);
               sWallDirection = "E";
             }
 
@@ -1358,11 +1463,11 @@ var gameEngineJS = (function(){
         var fEyeY = Math.sin(fPlayerA);
 
         var fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX) ;
-        if (fSpriteAngle < -Math.PI){
-          fSpriteAngle += 2.0 * Math.PI;
+        if (fSpriteAngle < -PI___){
+          fSpriteAngle += PIx2;
         }
-        if (fSpriteAngle > Math.PI){
-          fSpriteAngle -= 2.0 * Math.PI;
+        if (fSpriteAngle > PI___){
+          fSpriteAngle -= PIx2;
         }
 
         var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
@@ -1374,25 +1479,25 @@ var gameEngineJS = (function(){
 
           // very similar operation to background floor and ceiling.
           // Sprite height is default 1, but we can adjust with the factor passed in the sprite object/
-          var fSpriteCeiling = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (parseFloat(fDistanceFromPlayer) ) * currentSpriteObject["hghtFctr"];
-          var fSpriteFloor = parseFloat(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / (parseFloat(fDistanceFromPlayer) );
+          var fSpriteCeiling = +(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) - nScreenHeight / (+(fDistanceFromPlayer) ) * currentSpriteObject["hghtFctr"];
+          var fSpriteFloor = +(nScreenHeight / ((2 - nJumptimer*0.15) - fLooktimer*0.15)) + nScreenHeight / (+(fDistanceFromPlayer) );
 
           var fSpriteCeiling = Math.round(fSpriteCeiling);
           var fSpriteFloor = Math.round(fSpriteFloor);
 
           var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-          var fSpriteAspectRatio = parseFloat(currentSpriteObject["height"]) / parseFloat(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+          var fSpriteAspectRatio = +(currentSpriteObject["height"]) / +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
-          var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * parseFloat(nScreenWidth);
+          var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * +(nScreenWidth);
 
           // The angle the sprite is facing relative to the player
-          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + Math.PI / 4.0;
+          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PI___ / 4.0;
           // normalize
           if (fSpriteBeautyAngle < 0){
-            fSpriteBeautyAngle += 2.0 * Math.PI;
+            fSpriteBeautyAngle += PIx2;
           }
-          if (fSpriteBeautyAngle > 2.0 * Math.PI){
-            fSpriteBeautyAngle -= 2.0 * Math.PI;
+          if (fSpriteBeautyAngle > PIx2){
+            fSpriteBeautyAngle -= PIx2;
           }
 
           // loops through the sprite pixels
@@ -1403,14 +1508,14 @@ var gameEngineJS = (function(){
               var fSampleX = sx / fSpriteWidth;
               var fSampleY = sy / fSpriteHeight;
 
-              var sSamplePixel = '';
+              var sSamplePixel = "";
 
-              var sSpAngle = false;
+              // var sSpAngle = false;
               var sAnimationFrame = false;
 
               // animation-cycle available, determine the current cycle
               // TODO: randomize cycle position
-              if( "walkframes" in currentSpriteObject ){
+              if( sprite["move"] && "walkframes" in currentSpriteObject ){
                 if( animationTimer < 5 ){
                   sAnimationFrame = "W1";
                 }else if( animationTimer >= 5 && animationTimer < 10 ){
@@ -1423,27 +1528,31 @@ var gameEngineJS = (function(){
               // sample-angled glyph is available
               if( "angles" in currentSpriteObject ){
 
-                if( fSpriteBeautyAngle >= PI_00 && fSpriteBeautyAngle < PI_05 ){
-                  sSpAngle = "B";
+                if( fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05 ){
+                  // sSpAngle = "B";
+                  sprite["a"] = "B";
                 }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_05) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_10) ){
-                  sSpAngle = "L";
+                else if( +(fSpriteBeautyAngle) >= +(PIx05) && +(fSpriteBeautyAngle) < +(PIx1) ){
+                  // sSpAngle = "L";
+                  sprite["a"] = "L";
                 }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_10) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_15) ){
-                  sSpAngle = "F";
+                else if( +(fSpriteBeautyAngle) >= +(PIx1) && +(fSpriteBeautyAngle) < +(PIx1_5) ){
+                  // sSpAngle = "F";
+                  sprite["a"] = "F";
                 }
-                else if( parseFloat(fSpriteBeautyAngle) >= parseFloat(PI_15) && parseFloat(fSpriteBeautyAngle) < parseFloat(PI_20) ){
-                  sSpAngle = "R";
+                else if( +(fSpriteBeautyAngle) >= +(PIx1_5) && +(fSpriteBeautyAngle) < +(PIx2) ){
+                  // sSpAngle = "R";
+                  sprite["a"] = "R";
                 }
               }
 
 
               // check if object has both, angles, or animations
-              if( sSpAngle && sAnimationFrame ){
-                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle][sAnimationFrame], fSampleX, fSampleY);
+              if( sprite["a"] && sAnimationFrame ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY);
               }
-              else if( sSpAngle ){
-                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle], fSampleX, fSampleY);
+              else if( sprite["a"] ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY);
               }
               else if( sAnimationFrame ){
                 sSamplePixel = _getSamplePixel(currentSpriteObject[sAnimationFrame], fSampleX, fSampleY);
@@ -1469,11 +1578,10 @@ var gameEngineJS = (function(){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (sSpriteGlyph != "." && sSpriteGlyph != "&nbsp;" && fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer ){
 
-                  // render to overlay
+                  // render pixels to screen
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
                   screen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
-
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
               }
@@ -1488,7 +1596,6 @@ var gameEngineJS = (function(){
 
       }
 
-
       _fDrawFrame(screen, false);
 
     }
@@ -1502,7 +1609,7 @@ var gameEngineJS = (function(){
       for(var j = 0; j < nScreenWidth; j++){
         sOutput += "&nbsp;";
       }
-      sOutput += ".<br>";
+      sOutput += "<br>";
     }
     eScreen.innerHTML = sOutput;
   };
@@ -1553,6 +1660,7 @@ var gameEngineJS = (function(){
   {
     // prep document
     eScreen = document.getElementById("display");
+    eScreen2 = document.getElementById("seconddisplay");
     eDebugOut = document.getElementById("debug");
     eTouchLook = document.getElementById("touchinputlook");
     eTouchMove = document.getElementById("touchinputmove");
