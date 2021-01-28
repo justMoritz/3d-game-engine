@@ -1039,35 +1039,31 @@ var gameEngineJS = (function(){
           sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
 
           // change the angle and visible angle
-          // TODO, maybe turn a random amount of degreens between 45 and 90?
-          sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // still buggie
+          sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // TODO: sometimes buggie
         }
 
-        // if sprite is close to the player, and generally facing the player, turn around
+        // if sprite is close to the player, and facing the player, turn around
         if( sprite["z"] < 1 && sprite["a"] !== "B" ){
           sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
         }
 
-        // // sprites hitting each other
+        // TODO: sprites hitting each other
         // for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
         //   var jsprite = oLevelSprites[Object.keys(oLevelSprites)[sj]];
         //   if( jsprite["z"] - sprite["z"] > 2 ){
-
-        //     // reverse last movement
-        //     sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-        //     sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
         //     jsprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
         //   }
         // }
-
-
 
       } // end if sprite move
     }
   };
 
 
-  function compare( b, a ) {
+  /**
+   * Sorts List
+   */
+  function _sortSpriteList( b, a ) {
     if ( a["z"] < b["z"] ){
       return -1;
     }
@@ -1076,6 +1072,7 @@ var gameEngineJS = (function(){
     }
     return 0;
   }
+
 
   /**
    * Sorts the Sprite list based on distance from the player
@@ -1086,12 +1083,7 @@ var gameEngineJS = (function(){
     for(var si=0; si < Object.keys(oLevelSprites).length; si++ ){
       var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
-      // var X = fPlayerX - sprite["x"];
-      // var Y = fPlayerX - sprite["y"];
-      // var Dsq = Math.pow(X, 2) + Math.pow(Y, 2);
-      // var fDistance = Math.sqrt(Dsq);
-
-      // works better?
+      // the distance between the sprite and the player
       var fDistance = Math.hypot(sprite["x"]-fPlayerX, sprite["y"]-fPlayerY);
 
       sprite["z"] = fDistance;
@@ -1104,15 +1096,13 @@ var gameEngineJS = (function(){
     }
 
     // sorts the list
-    newList = newList.sort( compare );
-    // console.log( newList );
+    newList = newList.sort( _sortSpriteList );
 
     // make object from array again
     oLevelSprites = {};
     for(var sk=0; sk < Object.keys(newList).length; sk++ ){
       oLevelSprites[sk] = newList[sk]
     }
-    // console.log( oLevelSprites );
   };
 
 
@@ -1123,16 +1113,32 @@ var gameEngineJS = (function(){
     gameRun = setInterval(gameLoop, 33);
     function gameLoop(){
 
+      /**
+       * Game-function related
+       */
+
       animationTimer++;
       if(animationTimer > 15){
         animationTimer = 0;
       }
 
-      _moveHelpers.move();
-
       _updateSpriteBuffer();
       _moveSprites();
 
+
+      /**
+       * Player-movement related
+       */
+
+      _moveHelpers.move();
+
+      // normalize player angle
+      if (fPlayerA < 0){
+        fPlayerA += PIx2;
+      }
+      if (fPlayerA > PIx2){
+        fPlayerA -= PIx2;
+      }
 
       // allows jumping for only a certain amount of time
       if(bJumping){
@@ -1143,6 +1149,7 @@ var gameEngineJS = (function(){
         bJumping = false;
         nJumptimer = 6;
       }
+
       // falling back down after jump
       if(bFalling){
         nJumptimer--;
@@ -1150,6 +1157,11 @@ var gameEngineJS = (function(){
       if( nJumptimer < 1 ){
         bFalling = false;
       }
+
+
+      /**
+       * Drawing related
+       */
 
 
       // holds the frames we"re going to send to the renderer
