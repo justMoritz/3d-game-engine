@@ -1048,6 +1048,19 @@ var gameEngineJS = (function(){
           sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
         }
 
+        // // sprites hitting each other
+        // for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
+        //   var jsprite = oLevelSprites[Object.keys(oLevelSprites)[sj]];
+        //   if( jsprite["z"] - sprite["z"] > 2 ){
+
+        //     // reverse last movement
+        //     sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+        //     sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+        //     jsprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
+        //   }
+        // }
+
+
 
       } // end if sprite move
     }
