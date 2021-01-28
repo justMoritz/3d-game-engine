@@ -34,5 +34,5 @@ levelfile3 = {
   exitsto: "levelfile1.map",
   color: "aliceblue",
   background: "rebeccapurple",
-  sprites: {},
+  sprites: "autogen",
 };
