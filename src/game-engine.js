@@ -407,8 +407,9 @@ var gameEngineJS = (function(){
   };
 
 
-  var _fDrawFrame = function(screen, overlayscreen){
+  var _fDrawFrame = function(screen, overlayscreen, target){
     var frame = _fPrepareFrame(screen, overlayscreen);
+    var target = target || eScreen;
 
     var sOutput = "";
 
@@ -436,7 +437,7 @@ var gameEngineJS = (function(){
         printIndex++;
       }
     }
-    eScreen.innerHTML = sOutput;
+    target.innerHTML = sOutput;
   };
 
 
@@ -1166,6 +1167,7 @@ var gameEngineJS = (function(){
 
       // holds the frames we"re going to send to the renderer
       var screen = [];
+      var spritescreen = [];
       var overlayscreen = [];
 
 
@@ -1580,7 +1582,6 @@ var gameEngineJS = (function(){
                   var yccord = fSpriteCeiling + sy;
                   var xccord = nSpriteColumn;
                   screen[ yccord*nScreenWidth + xccord ] = sSpriteGlyph;
-
                   fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                 }
               }
@@ -1608,7 +1609,7 @@ var gameEngineJS = (function(){
       for(var j = 0; j < nScreenWidth; j++){
         sOutput += "&nbsp;";
       }
-      sOutput += ".<br>";
+      sOutput += "<br>";
     }
     eScreen.innerHTML = sOutput;
   };
@@ -1659,6 +1660,7 @@ var gameEngineJS = (function(){
   {
     // prep document
     eScreen = document.getElementById("display");
+    eScreen2 = document.getElementById("seconddisplay");
     eDebugOut = document.getElementById("debug");
     eTouchLook = document.getElementById("touchinputlook");
     eTouchMove = document.getElementById("touchinputmove");
