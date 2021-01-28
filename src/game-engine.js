@@ -82,13 +82,13 @@ var gameEngineJS = (function(){
     var y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
 
     while( map[ ~~(y) * nMapWidth + ~~(x)] != "." ){
-      var x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
-      var y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+      x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
+      y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
     }
 
     var oCoordinates = {
       "x": x,
-      "y": y,
+      "y": y
     };
 
     return oCoordinates;
@@ -97,7 +97,7 @@ var gameEngineJS = (function(){
 
   // generate random Sprites
   var _generateRandomSprites = function( nNumberOfSprites ){
-    var nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 )
+    nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 );
     // generates random Pogels :oooo
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
@@ -1043,7 +1043,10 @@ var gameEngineJS = (function(){
           sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // still buggie
         }
 
-        // if sprite is close to the player, turn around
+        // if sprite is close to the player, and generally facing the player, turn around
+        if( sprite["z"] < 1 && sprite["a"] !== "B" ){
+          sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
+        }
 
 
       } // end if sprite move
@@ -1480,7 +1483,7 @@ var gameEngineJS = (function(){
 
               var sSamplePixel = "";
 
-              var sSpAngle = false;
+              // var sSpAngle = false;
               var sAnimationFrame = false;
 
               // animation-cycle available, determine the current cycle
@@ -1499,26 +1502,30 @@ var gameEngineJS = (function(){
               if( "angles" in currentSpriteObject ){
 
                 if( fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05 ){
-                  sSpAngle = "B";
+                  // sSpAngle = "B";
+                  sprite["a"] = "B";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx05) && +(fSpriteBeautyAngle) < +(PIx1) ){
-                  sSpAngle = "L";
+                  // sSpAngle = "L";
+                  sprite["a"] = "L";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx1) && +(fSpriteBeautyAngle) < +(PIx1_5) ){
-                  sSpAngle = "F";
+                  // sSpAngle = "F";
+                  sprite["a"] = "F";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx1_5) && +(fSpriteBeautyAngle) < +(PIx2) ){
-                  sSpAngle = "R";
+                  // sSpAngle = "R";
+                  sprite["a"] = "R";
                 }
               }
 
 
               // check if object has both, angles, or animations
-              if( sSpAngle && sAnimationFrame ){
-                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle][sAnimationFrame], fSampleX, fSampleY);
+              if( sprite["a"] && sAnimationFrame ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY);
               }
-              else if( sSpAngle ){
-                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sSpAngle], fSampleX, fSampleY);
+              else if( sprite["a"] ){
+                sSamplePixel = _getSamplePixel(currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY);
               }
               else if( sAnimationFrame ){
                 sSamplePixel = _getSamplePixel(currentSpriteObject[sAnimationFrame], fSampleX, fSampleY);
