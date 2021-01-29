@@ -44,6 +44,7 @@ var gameEngineJS = (function(){
   var bFalling;
   var bRunning;
   var bPaused;
+  var bPlayerMayMoveForward;
 
   var nJumptimer = 0;
   var fLooktimer = 0;
@@ -974,7 +975,7 @@ var gameEngineJS = (function(){
         }
       }
 
-      if(bMoveForward){
+      if(bMoveForward && bPlayerMayMoveForward){
         fPlayerX += ( Math.cos(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
         fPlayerY += ( Math.sin(fPlayerA) + 5.0 * 0.0051 ) * fMoveFactor;
 
@@ -1046,6 +1047,12 @@ var gameEngineJS = (function(){
         // if sprite is close to the player, and facing the player, turn around
         if( sprite["z"] < 1 && sprite["a"] !== "B" ){
           sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
+        }
+        // if player hits sprite, prevent moving
+        if( sprite["z"] < 0.75 ){
+          bPlayerMayMoveForward = false;
+        }else{
+          bPlayerMayMoveForward = true;
         }
 
         // TODO: sprites hitting each other
@@ -1529,19 +1536,15 @@ var gameEngineJS = (function(){
               if( "angles" in currentSpriteObject ){
 
                 if( fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05 ){
-                  // sSpAngle = "B";
                   sprite["a"] = "B";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx05) && +(fSpriteBeautyAngle) < +(PIx1) ){
-                  // sSpAngle = "L";
                   sprite["a"] = "L";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx1) && +(fSpriteBeautyAngle) < +(PIx1_5) ){
-                  // sSpAngle = "F";
                   sprite["a"] = "F";
                 }
                 else if( +(fSpriteBeautyAngle) >= +(PIx1_5) && +(fSpriteBeautyAngle) < +(PIx2) ){
-                  // sSpAngle = "R";
                   sprite["a"] = "R";
                 }
               }
