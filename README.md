@@ -6,7 +6,9 @@
 Based on the javidx9 code-it-yourself, but written in JavaScript for your browser, this is a quick rundown or the text-only 3D engine complete with textures, mouselook, lighting and more!
 
 ### Where can I play it?
-You can download the repo, and just open the index.html file in your browser!
+`-->` Play it at http://pogel.xyz/ !!! `<--`
+
+Or you can download the repo, and just open the index.html file in your browser!
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine.gif)
 
 ## Breakdown
