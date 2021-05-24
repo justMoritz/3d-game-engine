@@ -1,13 +1,14 @@
 # 3D ASCII Game Engine
 
-![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine-min.png)
+![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine.gif)
 
 ## This project is an ascii-character-based 3D engine!
 Based on the javidx9 code-it-yourself, but written in JavaScript for your browser, this is a quick rundown or the text-only 3D engine complete with textures, mouselook, lighting and more!
 
 ### Where can I play it?
-You can download the repo, and just open the index.html file in your browser!
-![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine.gif)
+`-->` Play it at http://pogel.xyz/ !!! `<--`
+
+Or you can download the repo, and just open the index.html file in your browser!
 
 ## Breakdown
 
@@ -101,7 +102,5 @@ This one is actually quite simple: Every [few] frames, change the texture of a b
 - i/o is written from scratch but you knew that. Running and jumping included!
 - I quickly figured out that console.log-ing is super expensive. Instead, debug output is printed to a special section on the screen with it's own function. I always find it really interesting when you have find *other* solutions to problems that have already been solved.
 
-## TODO
-- Fix issues
-- Sprites?
-- build a half-fun game with decent art
+
+![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine-min.png)
