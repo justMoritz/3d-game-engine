@@ -1669,7 +1669,7 @@ var gameEngineJS = (function(){
     var viewPortAspect   = heightOfViewPort / widthOfViewport;
 
     // check if the amount of pixels to be rendered fit, if not, repeat
-    if(widthOfDisplay > widthOfViewport){
+    if(widthOfDisplay > widthOfViewport + 120){
       nScreenWidth = nScreenWidth - 1;
       // nScreenHeight = nScreenWidth * 0.22
 
@@ -1686,7 +1686,14 @@ var gameEngineJS = (function(){
     // if it does, set aspect-ratio-based height
     // and start the game
     else{
-      nScreenHeight = nScreenWidth * viewPortAspect/2.82;
+      var fAdjustedAspectRatio = viewPortAspect/2.82;
+      _debugOutput( fAdjustedAspectRatio );
+
+      if( fAdjustedAspectRatio < 0.266 ){
+        fAdjustedAspectRatio = 0.266;
+      }
+
+      nScreenHeight = nScreenWidth * fAdjustedAspectRatio;
       main();
     }
   };
