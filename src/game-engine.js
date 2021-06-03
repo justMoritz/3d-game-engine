@@ -1032,7 +1032,7 @@ var gameEngineJS = (function(){
         var fCollideY2 = +(sprite["y"]) + 0.425; // 0.25
         var fCollideX2 = +(sprite["x"]) - 0.65; //0.5
 
-        if( sprite["stuckcounter"] > 2 && map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
+        if( map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
 
           sprite["stuckcounter"]++;
 
