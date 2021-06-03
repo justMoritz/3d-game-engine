@@ -14,14 +14,16 @@
 var gameEngineJS = (function(){
 
   // constants
-  var PI___   = +(Math.PI);
-  var PI_0    = 0.0;
-  var PIx0_25 = +(PI___ * 0.25);
-  var PIx05   = +(PI___ * 0.5);
-  var PIx0_75 = +(PI___ * 0.75);
-  var PIx1    = PI___;
-  var PIx1_5  = +(PI___ * 1.5);
-  var PIx2    = +(PI___ * 2.0);
+  var PI___    = +(Math.PI);
+  var PI_0     = 0.0;
+  var PIx0_25  = +(PI___ * 0.25);
+  var PIx05    = +(PI___ * 0.5);
+  var PIx0_75  = +(PI___ * 0.75);
+  var PIx1     = PI___;
+  var PIx1_5   = +(PI___ * 1.5);
+  var PIx2     = +(PI___ * 2.0);
+  var I80divPI = (180/PI___)
+  var PIdiv4   = PI___ / 4.0
 
   // setup variables
   var eScreen;
@@ -71,13 +73,13 @@ var gameEngineJS = (function(){
   // ▒
   // ░
 
-  function _randomIntFromInterval(min, max) { // min and max included
+  var _randomIntFromInterval = function(min, max) { // min and max included
     return ~~(Math.random() * (max - min + 1) + min);
-  }
+  };
 
 
   // generates only pogels that can be placed
-  _generateRandomCoordinates = function(){
+  var _generateRandomCoordinates = function(){
 
     var x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
     var y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
@@ -103,12 +105,13 @@ var gameEngineJS = (function(){
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
       var randAngle = _randomIntFromInterval(0, PIx2);
+      var spriteRand = _randomIntFromInterval(0,1);
       var randomCoordinates = _generateRandomCoordinates();
       var oRandomSprite = {
           "x": randomCoordinates.x,
           "y": randomCoordinates.y,
           "r": randAngle,
-          "name": "P",
+          "name": (spriteRand === 1) ? "P" : "O",
           "move": true,
           "speed": _randomIntFromInterval(0, 5) * 0.01,
       }
@@ -1179,7 +1182,7 @@ var gameEngineJS = (function(){
 
 
       // Converts player turn position into degrees (used for texturing)
-      nDegrees = ~~( fPlayerA * (180/PI___)) % 360;
+      nDegrees = ~~( fPlayerA * I80divPI) % 360;
 
 
       // for the length of the screenwidth (one frame)
@@ -1498,7 +1501,7 @@ var gameEngineJS = (function(){
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * +(nScreenWidth);
 
           // The angle the sprite is facing relative to the player
-          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PI___ / 4.0;
+          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
           // normalize
           if (fSpriteBeautyAngle < 0){
             fSpriteBeautyAngle += PIx2;
