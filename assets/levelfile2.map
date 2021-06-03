@@ -35,20 +35,24 @@ levelfile2 = {
       "y": "3.5",
       "r": "0.5",
       "name": "P",
-      "move": true
+      "move": true,
+      "stuckcounter": 0
     },
     "2": {
       "x": "3.5",
       "y": "3.5",
       "r": "0",
       "name": "O",
+      "stuckcounter": 0
     },
     "3": {
       "x": "11",
       "y": "8",
       "r": "2",
       "name": "P",
-      "move": true
+      "move": true,
+      "stuckcounter": 0
     },
   },
+  sprites: "autogen",
 };

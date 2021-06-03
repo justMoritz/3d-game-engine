@@ -81,12 +81,12 @@ var gameEngineJS = (function(){
   // generates only pogels that can be placed
   var _generateRandomCoordinates = function(){
 
-    var x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
-    var y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+    var x = +(_randomIntFromInterval(0, nMapWidth)) + 0;
+    var y = +(_randomIntFromInterval(0, nMapHeight)) - 0;
 
     while( map[ ~~(y) * nMapWidth + ~~(x)] != "." ){
-      x = +(_randomIntFromInterval(0, nMapWidth)) + 0.25;
-      y = +(_randomIntFromInterval(0, nMapHeight)) - 0.5;
+      x = +(_randomIntFromInterval(0, nMapWidth)) + 1;
+      y = +(_randomIntFromInterval(0, nMapHeight)) - 1;
     }
 
     var oCoordinates = {
@@ -100,7 +100,7 @@ var gameEngineJS = (function(){
 
   // generate random Sprites
   var _generateRandomSprites = function( nNumberOfSprites ){
-    nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 );
+    nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 15 );
     // generates random Pogels or Obetrls! :oooo
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
@@ -1026,22 +1026,22 @@ var gameEngineJS = (function(){
         sprite["y"] = +(sprite["y"]) + +(Math.sin(sprite["r"])) * fMovementSpeed;
 
         // collision coordinates (attempting to center sprite)
-        var fCollideY = +(sprite["y"]) - 0.5;
-        var fCollideX = +(sprite["x"]) + 0.25;
+        var fCollideY = +(sprite["y"]) - 0.65; // 0.5
+        var fCollideX = +(sprite["x"]) + 0.125; // 0.25
 
-        var fCollideY2 = +(sprite["y"]) + 0.25;
-        var fCollideX2 = +(sprite["x"]) - 0.5;
+        var fCollideY2 = +(sprite["y"]) + 0.425; // 0.25
+        var fCollideX2 = +(sprite["x"]) - 0.65; //0.5
 
-        if( map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
+        if( sprite["stuckcounter"] > 2 && map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
 
           sprite["stuckcounter"]++;
 
-          // reverse last movement
-          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+          // // reverse last movement
+          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed*2;
+          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed*2;
 
 
-          // repeat may help unstuck sprites
+          // // repeat may help unstuck sprites
           // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
           // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
           // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
@@ -1054,9 +1054,14 @@ var gameEngineJS = (function(){
           // if sprite keeps getting stuck, shove it outta there
           if( sprite["stuckcounter"] > 10 ){
             sprite["stuckcounter"] = 0;
-            sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed*10;
-            sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed*10;
-            // sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // TODO: sometimes buggie
+            sprite["r"] = 0.5
+            sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * 0.5;
+            sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * 0.5;
+
+            // sprite["move"]  = false;
+            // sprite["x"]  = 0;
+            // sprite["7"]  = 0;
+
           }
         }
 
