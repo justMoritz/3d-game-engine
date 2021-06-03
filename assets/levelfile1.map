@@ -29,38 +29,43 @@ levelfile1 = {
   background: "black",
   sprites: {
     "1": {
-      "x": "13.75",
+      "x": "12.75",
       "y": "3.5",
       "r": "1.5",
       "name": "O",
-      "move": true
+      "move": true,
+      "stuckcounter": 0
     },
     "o1": {
       "x": "10.75",
       "y": "5.5",
       "r": "4.5",
       "name": "O",
-      "move": false
+      "move": false,
+      "stuckcounter": 0
     },
     "2": {
       "x": "3.5",
       "y": "3.5",
       "r": "0.1",
       "name": "P",
-      "move": true
+      "move": true,
+      "stuckcounter": 0
     },
     "3": {
       "x": "3.5",
       "y": "3.5",
       "r": "0.1",
       "name": "P",
-      "move": true
+      "move": true,
+      "stuckcounter": 0
     },
     "4": {
       "x": "2",
       "y": "8",
       "r": "1.1",
       "name": "O",
+      "stuckcounter": 0
     },
   },
   sprites: "autogen",

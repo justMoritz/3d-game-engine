@@ -101,19 +101,20 @@ var gameEngineJS = (function(){
   // generate random Sprites
   var _generateRandomSprites = function( nNumberOfSprites ){
     nNumberOfSprites = nNumberOfSprites || Math.round( nMapWidth * nMapWidth / 10 );
-    // generates random Pogels :oooo
+    // generates random Pogels or Obetrls! :oooo
     var oRandomLevelSprites = {};
     for( var m = 0; m < nNumberOfSprites; m++){
       var randAngle = _randomIntFromInterval(0, PIx2);
-      var spriteRand = _randomIntFromInterval(0,1);
+      var nSpriteRand = _randomIntFromInterval(0,3);
       var randomCoordinates = _generateRandomCoordinates();
       var oRandomSprite = {
           "x": randomCoordinates.x,
           "y": randomCoordinates.y,
           "r": randAngle,
-          "name": (spriteRand === 1) ? "P" : "O",
+          "name": (nSpriteRand === 1) ? "O" : "P",
           "move": true,
           "speed": _randomIntFromInterval(0, 5) * 0.01,
+          "stuckcounter": 0,
       }
       oRandomLevelSprites[m] = oRandomSprite ;
     }
@@ -1033,18 +1034,30 @@ var gameEngineJS = (function(){
 
         if( map[ ~~(fCollideY) * nMapWidth + ~~(fCollideX)] != "." || map[ ~~(fCollideY2) * nMapWidth + ~~(fCollideX2)] != "." ){
 
+          sprite["stuckcounter"]++;
+
           // reverse last movement
           sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
           sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
 
+
           // repeat may help unstuck sprites
-          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
-          sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-          sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+          // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+          // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+          // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+          // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+
 
           // change the angle and visible angle
           sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // TODO: sometimes buggie
+
+          // if sprite keeps getting stuck, shove it outta there
+          if( sprite["stuckcounter"] > 10 ){
+            sprite["stuckcounter"] = 0;
+            sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed*10;
+            sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed*10;
+            // sprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2; // TODO: sometimes buggie
+          }
         }
 
         // if sprite is close to the player, and facing the player, turn around
@@ -1578,7 +1591,7 @@ var gameEngineJS = (function(){
               }
 
 
-              var nSpriteColumn = Math.round((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
+              var nSpriteColumn = ~~((fMiddleOfSprite + sx - (fSpriteWidth / 2)));
 
               if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth){
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
