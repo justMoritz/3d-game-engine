@@ -1652,19 +1652,27 @@ var gameEngineJS = (function(){
   };
 
 
+  var _getHeight = function() {
+    return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  };
+
+
   var nTrymax = 512;
   var _testScreenSizeAndStartTheGame = function(){
 
     // render a static test screen
     _createTestScreen();
 
-    var widthOfDisplay = eScreen.offsetWidth;
-    var widthOfViewport = _getWidth();
+    var widthOfDisplay   = eScreen.offsetWidth;
+    var widthOfViewport  = _getWidth();
+    var heightOfViewPort = _getHeight();
+    var viewPortAspect   = heightOfViewPort / widthOfViewport;
 
     // check if the amount of pixels to be rendered fit, if not, repeat
-    if(widthOfDisplay > widthOfViewport ){
+    if(widthOfDisplay > widthOfViewport || widthOfViewport < 640 ){
       nScreenWidth = nScreenWidth - 1;
-      nScreenHeight = nScreenWidth * 0.22;
+      // nScreenHeight = nScreenWidth * 0.22
+
 
       // try no more than nTrymax times (in case of some error)
       if( nTrymax > 0 ){
@@ -1673,8 +1681,10 @@ var gameEngineJS = (function(){
       }
 
     }
-    // if it does, start the game
+    // if it does, set aspect-ratio-based height
+    // and start the game
     else{
+      nScreenHeight = nScreenWidth * viewPortAspect/2.2;
       main();
     }
   };
