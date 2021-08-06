@@ -2,27 +2,27 @@
 
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine.gif)
 
-## This project is an ascii-character-based 3D engine!
-Based on the javidx9 code-it-yourself, but written in JavaScript for your browser, this is a quick rundown or the text-only 3D engine complete with textures, mouselook, lighting and more!
+## A JavaScript 3D Engine with a pure ASCII-character-based renderer!
+Based on the javidx9 code-it-yourself, but re-written and optimized in JavaScript for your browser, this is a quick rundown or the text-only 3D engine complete with mouselook, sprites, textures, lighting, water and more!
 
 ### Where can I play it?
 `-->` Play it at http://pogel.xyz/ !!! `<--`
 
-Or you can download the repo, and just open the index.html file in your browser!
+Or you can download the repo, and just open the `index.html` file in your browser!
 
 ## Breakdown
 
+### Starting Point
+Javidx9's YouTube video titled [“Code-It-Yourself! First Person Shooter (Quick and Simple C++)”](https://www.youtube.com/watch?v=xW8skO7MFYw), it's a great and easy-to-follow tutorial for writing a simple 3D game to run in a command line terminal. It goes into much depth on the calculations, maths, and theories behind a raycaster engine, and is just honestly a really cool concept. My goal was it to adapt it for JavaScript, run it in a browser, and then take it a little further!
+
 ### Raycasting and ‘3D’
-I really encourace you to check out javidx9's original project, it's a great and easy-to-follow tutorial, and goes into much depth of the calculations, maths, and theories behind a raycaster engine.
-
-So the biggest question might be…is it 3D? Well, I would say it depends. It's not polygons, sure, but you might argue that even polygonal 3D rendering is just a 2D representation of threedimensional space. And so is this. It has more limitations than polygonal rendering, for sure. But it's still in essense the illusion of a 3D world, created in 2D pixels from a set of coordinates, just like polygonal 3D.
-
+The first question might be…is it 3D? That depends. You could argue that even polygonal 3D rendering is just a 2D representation of three-dimensional space. And so is a raycaster! While it has clearly more limitations than a polygonal world, it's still in essence the illusion of a 3D world, created in 2D pixels from a set of coordinates.
 
 ### Just text on a screen
-This is a game engine built with nothing but mono-spaced ASCII characters, so I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas here!
+This is a game engine built with nothing but mono-spaced ASCII characters, so I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas, just text in a box!
 
 ### Looking Up and Down
-One of the most obvious limitations of rendering a 3D world not with polygons but with colums is that looking up and down is a bit tricky. After all, traditional raycaster games and even Doom had you looking straight ahead pretty much all the time.
+One of the most obvious limitations of rendering a 3D world not with polygons but with colums like a raycaster is that looking up and down is a bit tricky. After all, traditional raycaster games and even early poly games like Doom had you looking straight ahead pretty much all the time.
 
 However, after adding mouse support, I really wanted a “mouselook” feel. I guess modern 3D games just spoiled us, and it's really hard to get un-used to that. So what to do?
 
