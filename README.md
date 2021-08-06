@@ -54,37 +54,42 @@ The last thing is to run the resulting output through another loop, and cut off 
 
 
 ## Sprites
-Of course no 3D world is complete without inhabitants! The sprites are calculated and drawn in their own space, and imposed on the over the background. Each sprite has 4 views depending on its angle relative to the player. To determine if a sprite is behind another sprite, or a wall, a rudimentary z-buffer is used!
+Of course no 3D world is complete without inhabitants! 
 
-The characters models are adapted from my first Pogel-game, and stored as JSON in external texture-files. They loaded and placed into the world dynamically, and have basic movement routines, will turn in 90 degree angles if they hit a wall, and reverse direction when they hit the player!
+Sprites are calculated and in their own space, and superimposed over the background world. Sprites support 4 views depending on its angle relative to the player. To determine if a sprite is behind another sprite, or a wall, a rudimentary z-buffer is used!
+
+The characters models are adapted from my first Pogel-game, and stored as JSON in external texture-files. They loaded and placed into the world dynamically, and have basic movement logic. Moving sprites will turn 90 degrees if they hit a wall, and reverse direction when they hit the player!
 
 
 ## Textures, Renderer and Output Modes:
-The ascii engine can run in 3 render modes: Solid Walls, Textures Only and Shaded Texture.
+The ASCII output can run in 3 render modes: Solid Walls, Textures Only and Shaded Texture. Walls are textured with a sampler: 
+- The sampler figures out which pixel to get from a texture based on which part of the texture corresponds to the wall coordinates from the game-world
+- Textures can be sampled at different sizes: Blocks can have 2x (or any times) the size, and repeat textures within the block, increasing the resolution
 
-Like the original, it started with solid Walls rendered in different shades for depth. To texture the walls, I implemented a sampler (which figures out which pixel to get from a texture based on absolute coordinates), and a texturing algorithm that figures out where to place them in the world. 
-
-While I like the look of ASCII characters as textures, they tend to be a bit…illegible if they are rendered with really large pixels, and so I wrote in the ability to not only convert the text ASCII chars into solid solid ASCII chars, but also adjust the distance shading of those chars on depth.
+While I like the look of ASCII characters as textures, they tend to be a illegible if rendered with really large pixels, and so I wrote in the ability to not only convert the text ASCII chars into solid solid ASCII chars, but also adjust the distance shading of those chars on depth.
 
 ![Different Render Modes Motion](https://raw.githubusercontent.com/justMoritz/images/master/3d-textures.gif)
 ![Different Render Modes Still](https://raw.githubusercontent.com/justMoritz/images/master/3d-rendermodes-min.png)
 
 
-## Shaded Textures! (aka almost lighting)
-I thought it might be kind of neat to have a—sorta—directional light source to give the whole world a little more depth. Depending on the distance from the player, each world-column is rendered at a slightly brightness. Walls facing a certain direction are shaded one step lighter than walls facing the other. In order to re-use this for any texture, solid wall, or even sprites, I wrote a method that assigns the correct shade to each pixel as they are requested to render by the engine.
+## Shading! (aka almost lighting)
+I thought it might be kind of neat to have a—sorta—directional light source to give the whole world a little more depth. Depending on the distance from the player, each world-column is rendered at a slightly brightness. Walls facing a certain direction are shaded one step lighter than walls facing the other.
+
+In order to re-use this for any texture, solid wall, or sprites, I wrote a method that assigns the correct depth- texture- directional values for each pixel as they are requested by the engine.
 
 ![Almost Lighting](https://raw.githubusercontent.com/justMoritz/images/master/3d-shading.gif)
 
 The same is also true for the sprite-based characters!
 
 ## Performance Optimisations
-As you can imagine, doing hundreds and thousands of trigonometrical calculations per second is extremely processor expensive, and JavaScript is not necessarily your best language for that. It's loosely typed, it's running in a browser, and while a lot of its math operations are highly optimized in modern browsers, it can still be brought to its knees rather quickly. My approach at optimizing can be broken down into caching/state-preserving, and reducing expensive loops and function calls.
+As you can imagine, doing hundreds and thousands of trigonometrical calculations per second is extremely processor expensive, and JavaScript is not necessarily your best language for that. It's loosely typed, it's running in a browser, and while a lot of its math operations are highly optimized in modern browsers, it can still be brought to its knees rather quickly. My approach in optimizing can be broken down into caching/state-preserving, and reducing expensive loops and function calls.
 
 - Caching and preserving certain player-, object- and world-states, such as angles, z-buffers, distance calculations. The goal is calculate everything only once!
-- Frequent calculations (especially those involving π, and various calculations involving π) are cached in constants.
-- Lookup-tables for some calculations involving looking up and down
-- replace various replace JavaScript functions like `parseInt`, `parseFloat`, `Math.floor` etc. with bitwise operators
-- combine various operations into single loops: super-impose objects and sprites onto the background in the same output loop, instead of super-imposing them.
+- Frequent calculations (especially π, and various calculations involving π) are cached in constants
+- Lookup-tables for some recurring calculations involving looking up and down
+- Replaceing various JavaScript functions like `parseInt`, `parseFloat`, `Math.floor` etc. with bitwise operators
+- Combining various operations into single loops: super-impose objects and sprites onto the background in the same output loop, instead of rendering each space on top the other
+
 
 ## Other Details
 
@@ -92,10 +97,10 @@ As you can imagine, doing hundreds and thousands of trigonometrical calculations
 Because this is an entire game engine, level data and textures are loaded from files, and can be switched on the fly!
 
 ### Floor Objects
-The engine also supports what I call objects: Items that are neither walls nor the planes that are the ceiling and the sky. In the world they could represent water or holes, depending on their shading. They work by:
+The engine also supports what I call floor objects: blocks that are neither walls nor infinite planes like ceilings and the sky. In the world they could represent water or holes, depending on their shading. They work by:
 - Calculating the distance to the front *and* the back of a block.
 - Overlaying and combining them onto the background-space
-- Floor Objects are kept out of the z-buffer, otherwise they might be hiding sprites placed behind them!
+- Keeping them out of the z-buffer, so they don't hide sprites placed behind them!
 
 ![Objects Composite Image](https://raw.githubusercontent.com/justMoritz/images/master/3d-composit-min.png)
 
