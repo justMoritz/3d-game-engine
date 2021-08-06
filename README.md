@@ -22,12 +22,12 @@ Javidx9's YouTube video titled [“Code-It-Yourself! First Person Shooter (Quick
 The first question might be…is it actually 3D? That depends. You could argue that even polygonal 3D rendering is just a 2D representation of three-dimensional space. And so is this raycaster! While it has clearly more limitations than a polygonal world, it's still in essence the illusion of a 3D world, created in 2D pixels from a set of coordinates.
 
 ## Just text on a screen
-This is a game engine built with nothing but mono-spaced ASCII characters, so I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas, no divs, just plan old text!
+Since this game engine builds its world with nothing but mono-spaced ASCII characters, I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas, no divs, just plain text!
 
 ## Looking Up and Down
-One of the most obvious limitations of column-based rendering a 3D world is that looking up and down is a bit tricky. After all, traditional raycaster games and even early poly games like Doom had you looking straight ahead pretty much all the time.
+One of the most obvious limitations of column-based rendering a 3D world is the absence of proper looking up and down. After all, traditional raycaster games and even early poly games like Doom had you looking straight ahead pretty much all the time.
 
-Modern 3D games really spoil us with, and being able to look around freely contributes so much to an immersive, real-feeling world. And that's really hard to get un-used to. So the challenge was: Can I re-create and build a modern “mouselook” into this engine?
+Modern 3D games really spoil us in this regard: being able to look around freely contributes so much to an immersive, real-feeling world. And that's really hard to get un-used to. So the challenge was: Can I re-create a modern “mouselook” feel into this engine?
 
 #### Step 1: Just Change the Height of the Ceiling and Floor
 The basic concept is simple enough: When you move the mouse to look up, simply make the sky taller and the floor smaller. When looking down, make the sky smaller and the floor larger.
