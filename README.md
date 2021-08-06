@@ -10,21 +10,21 @@ Based on the Javidx9 code-it-yourself, but re-written and optimized in JavaScrip
 
 Or you can download the repo, and just open the `index.html` file in your browser!
 
-## Breakdown
-
-## Who is Pogel?
+### Who is Pogel?
 Pogel is a cartoon character I invented! He's the star of many comics, cartoons, and even a previous fun [mini game project](https://scratch.mit.edu/projects/27237320/)!
 
-### Starting Point
+# Case Study
+
+## Starting Point
 Javidx9's YouTube video titled [“Code-It-Yourself! First Person Shooter (Quick and Simple C++)”](https://www.youtube.com/watch?v=xW8skO7MFYw), it's a great and easy-to-follow tutorial for writing a simple 3D game to run in a command line terminal. It goes into much depth on the calculations, maths, and theories behind a raycaster engine, and is just honestly a really cool concept. My goal was it to adapt it for JavaScript, run it in a browser, and then take it a little further!
 
-### Raycasting and ‘3D’
+## Raycasting and ‘3D’
 The first question might be…is it 3D? That depends. You could argue that even polygonal 3D rendering is just a 2D representation of three-dimensional space. And so is this raycaster! While it has clearly more limitations than a polygonal world, it's still in essence the illusion of a 3D world, created in 2D pixels from a set of coordinates.
 
-### Just text on a screen
+## Just text on a screen
 This is a game engine built with nothing but mono-spaced ASCII characters, so I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas, no divs, just plan old text!
 
-### Looking Up and Down
+## Looking Up and Down
 One of the most obvious limitations of column-based rendering a 3D world is that looking up and down is a bit tricky. After all, traditional raycaster games and even early poly games like Doom had you looking straight ahead pretty much all the time.
 
 Modern 3D games really spoil us with, and being able to look around freely contributes so much to an immersive, real-feeling world. And that's really hard to get un-used to. So the challenge was: Can I re-create and build a modern “mouselook” into this engine?
@@ -53,15 +53,13 @@ The last thing is to run the resulting output through another loop, and cut off 
 *Tada! (Almost) 3d!*
 
 
-### Sprites
-
+## Sprites
 Of course no 3D world is complete without inhabitants! The sprites are calculated and drawn in their own space, and imposed on the over the background. Each sprite has 4 views depending on its angle relative to the player. To determine if a sprite is behind another sprite, or a wall, a rudimentary z-buffer is used!
 
 The characters models are adapted from my first Pogel-game, and stored as JSON in external texture-files. They loaded and placed into the world dynamically, and have basic movement routines, will turn in 90 degree angles if they hit a wall, and reverse direction when they hit the player!
 
 
-### Textures, Renderer and Output Modes:
-
+## Textures, Renderer and Output Modes:
 The ascii engine can run in 3 render modes: Solid Walls, Textures Only and Shaded Texture.
 
 Like the original, it started with solid Walls rendered in different shades for depth. To texture the walls, I implemented a sampler (which figures out which pixel to get from a texture based on absolute coordinates), and a texturing algorithm that figures out where to place them in the world. 
@@ -72,24 +70,14 @@ While I like the look of ASCII characters as textures, they tend to be a bit…i
 ![Different Render Modes Still](https://raw.githubusercontent.com/justMoritz/images/master/3d-rendermodes-min.png)
 
 
-### Shaded Textures! (aka almost lighting)
+## Shaded Textures! (aka almost lighting)
 I thought it might be kind of neat to have a—sorta—directional light source to give the whole world a little more depth. Depending on the distance from the player, each world-column is rendered at a slightly brightness. Walls facing a certain direction are shaded one step lighter than walls facing the other. In order to re-use this for any texture, solid wall, or even sprites, I wrote a method that assigns the correct shade to each pixel as they are requested to render by the engine.
 
 ![Almost Lighting](https://raw.githubusercontent.com/justMoritz/images/master/3d-shading.gif)
 
 The same is also true for the sprite-based characters!
 
-### Directional Textures
-At some point I decided I would make a game that took place in a grocery store. Since shelves themselves have depths, the textures for the shelves would have to have some dimension to them. My idea was to serve a different texture (with fake perspective) based on the player angel is looking at it. The effect is subtle here, but I think it really helps sell the illusion!
-
-![Directional Textures](https://raw.githubusercontent.com/justMoritz/images/master/3d-directional.gif)
-
-
-### Asset Loader
-Because this is an entire game engine, level data and textures are loaded from files, and can be switched on the fly!
-
-### Performance Optimisations
-
+## Performance Optimisations
 As you can imagine, doing hundreds and thousands of trigonometrical calculations per second is extremely processor expensive, and JavaScript is not necessarily your best language for that. It's loosely typed, it's running in a browser, and while a lot of its math operations are highly optimized in modern browsers, it can still be brought to its knees rather quickly. My approach at optimizing can be broken down into caching/state-preserving, and reducing expensive loops and function calls.
 
 - Caching and preserving certain player-, object- and world-states, such as angles, z-buffers, distance calculations. The goal is calculate everything only once!
@@ -97,6 +85,11 @@ As you can imagine, doing hundreds and thousands of trigonometrical calculations
 - Lookup-tables for some calculations involving looking up and down
 - replace various replace JavaScript functions like `parseInt`, `parseFloat`, `Math.floor` etc. with bitwise operators
 - combine various operations into single loops: super-impose objects and sprites onto the background in the same output loop, instead of super-imposing them.
+
+## Other Details
+
+### Asset Loader
+Because this is an entire game engine, level data and textures are loaded from files, and can be switched on the fly!
 
 ### Floor Objects
 The engine also supports what I call objects: Items that are neither walls nor the planes that are the ceiling and the sky. In the world they could represent water or holes, depending on their shading. They work by:
@@ -106,14 +99,19 @@ The engine also supports what I call objects: Items that are neither walls nor t
 
 ![Objects Composite Image](https://raw.githubusercontent.com/justMoritz/images/master/3d-composit-min.png)
 
-### Animated Textures:
-This one is actually quite simple: Every few frames, load a different texture of a block. This code is alreay in the engine, but has not yet been implemented yet!
-
 ### Input and Output
 - i/o is written from scratch! Walking, strafing, running and jumping included, and of course proper mouselook! 
 - I quickly figured out that console.log-ing is super expensive. Instead, debug output is printed to a special div on screen with its own function. I always find it really interesting when you have find *other* solutions to problems that have already been solved!
 
-### Towers (WIP)
+### Directional Textures
+At some point I decided I would make a game that took place in a grocery store. Since shelves themselves have depths, the textures for the shelves would have to have some dimension to them. My idea was to serve a different texture (with fake perspective) based on the player angel is looking at it. The effect is subtle here, but I think it really helps sell the illusion!
+
+![Directional Textures](https://raw.githubusercontent.com/justMoritz/images/master/3d-directional.gif)
+
+### Animated Textures:
+This one is actually quite simple: Every few frames, load a different texture of a block. This code is alreay in the engine, but has not yet been implemented yet!
+
+## Towers (WIP)
 Certain blocks can be rendered taller than other blocks. This is done by rendering part of the sky as a solid. It works really nice until you start looking up and down, when it shifts, warps, and occasionally pops in and out.
 
 ![Towers](https://raw.githubusercontent.com/justMoritz/images/master/3d-towers-min.png)
