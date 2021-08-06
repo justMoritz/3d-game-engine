@@ -16,10 +16,10 @@ Pogel is a cartoon character I invented! He's the star of many comics, cartoons,
 # Case Study
 
 ## Starting Point
-Javidx9's YouTube video titled [“Code-It-Yourself! First Person Shooter (Quick and Simple C++)”](https://www.youtube.com/watch?v=xW8skO7MFYw), it's a great and easy-to-follow tutorial for writing a simple 3D game to run in a command line terminal. It goes into much depth on the calculations, maths, and theories behind a raycaster engine, and is just honestly a really cool concept. My goal was it to adapt it for JavaScript, run it in a browser, and then take it a little further!
+Javidx9's YouTube video titled [“Code-It-Yourself! First Person Shooter (Quick and Simple C++)”](https://www.youtube.com/watch?v=xW8skO7MFYw), it's a great and easy-to-follow tutorial for writing a raycaster game that runs in a command line terminal! It goes into much depth on the calculations, maths, and theories behind a raycaster engine, and is just honestly a really cool concept. My goal was it to adapt it for JavaScript, run it in a browser, and then take it a little further!
 
-## Raycasting and ‘3D’
-The first question might be…is it 3D? That depends. You could argue that even polygonal 3D rendering is just a 2D representation of three-dimensional space. And so is this raycaster! While it has clearly more limitations than a polygonal world, it's still in essence the illusion of a 3D world, created in 2D pixels from a set of coordinates.
+#### Raycasting and 3D
+The first question might be…is it actually 3D? That depends. You could argue that even polygonal 3D rendering is just a 2D representation of three-dimensional space. And so is this raycaster! While it has clearly more limitations than a polygonal world, it's still in essence the illusion of a 3D world, created in 2D pixels from a set of coordinates.
 
 ## Just text on a screen
 This is a game engine built with nothing but mono-spaced ASCII characters, so I thought it might be a lot more fun to just have the game be actual text! As a result, that's just what it is. No JavaScript canvas, no divs, just plan old text!
