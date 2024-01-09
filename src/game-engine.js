@@ -458,15 +458,47 @@ var gameEngineJS = (function () {
     return sOutput;
   };
 
+  var _drawToCanvas = function ( pixels, removePixels ) {
+    var canvas = eCanvas;
+    var ctx = canvas.getContext("2d");
+
+    // Assuming your canvas has a width and height
+    // canvas.width = nScreenWidth - removePixels/2;
+    _debugOutput( canvas.width );
+
+    var canvasWidth = canvas.width;
+    var canvasHeight = canvas.height;
+    
+    // Create an ImageData object with the pixel data
+    var imageData = ctx.createImageData(canvasWidth, canvasHeight);
+        
+    // Convert values to shades of grey
+    for (var i = 0; i < pixels.length; i++) {
+      var pixelValue = pixels[i];
+      var greyShade = pixelValue * 63; // Adjust the factor based on your preference
+      imageData.data[i * 4] = greyShade; // Red channel
+      imageData.data[i * 4 + 1] = greyShade; // Green channel
+      imageData.data[i * 4 + 2] = greyShade; // Blue channel
+      imageData.data[i * 4 + 3] = 255; // Alpha channel (fully opaque)
+    }
+    // Use putImageData to draw the pixels onto the canvas
+    ctx.putImageData(imageData, 0, 0);
+    }
+
   var _fDrawFrame = function (screen, overlayscreen, target) {
     var frame = _fPrepareFrame(screen, overlayscreen);
     var target = target || eScreen;
 
     var sOutput = "";
+    var sCanvasOutput = "";
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
     var printIndex = 0;
     var removePixels = nScreenHeight / 2;
+
+    // _debugOutput( removePixels );
+
+
     for (var row = 0; row < nScreenHeight; row++) {
       for (var pix = 0; pix < nScreenWidth; pix++) {
         // H-blank based on screen-width
@@ -476,16 +508,20 @@ var gameEngineJS = (function () {
 
         if (pix < removePixels) {
           sOutput += "";
+          sCanvasOutput += "0";
         } else if (pix > nScreenWidth - removePixels) {
           sOutput += "";
+          sCanvasOutput += "0";
         } else {
           sOutput += frame[printIndex];
+          sCanvasOutput += frame[printIndex];
         }
 
         printIndex++;
       }
     }
     target.innerHTML = sOutput;
+    _drawToCanvas( sCanvasOutput, removePixels );
   };
 
   // various shaders for walls, ceilings, objects
@@ -497,11 +533,11 @@ var gameEngineJS = (function () {
     renderWall: function (j, fDistanceToWall, sWallDirection, pixel) {
       var fill = "";
 
-      var b100 = "&#9608;";
-      var b75 = "&#9619;";
-      var b50 = "&#9618;";
-      var b25 = "&#9617;";
-      var b0 = "&nbsp;";
+      var b100 = "4";
+      var b75 = "3";
+      var b50 = "2";
+      var b25 = "1";
+      var b0 = "0";
 
       if (sWallDirection === "N" || sWallDirection === "S") {
         if (fDistanceToWall < fDepth / 5.5) {
@@ -545,7 +581,7 @@ var gameEngineJS = (function () {
             fill = b0;
           }
         } else {
-          fill = "&nbsp;";
+          fill = "0";
         }
       }
 
@@ -592,7 +628,7 @@ var gameEngineJS = (function () {
             fill = b0;
           }
         } else {
-          fill = "&nbsp;";
+          fill = "0";
         }
       }
 
@@ -604,28 +640,28 @@ var gameEngineJS = (function () {
       var fill = "&#9617;";
 
       if (fDistanceToWall < fDepth / 6.5) {
-        fill = "&#9608;";
+        fill = "4";
       } else if (fDistanceToWall < fDepth / 4.66) {
-        fill = "&#9619;";
+        fill = "3";
       } else if (fDistanceToWall < fDepth / 3.33) {
-        fill = "&#9618;";
+        fill = "2";
       } else if (fDistanceToWall < fDepth / 1) {
-        fill = "&#9617;";
+        fill = "1";
       } else {
-        fill = "&nbsp;";
+        fill = "0";
       }
 
       if (isBoundary) {
         if (fDistanceToWall < fDepth / 6.5) {
-          fill = "&#9617;";
+          fill = "1";
         } else if (fDistanceToWall < fDepth / 4.66) {
-          fill = "&#9617;";
+          fill = "1";
         } else if (fDistanceToWall < fDepth / 3.33) {
-          fill = "&nbsp;";
+          fill = "0";
         } else if (fDistanceToWall < fDepth / 1) {
-          fill = "&nbsp;";
+          fill = "0";
         } else {
-          fill = "&nbsp;";
+          fill = "0";
         }
       }
 
@@ -634,16 +670,16 @@ var gameEngineJS = (function () {
 
     // shading and sectionals for gate
     renderGate: function (j, fDistanceToWall, nDoorFrameHeight) {
-      var fill = "X";
+      var fill = "2";
       if (j < nDoorFrameHeight) {
         if (fDistanceToWall < fDepth / 4) {
-          fill = "&boxH;";
+          fill = "1;";
         } else {
           fill = "=";
         }
       } else {
         if (fDistanceToWall < fDepth / 4) {
-          fill = "&boxV;";
+          fill = "1";
         } else {
           fill = "|";
         }
@@ -670,7 +706,7 @@ var gameEngineJS = (function () {
       } else if (b < 0.9) {
         fill = "`";
       } else {
-        fill = "&nbsp;";
+        fill = "0";
       }
 
       return fill;
@@ -1425,7 +1461,7 @@ var gameEngineJS = (function () {
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
                 );
               } else {
-                screen[j * nScreenWidth + i] = "&nbsp;";
+                screen[j * nScreenWidth + i] = "0";
               }
             }
 
@@ -1434,7 +1470,7 @@ var gameEngineJS = (function () {
               if (sWalltype == ",") {
                 screen[j * nScreenWidth + i] = "1";
               } else {
-                screen[j * nScreenWidth + i] = "&nbsp;";
+                screen[j * nScreenWidth + i] = "0";
               }
             }
           }
@@ -1675,7 +1711,7 @@ var gameEngineJS = (function () {
                 // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                 if (
                   sSpriteGlyph != "." &&
-                  sSpriteGlyph != "&nbsp;" &&
+                  sSpriteGlyph != "0" &&
                   fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
                 ) {
                   // render pixels to screen
@@ -1704,7 +1740,7 @@ var gameEngineJS = (function () {
     var sOutput = "";
     for (var i = 0; i < nScreenHeight; i++) {
       for (var j = 0; j < nScreenWidth; j++) {
-        sOutput += "&nbsp;";
+        sOutput += "0";
       }
       sOutput += "<br>";
     }
@@ -1771,7 +1807,7 @@ var gameEngineJS = (function () {
   var init = function (input) {
     // prep document
     eScreen = document.getElementById("display");
-    eScreen2 = document.getElementById("seconddisplay");
+    eCanvas = document.getElementById("seconddisplay");
     eDebugOut = document.getElementById("debug");
     eTouchLook = document.getElementById("touchinputlook");
     eTouchMove = document.getElementById("touchinputmove");
@@ -1780,16 +1816,16 @@ var gameEngineJS = (function () {
     _moveHelpers.mouseinit();
     _moveHelpers.touchinit();
 
-    // TODO: move to in-game menu
-    document.getElementById("solid").addEventListener("click", function () {
-      nRenderMode = 0;
-    });
-    document.getElementById("texture").addEventListener("click", function () {
-      nRenderMode = 1;
-    });
-    document.getElementById("shader").addEventListener("click", function () {
-      nRenderMode = 2;
-    });
+    // // TODO: move to in-game menu
+    // document.getElementById("solid").addEventListener("click", function () {
+    //   nRenderMode = 0;
+    // });
+    // document.getElementById("texture").addEventListener("click", function () {
+    //   nRenderMode = 1;
+    // });
+    // document.getElementById("shader").addEventListener("click", function () {
+    //   nRenderMode = 2;
+    // });
 
     // initial gameload
     _loadLevel("levelfile1.map");

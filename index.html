@@ -1,94 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>3D ASCII Game Engine</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' >
 
-    <script id="gameEngine" type="text/javascript" src="src/game-engine.js?v=0.2.0"></script>
-    <script id="textures" type="text/javascript" src="assets/textures.tex"></script>
-    <script id="textures" type="text/javascript" src="assets/sprites.tex"></script>
-    <!-- <script id="textures" type="text/javascript" src="assets/pogelfont.tex"></script> -->
-    <script id="map" type="text/javascript" src="assets/levelfile1.map"></script>
+<head>
+  <title>3D ASCII Game Engine</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
 
-    <style>
-      body{
-        background: black;
-        color: white;
-        font-family: 'Consolas',Courier, monospace;
-        font-weight: bold;
-        font-size: 8px;
-        line-height: 1.15em;
-        overflow: hidden;
-        text-align: center;
-        touch-action: none;
-      }
-      #game{
-        position: relative;
-      }
-      #display{
-        display: inline-block;
-        pointer-events: none;
-      }
-      #seconddisplay{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        left: 0; top: 0;
-        color: lightgreen;
-      }
-      #touchinputmove,
-      #touchinputlook{
-        height: 100%;
-        position: absolute;
-        top: 0;
-        width: 50%;
-        touch-action: pan-left, pan-right, pan-up, pan-down;
-      }
-      #touchinputmove{
-        left: 0;
-      }
-      #touchinputlook{
-        right: 0;
-      }
-      .nomouse{
-        cursor: none;
-      }
-      #debug{
-        clear: both;
-      }
-      @media(max-width: 768px){
-        body{
-          font-size: 3px;
-        }
-      }
-    </style>
-  </head>
-  <body>
+  <script id="gameEngine" type="text/javascript" src="src/game-engine.js?v=0.2.0"></script>
+  <script id="textures" type="text/javascript" src="assets/textures.tex"></script>
+  <script id="textures" type="text/javascript" src="assets/sprites.tex"></script>
+  <!-- <script id="textures" type="text/javascript" src="assets/pogelfont.tex"></script> -->
+  <script id="map" type="text/javascript" src="assets/levelfile1.map"></script>
 
-    <div id="game">
-      <div id="display"></div>
-      <div id="seconddisplay"></div>
-      <div id="touchinputlook"></div>
-      <div id="touchinputmove"></div>
-    </div>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: 'Consolas', Courier, monospace;
+      font-weight: bold;
+      font-size: 8px;
+      line-height: 1.15em;
+      overflow: hidden;
+      text-align: center;
+      touch-action: none;
+    }
 
-    <br>
-    Click game screen to use mouse
+    #game {
+      position: relative;
+    }
 
-    <div id="debug" style="font-size: 2em; line-height: 2em;"></div>
+    #display {
+      display: inline-block;
+      pointer-events: none;
+    }
 
-    <h2>Render Mode</h2>
-    <button id="solid">Solid</button>
+    #seconddisplay {
+      position: absolute;
+      transform: scale(3);
+      /* width: 50%; */
+      /* height: auto; */
+      left: 20%;
+      top: 20%;
+      color: lightgreen;
+    }
+
+    #touchinputmove,
+    #touchinputlook {
+      height: 100%;
+      position: absolute;
+      top: 0;
+      width: 50%;
+      touch-action: pan-left, pan-right, pan-up, pan-down;
+    }
+
+    #touchinputmove {
+      left: 0;
+    }
+
+    #touchinputlook {
+      right: 0;
+    }
+
+    .nomouse {
+      cursor: none;
+    }
+
+    #debug {
+      clear: both;
+    }
+
+    @media(max-width: 768px) {
+      body {
+        font-size: 3px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="game">
+    <div id="display"></div>
+    <canvas id="seconddisplay" width="240" height="60"></canvas>
+    <div id="touchinputlook"></div>
+    <div id="touchinputmove"></div>
+  </div>
+
+  <br>
+  Click game screen to use mouse
+
+  <div id="debug" style="font-size: 2em; line-height: 2em;"></div>
+
+  <!-- <h2>Render Mode</h2> -->
+  <!-- <button id="solid">Solid</button>
     <button id="texture">Texture</button>
-    <button id="shader">Shaded Texture</button>
+    <button id="shader">Shaded Texture</button> -->
 
-    <br><br>
-    <a href="https://github.com/justMoritz/3d-game-engine" target="_blank" style="color: white;">GitHub repo</a>
-    <br>
-    2020-2021 by Moritz Zimmer
+  <br><br>
+  <a href="https://github.com/justMoritz/3d-game-engine" target="_blank" style="color: white;">GitHub repo</a>
+  <br>
+  2020-2021 by Moritz Zimmer
 
-    <script>
-      gameEngineJS.init();
-    </script>
-  </body>
+  <script>
+    gameEngineJS.init();
+  </script>
+</body>
+
 </html>
