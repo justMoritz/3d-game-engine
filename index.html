@@ -36,11 +36,17 @@
     #seconddisplay {
       position: absolute;
       transform: scale(3);
-      /* width: 50%; */
+      /* width: 80%; */
       /* height: auto; */
       left: 20%;
       top: 20%;
       color: lightgreen;
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: -o-crisp-edges;
+      image-rendering: crisp-edges;
+      -ms-interpolation-mode: nearest-neighbor;
     }
 
     #touchinputmove,
@@ -80,7 +86,7 @@
 
   <div id="game">
     <div id="display"></div>
-    <canvas id="seconddisplay" width="240" height="60"></canvas>
+    <canvas id="seconddisplay"></canvas>
     <div id="touchinputlook"></div>
     <div id="touchinputmove"></div>
   </div>

@@ -26,12 +26,14 @@ var gameEngineJS = (function () {
 
   // setup variables
   var eScreen;
+  var eCanvas;
+  var cCtx;
   var eDebugOut;
 
-  var nScreenWidth = 240;
-  var nScreenHeight = 60;
+  var nScreenWidth = 320;
+  var nScreenHeight = 120;
 
-  var fFOV = PI___ / 2.25; // (PI___ / 4.0 originally)
+  var fFOV = PI___ / 1.667; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -459,31 +461,29 @@ var gameEngineJS = (function () {
   };
 
   var _drawToCanvas = function ( pixels, removePixels ) {
-    var canvas = eCanvas;
-    var ctx = canvas.getContext("2d");
 
     // Assuming your canvas has a width and height
     // canvas.width = nScreenWidth - removePixels/2;
-    _debugOutput( canvas.width );
+    _debugOutput( eCanvas.width );
 
-    var canvasWidth = canvas.width;
-    var canvasHeight = canvas.height;
+    eCanvas.width = nScreenWidth;
+    eCanvas.height = nScreenHeight;
     
     // Create an ImageData object with the pixel data
-    var imageData = ctx.createImageData(canvasWidth, canvasHeight);
+    var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
         
     // Convert values to shades of grey
     for (var i = 0; i < pixels.length; i++) {
       var pixelValue = pixels[i];
       var greyShade = pixelValue * 63; // Adjust the factor based on your preference
       imageData.data[i * 4] = greyShade; // Red channel
-      imageData.data[i * 4 + 1] = greyShade; // Green channel
-      imageData.data[i * 4 + 2] = greyShade; // Blue channel
+      imageData.data[i * 4 + 1] = greyShade/2; // Green channel
+      imageData.data[i * 4 + 2] = greyShade/4; // Blue channel
       imageData.data[i * 4 + 3] = 255; // Alpha channel (fully opaque)
     }
     // Use putImageData to draw the pixels onto the canvas
-    ctx.putImageData(imageData, 0, 0);
-    }
+    cCtx.putImageData(imageData, 0, 0);
+  }
 
   var _fDrawFrame = function (screen, overlayscreen, target) {
     var frame = _fPrepareFrame(screen, overlayscreen);
@@ -698,13 +698,13 @@ var gameEngineJS = (function () {
           (nScreenHeight / (2 - fLooktimer * 0.15));
 
       if (b < 0.25) {
-        fill = "x";
+        fill = "4";
       } else if (b < 0.5) {
-        fill = "=";
+        fill = "3";
       } else if (b < 0.75) {
-        fill = "-";
+        fill = "2";
       } else if (b < 0.9) {
-        fill = "`";
+        fill = "1";
       } else {
         fill = "0";
       }
@@ -1808,6 +1808,7 @@ var gameEngineJS = (function () {
     // prep document
     eScreen = document.getElementById("display");
     eCanvas = document.getElementById("seconddisplay");
+    cCtx    = eCanvas.getContext("2d");
     eDebugOut = document.getElementById("debug");
     eTouchLook = document.getElementById("touchinputlook");
     eTouchMove = document.getElementById("touchinputmove");
