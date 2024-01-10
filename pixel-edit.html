@@ -12,6 +12,13 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    small {
+      font-weight: bold;
+      display: block;
+      margin: 0.25rem 0;
     }
 
     .layout {
@@ -19,12 +26,17 @@
     }
 
     .canvasholder {
-      width: 50%;
+      width: auto;
       padding: 1rem;
     }
 
     .dimensioninput {
-      margin-bottom: 1rem;
+      margin: 1rem auto;
+      display: flex;
+    }
+
+    .dimensioninput>* {
+      padding: 0 1rem;
     }
 
     .controls {
@@ -41,6 +53,7 @@
       left: 0;
       width: 100%;
       height: 100%;
+      cursor: none;
     }
 
     .canvas-sizer {
@@ -50,7 +63,7 @@
     }
 
     .import-export {
-      margin-top: 2rem;
+      margin: 0 auto;
     }
 
     .color-palette {
@@ -66,32 +79,38 @@
     }
 
     textarea {
-      margin-top: 1rem;
-      width: 400px;
+      width: 100%;
+      min-width: 400px;
       height: 200px;
     }
 
     input {
-      margin-top: 1rem;
+      /* margin-top: 1rem; */
       width: 50px;
+    }
+
+    h1,
+    h3 {
+      margin: 0.5rem auto;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="layout">
-    <div class="canvasholder">
-      <div class="dimensioninput">
-        <label for="widthInput">Width:</label>
-        <input type="number" id="widthInput" value="16" min="1">
-        <label for="heightInput">Height:</label>
-        <input type="number" id="heightInput" value="16" min="1">
-      </div>
+  <h1>Pixel Edit</h1>
+  <h3>The official pixel editor for the raycaster engine</h3>
 
+  <hr>
+
+  <div class="layout">
+
+    <div class="canvasholder">
       <div class="canvas-sizer">
-        <canvas id="pixelCanvas" width="16" height="16"></canvas>
-        <canvas id="cursorCanvas" width="16" height="16"></canvas>
+        <div class="">
+          <canvas id="pixelCanvas" width="16" height="16"></canvas>
+          <canvas id="cursorCanvas" width="16" height="16"></canvas>
+        </div>
       </div>
     </div>
 
@@ -130,10 +149,27 @@
     </div>
   </div>
 
+  <div class="dimensioninput">
+    <div>
+      <label for="widthInput">Width:</label>
+      <input type="number" id="widthInput" value="16" min="1">
+      <label for="heightInput">Height:</label>
+      <input type="number" id="heightInput" value="16" min="1">
+    </div>
+    <div>
+      <button id="updateDimensions">Update Dimensions</button>
+      <br />
+      <small>WARNING: Clears the canvas.</small>
+    </div>
+  </div>
+
   <div class="import-export">
-    <button onclick="exportPixels()">Export Pixels</button>
-    <br>
-    <textarea id="exportTextArea" readonly></textarea>
+    <!-- <button onclick="exportPixels()">Export Pixels</button> -->
+
+    <textarea id="exportTextArea" data-not-readonly></textarea>
+    <small>To import pixels, paste an existing texture array into this field. Make sure you set the correct height and
+      width.</small>
+    <button onclick="importPixels()">Import Pixels</button>
   </div>
 
   <script>
@@ -178,6 +214,7 @@
 
     const widthInput = document.getElementById("widthInput");
     const heightInput = document.getElementById("heightInput");
+    const updateDimensionsButton = document.getElementById("updateDimensions");
 
     const canvas = document.getElementById("pixelCanvas");
     const cCanvas = document.getElementById("cursorCanvas");
@@ -188,8 +225,17 @@
     // Set every pixel on the canvas to black initially
     resetCanvas();
 
-    widthInput.addEventListener("input", resetCanvas);
-    heightInput.addEventListener("input", resetCanvas);
+    // widthInput.addEventListener("input", resetCanvas);
+    // heightInput.addEventListener("input", resetCanvas);
+    updateDimensionsButton.addEventListener("click", () => {
+
+      let conf = confirm('Are you sure? You will ease your curent art. Consider exporting first.');
+      if (conf === true) {
+        resetCanvas();
+      } else {
+        // do nothing
+      }
+    });
 
     cCanvas.addEventListener("mousemove", showCursorPreview);
 
@@ -211,6 +257,11 @@
 
       canvas.width = width;
       canvas.height = height;
+      cCanvas.width = width;
+      cCanvas.height = height;
+
+      document.querySelector(".canvas-sizer").style.width = width * 10 + 'px';
+      document.querySelector(".canvas-sizer").style.height = height * 10 + 'px';
 
       ctx.fillStyle = currentColor;
       ctx.fillRect(0, 0, width, height);
@@ -234,6 +285,8 @@
 
       ctx.fillStyle = currentColor;
       ctx.fillRect(x, y, 1, 1);
+
+      exportPixels();
     }
 
 
@@ -275,6 +328,44 @@
       // // console.log(pixelArray);
       // exportTextArea.value = pixelArray.join('||||');
     }
+
+
+    // Pixel Import
+    function importPixels() {
+      const importTextArea = document.getElementById("exportTextArea");
+      const importedData = JSON.parse(importTextArea.value);
+
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      // Clear the canvas
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+
+      // Loop through each texel in importedData and set the corresponding color on the canvas
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const texel = importedData[y * width + x];
+          let color = texelLookupTable[texel];
+
+          // Looks up the RGB value from the lookuptable;
+          for (const [key, value] of Object.entries(texelLookupTable)) {
+            if (JSON.stringify(value) == JSON.stringify(texel)) {
+              color = key;
+              continue;
+            }
+          }
+
+          console.log(color);
+
+          if (color) {
+            ctx.fillStyle = color; // Use the color value from the texelLookupTable
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+
   </script>
 </body>
 
