@@ -530,6 +530,58 @@ var gameEngineJS = (function () {
   // each texture has 4 values: 3 hues plus black
   // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
+    // The 4 color values for these start at this point in the array
+    colorReferenceTableMin:{
+      m: '1',
+      b: '5',
+      p: '9',
+      r: '13',
+      o: '17',
+      g: '21',
+      t: '25',
+    },    
+    colorReferenceTable:{
+      m: ['1', '2', '3', '4'],
+      b: ['a', 'b', 'c', 'd'],
+      p: ['e', 'f', 'g', 'h'],
+      r: ['i', 'j', 'k', 'l'],
+      o: ['m', 'n', 'o', 'p'],
+      g: ['q', 'r', 's', 't'],
+      t: ['u', 'v', 'w', 'x'],
+    },
+    // the color values
+    pixelLookupTableMin: [
+      [0, 0, 0], // Black
+      [66, 66, 66], // 4 Grey Values
+      [133, 133, 133],
+      [200, 200, 200],
+      [255, 255, 255], // White
+      [32, 24, 136], // 4 Blues
+      [32, 56, 232],
+      [88, 144, 248],
+      [192, 208, 248],
+      [136, 0, 112], // 4 pinks
+      [184, 0, 184],
+      [240, 120, 248],
+      [248, 192, 248],
+      [160, 0, 0], // 4 reds
+      [216, 40, 66],
+      [248, 112, 96],
+      [248, 184, 176],
+      [114, 64, 7], // 4 oranges
+      [136, 112, 0],
+      [199, 178, 28],
+      [220, 206, 112],
+      [0, 80, 0], // 4 greens
+      [0, 168, 0], 
+      [72, 216, 72],
+      [168, 240, 184],
+      [24, 56, 88], // 4 teals
+      [0, 128, 136],
+      [0, 232, 217],
+      [152, 248, 240],
+      // Add more entries as needed
+    ],
     pixelLookupTable: {
       0: [0, 0, 0], // Black
       1: [66, 66, 66], // 4 Grey Values
@@ -562,19 +614,19 @@ var gameEngineJS = (function () {
       x: [152, 248, 240],
       // Add more entries as needed
     },
-    renderWall: function (j, fDistanceToWall, sWallDirection, pixel) {
+    renderWall: function (j, fDistanceToWall, sWallDirection, pixel, colorReference) {
+      var color = colorReference || 'm';
+
       var fill = "";
 
       // TODO: 
       // Maybe can pass the color-family for the pixel here, 
       // and then change the bxx variables accordingly
-
       var b0 = "0";
-      var b20 = "u";
-      var b40 = "v";
-      var b80 = "w";
-      var b60 = "x";
-
+      var b20 = _rh.colorReferenceTable[color][0];
+      var b40 = _rh.colorReferenceTable[color][1];
+      var b60 = _rh.colorReferenceTable[color][2];
+      var b80 = _rh.colorReferenceTable[color][3];
       var b100 = "4";
 
       if (sWallDirection === "N" || sWallDirection === "S") {
@@ -649,9 +701,9 @@ var gameEngineJS = (function () {
           if (pixel === "#") {
             fill = b60;
           } else if (pixel === "7") {
-            fill = b60;
-          } else if (pixel === "*") {
             fill = b40;
+          } else if (pixel === "*") {
+            fill = b20;
           } else if (pixel === "o") {
             fill = b20;
           } else {
@@ -663,9 +715,9 @@ var gameEngineJS = (function () {
           } else if (pixel === "7") {
             fill = b40;
           } else if (pixel === "*") {
-            fill = b40;
-          } else if (pixel === "o") {
             fill = b20;
+          } else if (pixel === "o") {
+            fill = b0;
           } else {
             fill = b0;
           }
@@ -744,7 +796,6 @@ var gameEngineJS = (function () {
     renderFloor: function (j) {
       var fill = "`";
 
-      
       // b = 1 - 
       //   (j - nScreenHeight / 2) / (nScreenHeight / 2);
 
@@ -754,15 +805,15 @@ var gameEngineJS = (function () {
           (nScreenHeight / (2 - fLooktimer * 0.15));
 
       if (b < 0.25) {
-        fill = "4";
+        fill = "q";
       } else if (b < 0.5) {
-        fill = "3";
+        fill = "q";
       } else if (b < 0.75) {
-        fill = "2";
+        fill = "r";
       } else if (b < 0.9) {
-        fill = "1";
+        fill = "s";
       } else {
-        fill = "0";
+        fill = "t";
       }
 
       return fill;
@@ -1751,7 +1802,8 @@ var gameEngineJS = (function () {
                   j,
                   fDistanceFromPlayer,
                   "W",
-                  sSamplePixel
+                  sSamplePixel,
+                  'r'
                 );
               } else {
                 sSpriteGlyph = sSamplePixel;
