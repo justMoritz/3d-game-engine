@@ -127,17 +127,28 @@ textureN += "##7*************";
 textureN += "################";
 
 
-// Concrete Wall
-var textureC = "";
-textureC += "7#.ooooo";
-textureC += "77777#.o";
-textureC += "77777777";
-textureC += "ooooo.#7";
-textureC += "o.#7oooo";
-textureC += "o#77777.";
-textureC += "77777777";
-textureC += "ooooo.#7";
 
+// Concrete Wall
+var textureW = "";
+textureW += "7#.ooooo";
+textureW += "77777#.o";
+textureW += "77777777";
+textureW += "ooooo.#7";
+textureW += "o.#7oooo";
+textureW += "o#77777.";
+textureW += "77777777";
+textureW += "ooooo.#7";
+
+// Concrete Wall Color
+var textureWC = "";
+textureWC += "mmttmmtt";
+textureWC += "mmttmmtt";
+textureWC += "tmtbbbmt";
+textureWC += "tmtmtmbt";
+textureWC += "ttmmtmtm";
+textureWC += "mmtmtmmt";
+textureWC += "ttttmtbb";
+textureWC += "mmmttbtb";
 
 
 // cobble stone COLOR
@@ -179,10 +190,11 @@ var textures = {
     "color": woodplanksC,
   },
   "C": {
-    "texture": textureC,
+    "texture": textureW,
+    "color": textureWC,
     "height": 8,
     "width": 8,
-    "scale": 4,
+    "scale": 8,
   },
   "$": {
     "texture": brick,
