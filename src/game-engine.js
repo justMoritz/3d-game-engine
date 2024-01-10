@@ -646,6 +646,7 @@ var gameEngineJS = (function () {
       var b80 = _rh.colorReferenceTable[color][3];
       var b100 = "4";
 
+      // Controls the depth shading
       if (sWallDirection === "N" || sWallDirection === "S") {
         if (fDistanceToWall < fDepth / 5.5) {
           if (pixel === "#") {

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Art Editor</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .layout {
+      display: flex;
+    }
+
+    .canvasholder {
+      width: 50%;
+      padding: 1rem;
+    }
+
+    .dimensioninput {
+      margin-bottom: 1rem;
+    }
+
+    .controls {
+      width: 50%;
+      padding: 1rem;
+    }
+
+    canvas {
+      border: 1px solid #000;
+      transform: scale(6);
+      image-rendering: pixelated;
+      transform-origin: top left;
+    }
+
+    .import-export {
+      margin-top: 2rem;
+    }
+
+    .color-palette {
+      display: flex;
+      flex-wrap: wrap;
+      width: 140px;
+    }
+
+    .color {
+      width: 32px;
+      height: 32px;
+      /* margin: 0.25rem; */
+      cursor: pointer;
+      border: 1px solid #000;
+    }
+
+    textarea {
+      margin-top: 1rem;
+      width: 400px;
+      height: 200px;
+    }
+
+    input {
+      margin-top: 1rem;
+      width: 50px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="layout">
+    <div class="canvasholder">
+      <div class="dimensioninput">
+        <label for="widthInput">Width:</label>
+        <input type="number" id="widthInput" value="32" min="1">
+        <label for="heightInput">Height:</label>
+        <input type="number" id="heightInput" value="32" min="1">
+      </div>
+
+      <canvas id="pixelCanvas" width="32" height="32"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="color-palette">
+        <div class="color" style="background-color: #424242;"></div>
+        <div class="color" style="background-color: #858585;"></div>
+        <div class="color" style="background-color: #c8c8c8;"></div>
+        <div class="color" style="background-color: #ffffff;"></div>
+        <div class="color" style="background-color: #201888;"></div>
+        <div class="color" style="background-color: #2038e8;"></div>
+        <div class="color" style="background-color: #5890f8;"></div>
+        <div class="color" style="background-color: #c0d0f8;"></div>
+        <div class="color" style="background-color: #880070;"></div>
+        <div class="color" style="background-color: #b800b8;"></div>
+        <div class="color" style="background-color: #f078f8;"></div>
+        <div class="color" style="background-color: #f8b8f8;"></div>
+        <div class="color" style="background-color: #a00000;"></div>
+        <div class="color" style="background-color: #d82842;"></div>
+        <div class="color" style="background-color: #f87060;"></div>
+        <div class="color" style="background-color: #f8b8b0;"></div>
+        <div class="color" style="background-color: #724007;"></div>
+        <div class="color" style="background-color: #887000;"></div>
+        <div class="color" style="background-color: #c7b41c;"></div>
+        <div class="color" style="background-color: #dccf70;"></div>
+        <div class="color" style="background-color: #005000;"></div>
+        <div class="color" style="background-color: #00a800;"></div>
+        <div class="color" style="background-color: #48d848;"></div>
+        <div class="color" style="background-color: #a8f8b8;"></div>
+        <div class="color" style="background-color: #183858;"></div>
+        <div class="color" style="background-color: #008088;"></div>
+        <div class="color" style="background-color: #00e8d9;"></div>
+        <div class="color" style="background-color: #98f8f0;"></div>
+        <div class="color" style="background-color: #000;"></div>
+      </div>
+
+      <div class="import-export">
+        <button onclick="exportPixels()">Export Pixels</button>
+        <textarea id="exportTextArea" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const widthInput = document.getElementById("widthInput");
+    const heightInput = document.getElementById("heightInput");
+
+    const canvas = document.getElementById("pixelCanvas");
+    const ctx = canvas.getContext("2d");
+    let currentColor = "#000"; // Default color is black
+
+    // Set every pixel on the canvas to black initially
+    resetCanvas();
+
+    widthInput.addEventListener("input", resetCanvas);
+    heightInput.addEventListener("input", resetCanvas);
+
+    canvas.addEventListener("mousedown", function (e) {
+      drawPixel(e);
+      canvas.addEventListener("mousemove", drawPixel);
+    });
+
+    canvas.addEventListener("mouseup", function () {
+      canvas.removeEventListener("mousemove", drawPixel);
+    });
+
+    function resetCanvas() {
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.fillStyle = currentColor;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawPixel(e) {
+      const x = Math.floor((e.offsetX / canvas.clientWidth) * canvas.width);
+      const y = Math.floor((e.offsetY / canvas.clientHeight) * canvas.height);
+
+      ctx.fillStyle = currentColor;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    // Color Selector
+    document.querySelectorAll(".color").forEach((element) => {
+      element.addEventListener("click", () => {
+        currentColor = element.style.backgroundColor;
+      });
+    });
+
+    // Pixel Export
+    function exportPixels() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let pixelArray = [];
+
+      for (let i = 0; i < imageData.length; i += 4) {
+        const red = imageData[i].toString(16).padStart(2, '0');
+        const green = imageData[i + 1].toString(16).padStart(2, '0');
+        const blue = imageData[i + 2].toString(16).padStart(2, '0');
+
+        const hexValue = `#${red}${green}${blue}`;
+        pixelArray.push(hexValue);
+      }
+
+      const exportTextArea = document.getElementById("exportTextArea");
+      exportTextArea.value = pixelArray.join(', ');
+    }
+  </script>
+</body>
+
+</html>
