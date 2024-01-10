@@ -225,18 +225,15 @@
     // Set every pixel on the canvas to black initially
     resetCanvas();
 
-    // widthInput.addEventListener("input", resetCanvas);
-    // heightInput.addEventListener("input", resetCanvas);
+    // Gets user confirm, then erases the canvas
     updateDimensionsButton.addEventListener("click", () => {
-
       let conf = confirm('Are you sure? You will ease your curent art. Consider exporting first.');
       if (conf === true) {
         resetCanvas();
-      } else {
-        // do nothing
       }
     });
 
+    // Cursor interaction layer
     cCanvas.addEventListener("mousemove", showCursorPreview);
 
     cCanvas.addEventListener("mousedown", function (e) {
@@ -251,6 +248,7 @@
       cCanvas.removeEventListener("mousemove", drawPixel);
     });
 
+    // Reset Canvas function
     function resetCanvas() {
       const width = parseInt(widthInput.value);
       const height = parseInt(heightInput.value);
@@ -267,6 +265,7 @@
       ctx.fillRect(0, 0, width, height);
     }
 
+    // Cursor of where the pixel will be drawn
     function showCursorPreview(e) {
       const x = Math.floor((e.offsetX / cCanvas.clientWidth) * cCanvas.width);
       const y = Math.floor((e.offsetY / cCanvas.clientHeight) * cCanvas.height);
@@ -279,6 +278,7 @@
       cCtx.fillRect(x, y, 1, 1);
     }
 
+    // Draws Pixel on the screen
     function drawPixel(e) {
       const x = Math.floor((e.offsetX / canvas.clientWidth) * canvas.width);
       const y = Math.floor((e.offsetY / canvas.clientHeight) * canvas.height);
@@ -288,7 +288,6 @@
 
       exportPixels();
     }
-
 
     // Color Selector
     document.querySelectorAll(".color").forEach((element) => {
@@ -315,18 +314,13 @@
         pixelArray.push(currentTexel);
       }
 
-
       const arrayString = JSON.stringify(pixelArray, null, 2)
         .replace(/\n/g, '')
         .replace(/\s{2,}/g, ' ');
-      // Set the text area value
-
 
       const exportTextArea = document.getElementById("exportTextArea");
 
       exportTextArea.value = arrayString;
-      // // console.log(pixelArray);
-      // exportTextArea.value = pixelArray.join('||||');
     }
 
 
@@ -356,10 +350,8 @@
             }
           }
 
-          console.log(color);
-
           if (color) {
-            ctx.fillStyle = color; // Use the color value from the texelLookupTable
+            ctx.fillStyle = color;
             ctx.fillRect(x, y, 1, 1);
           }
         }
