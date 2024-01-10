@@ -1,0 +1,970 @@
+
+// pogel
+var pogel = "";
+pogel += "...##..##...";
+pogel += "..#**##**#..";
+pogel += ".#***7***7#.";
+pogel += ".#********7#";
+pogel += "#****7****7#";
+pogel += "#**#*7*#**7#";
+pogel += "#****7****7#";
+pogel += ".#7*777**7#.";
+pogel += "..#77777##..";
+pogel += "...#7777#...";
+pogel += "...#777#....";
+pogel += "....#77#....";
+pogel += "...#*7*7#...";
+pogel += "..#7****7#..";
+pogel += "..#7****7#..";
+pogel += "..#******#..";
+pogel += "..#7***77#..";
+pogel += "...#7*77#...";
+pogel += "...#77*#....";
+pogel += "...#*7*#....";
+pogel += ".###7#7###..";
+pogel += ".#777#7777#.";
+pogel += ".#777#7777#.";
+pogel += ".##########.";
+
+// pogel
+var pogelfront = "";
+pogelfront += "......**..**......";
+pogelfront += ".....*##**##*.....";
+pogelfront += "....*###7###7*....";
+pogelfront += "....*########7*...";
+pogelfront += "...*####7####7*...";
+pogelfront += "...*##*#7#*##7*...";
+pogelfront += "...*####7####7*...";
+pogelfront += "....*7#777##7*....";
+pogelfront += ".....*77777**.....";
+pogelfront += "......*7777*......";
+pogelfront += "......*777*.......";
+pogelfront += ".......*77*.......";
+pogelfront += ".......*7#*.......";
+pogelfront += "......*7###7*.....";
+pogelfront += ".....*7####7*.....";
+pogelfront += ".....*7####7*.....";
+pogelfront += ".....*######*.....";
+pogelfront += ".....*7###77*.....";
+pogelfront += "......*7#77*......";
+pogelfront += "......*77#*.......";
+pogelfront += "......*#7#*.......";
+pogelfront += "....***7*7***.....";
+pogelfront += "....*777*7777*....";
+pogelfront += "....*777*7777*....";
+pogelfront += "....**********....";
+
+
+var pogelfrontW1 = "";
+pogelfrontW1 += "..................";
+pogelfrontW1 += "......**..**......";
+pogelfrontW1 += ".....*##**##*.....";
+pogelfrontW1 += "....*###7###7*....";
+pogelfrontW1 += "....*########7*...";
+pogelfrontW1 += "...*####7####7*...";
+pogelfrontW1 += "...*##*#7#*##7*...";
+pogelfrontW1 += "...*####7####7*...";
+pogelfrontW1 += "....*7#777##7*....";
+pogelfrontW1 += ".....*77777**.....";
+pogelfrontW1 += "......*7777*......";
+pogelfrontW1 += "......*777*.......";
+pogelfrontW1 += ".......*77*.......";
+pogelfrontW1 += "......*#7#7*......";
+pogelfrontW1 += ".....*7####7*.....";
+pogelfrontW1 += ".....*7####77*....";
+pogelfrontW1 += "....*77####7#*....";
+pogelfrontW1 += "....***###7##*....";
+pogelfrontW1 += "......*7#77**.....";
+pogelfrontW1 += "....***###*.......";
+pogelfrontW1 += "....*777##*.......";
+pogelfrontW1 += "....*777*77*......";
+pogelfrontW1 += "....*777*77*......";
+pogelfrontW1 += "....**77****......";
+pogelfrontW1 += ".....****.........";
+
+var pogelfrontW2 = "";
+pogelfrontW2 += "..................";
+pogelfrontW2 += "......**..**......";
+pogelfrontW2 += ".....*##**##*.....";
+pogelfrontW2 += "....*###7###7*....";
+pogelfrontW2 += "....*########7*...";
+pogelfrontW2 += "...*####7####7*...";
+pogelfrontW2 += "...*##*#7#*##7*...";
+pogelfrontW2 += "...*####7####7*...";
+pogelfrontW2 += "....*7#777##7*....";
+pogelfrontW2 += ".....*77777**.....";
+pogelfrontW2 += "......*7777*......";
+pogelfrontW2 += "......*777*.......";
+pogelfrontW2 += ".......*77*.......";
+pogelfrontW2 += ".....*7#7#*.......";
+pogelfrontW2 += "....*7####7*......";
+pogelfrontW2 += "...*77####7* .....";
+pogelfrontW2 += "...*#7####77*.....";
+pogelfrontW2 += "...*##7##7***.....";
+pogelfrontW2 += "....**77#7*.......";
+pogelfrontW2 += "......*###***.....";
+pogelfrontW2 += "......*##777*.....";
+pogelfrontW2 += ".....*77*777*.....";
+pogelfrontW2 += ".....*77*777*.....";
+pogelfrontW2 += ".....****77**.....";
+pogelfrontW2 += "........****......";
+
+
+// Pogel
+var pogelback = "";
+pogelback += "......**..**......";
+pogelback += ".....*#***77*.....";
+pogelback += "....*###*###7*....";
+pogelback += "....*###**###7*...";
+pogelback += "...*####**###7*...";
+pogelback += "...*####**7##7*...";
+pogelback += "...*#####*7##7*...";
+pogelback += "....*7####777*....";
+pogelback += ".....*7###77*.....";
+pogelback += "......*777**......";
+pogelback += ".......*#*........";
+pogelback += ".......*#*........";
+pogelback += ".......*7*........";
+pogelback += "......*#7#7*......";
+pogelback += ".....*7####7*.....";
+pogelback += ".....*7####7*.....";
+pogelback += ".....*######*.....";
+pogelback += ".....*7###77*.....";
+pogelback += "......*7#77*......";
+pogelback += "......*77#*.......";
+pogelback += "......*#7#*.......";
+pogelback += "....***7*7***.....";
+pogelback += "....*777*7777*....";
+pogelback += "....*777*7777*....";
+pogelback += "....**********....";
+
+var pogelbackW1 = "";
+pogelbackW1 += ".......*..........";
+pogelbackW1 += "......**..**......";
+pogelbackW1 += ".....*#***77*.....";
+pogelbackW1 += "....*###*###7*....";
+pogelbackW1 += "....*###**###7*...";
+pogelbackW1 += "...*####**###7*...";
+pogelbackW1 += "...*####**7##7*...";
+pogelbackW1 += "...*#####*7##7*...";
+pogelbackW1 += "....*7####777*....";
+pogelbackW1 += ".....*7###77*.....";
+pogelbackW1 += "......*777**......";
+pogelbackW1 += ".......*#*........";
+pogelbackW1 += ".......*#**.......";
+pogelbackW1 += ".....**#77*.......";
+pogelbackW1 += "... *7####7*......";
+pogelbackW1 += "...*77####7*......";
+pogelbackW1 += "...*##7###77*.....";
+pogelbackW1 += "...*##7##7***.....";
+pogelbackW1 += "....**77#7*.......";
+pogelbackW1 += "......*###***.....";
+pogelbackW1 += "......*###77*.....";
+pogelbackW1 += ".....*77*777*.....";
+pogelbackW1 += ".....*77*777*.....";
+pogelbackW1 += ".....****77**.....";
+pogelbackW1 += "........****......";
+
+var pogelbackW2 = "";
+pogelbackW2 += "...........*......";
+pogelbackW2 += "......**..**......";
+pogelbackW2 += ".....*##***7*.....";
+pogelbackW2 += "....*###7*##7*....";
+pogelbackW2 += "....*####*###7*...";
+pogelbackW2 += "...*####7*###7*...";
+pogelbackW2 += "...*####**7##7*...";
+pogelbackW2 += "...*######7##7*...";
+pogelbackW2 += "....*7####777*....";
+pogelbackW2 += ".....*7###77*.....";
+pogelbackW2 += "......*777**......";
+pogelbackW2 += ".......*#*........";
+pogelbackW2 += ".......*#**.......";
+pogelbackW2 += "......*#7#7*......";
+pogelbackW2 += ".....*7####7*.....";
+pogelbackW2 += ".....*7####77*....";
+pogelbackW2 += "....*77###7##*....";
+pogelbackW2 += "....***###7##*....";
+pogelbackW2 += "......*7#77**.....";
+pogelbackW2 += "....***###*.......";
+pogelbackW2 += "....*77###*.......";
+pogelbackW2 += "....*777*77*......";
+pogelbackW2 += "....*777*77*......";
+pogelbackW2 += "....**77****......";
+pogelbackW2 += ".....****.........";
+
+// Pogel
+var pogelleft = "";
+pogelleft += "......**.***......";
+pogelleft += ".....*##*###*.....";
+pogelleft += "....*#######7*....";
+pogelleft += "....*##7####7*....";
+pogelleft += "...*###7####7*..**";
+pogelleft += "...*#*#7#*##7*.*..";
+pogelleft += "...*###7###7*.*...";
+pogelleft += "...**77#777#7*..*.";
+pogelleft += "..*77777####7**..*";
+pogelleft += ".*777777###7*.*...";
+pogelleft += "*777777*#77*......";
+pogelleft += "*7777**##7*.......";
+pogelleft += "*****77#77*.......";
+pogelleft += "......*###7*......";
+pogelleft += "......*###7*......";
+pogelleft += ".....*7###7*......";
+pogelleft += "....*#7###7*......";
+pogelleft += "....*####77*......";
+pogelleft += ".....*7****.......";
+pogelleft += ".....*7###*.......";
+pogelleft += ".....*#**#*.......";
+pogelleft += "...***7*77*.......";
+pogelleft += "...*777777*.......";
+pogelleft += "...*777777*.......";
+pogelleft += "...********.......";
+
+var pogelleftW1 = "";
+pogelleftW1 += "......**.***......";
+pogelleftW1 += ".....*##*###*.....";
+pogelleftW1 += "....*#######7*....";
+pogelleftW1 += "....*##7####7*....";
+pogelleftW1 += "...*###7####7*..**";
+pogelleftW1 += "...*#*#7#*##7*.*..";
+pogelleftW1 += "...*###7###7*.*...";
+pogelleftW1 += "...**77#777#7*..*.";
+pogelleftW1 += "..*77777####7**..*";
+pogelleftW1 += ".*777777###7*.*...";
+pogelleftW1 += "*777777*#77*......";
+pogelleftW1 += "*7777**##7*.......";
+pogelleftW1 += "*****77#77*.......";
+pogelleftW1 += "......*##77*......";
+pogelleftW1 += "......*#777*......";
+pogelleftW1 += "....**###777*.....";
+pogelleftW1 += "...*#7####77*.....";
+pogelleftW1 += "...*77###7#7*.....";
+pogelleftW1 += "....**7##7##*.....";
+pogelleftW1 += ".....*#777***.....";
+pogelleftW1 += "...****####7*.....";
+pogelleftW1 += "...*777*###7*.....";
+pogelleftW1 += "...*7777##77*.....";
+pogelleftW1 += "...***777#***.....";
+pogelleftW1 += ".....******.......";
+
+
+// Pogel
+var pogelleftW2 = "";
+pogelleftW2 += "......**.***......";
+pogelleftW2 += ".....*##*###*.....";
+pogelleftW2 += "....*#######7*....";
+pogelleftW2 += "....*##7####7*....";
+pogelleftW2 += "...*###7####7*..**";
+pogelleftW2 += "...*#*#7#*##7*.*..";
+pogelleftW2 += "...*###7###7*.*...";
+pogelleftW2 += "...**77#777#7*..*.";
+pogelleftW2 += "..*77777####7**..*";
+pogelleftW2 += ".*777777###7*.*...";
+pogelleftW2 += "*777777*#77*......";
+pogelleftW2 += "*7777**##7*.......";
+pogelleftW2 += "*****77#77*.......";
+pogelleftW2 += "......*##7*.......";
+pogelleftW2 += ".....***77**......";
+pogelleftW2 += "....*#7777##*.....";
+pogelleftW2 += "...*##777*7#*.....";
+pogelleftW2 += "....*77***7*......";
+pogelleftW2 += ".....**#7**.......";
+pogelleftW2 += "......*77****.....";
+pogelleftW2 += "..*****#777**.....";
+pogelleftW2 += "..*77*##7777*.....";
+pogelleftW2 += "..*7777**777*.....";
+pogelleftW2 += "..***77**777*.....";
+pogelleftW2 += "....*********.....";
+
+
+var pogelright = "";
+pogelright += "......***.**......";
+pogelright += ".....*###*##*.....";
+pogelright += "....*7#######*....";
+pogelright += "....*7####7##*....";
+pogelright += "**..*7####7###*...";
+pogelright += "..*.*7##*#7#*#*...";
+pogelright += "...*.*7###7###*...";
+pogelright += ".*..*7#777#77**...";
+pogelright += "*..**7####77777*..";
+pogelright += "...*.*7###777777*.";
+pogelright += "......*77#*777777*";
+pogelright += ".......*7##**7777*";
+pogelright += ".......*77#77*****";
+pogelright += "......*7###*......";
+pogelright += "......*7###*......";
+pogelright += "......*7###7*.....";
+pogelright += "......*7###7#*....";
+pogelright += "......*77####*....";
+pogelright += ".......****7*.....";
+pogelright += ".......*###7*.....";
+pogelright += ".......*#**#*.....";
+pogelright += ".......*77*7***...";
+pogelright += ".......*777777*...";
+pogelright += ".......*777777*...";
+pogelright += ".......********...";
+
+
+var pogelrightW1 = "";
+pogelrightW1 += "......***.**......";
+pogelrightW1 += ".....*###*##*.....";
+pogelrightW1 += "....*7#######*....";
+pogelrightW1 += "....*7####7##*....";
+pogelrightW1 += "**..*7####7###*...";
+pogelrightW1 += "..*.*7##*#7#*#*...";
+pogelrightW1 += "...*.*7###7###*...";
+pogelrightW1 += ".*..*7#777#77**...";
+pogelrightW1 += "*..**7####77777*..";
+pogelrightW1 += "...*.*7###777777*.";
+pogelrightW1 += "......*77#*777777*";
+pogelrightW1 += ".......*7##**7777*";
+pogelrightW1 += ".......*77#77*****";
+pogelrightW1 += "......*77##*......";
+pogelrightW1 += "......*777#*......";
+pogelrightW1 += ".....*777###**....";
+pogelrightW1 += ".....*77####7#*...";
+pogelrightW1 += ".....*7#7###77*...";
+pogelrightW1 += ".....*##7##7**....";
+pogelrightW1 += ".....***777#*.....";
+pogelrightW1 += ".....*7####****...";
+pogelrightW1 += ".....*7###*777*...";
+pogelrightW1 += ".....*77##7777*...";
+pogelrightW1 += ".....***#777***...";
+pogelrightW1 += ".......******.....";
+
+
+// Pogel
+var pogelrightW2 = "";
+pogelrightW2 += "......***.**......";
+pogelrightW2 += ".....*###*##*.....";
+pogelrightW2 += "....*7#######*....";
+pogelrightW2 += "....*7####7##*....";
+pogelrightW2 += "**..*7####7###*...";
+pogelrightW2 += "..*.*7##*#7#*#*...";
+pogelrightW2 += "...*.*7###7###*...";
+pogelrightW2 += ".*..*7#777#77**...";
+pogelrightW2 += "*..**7####77777*..";
+pogelrightW2 += "...*.*7###777777*.";
+pogelrightW2 += "......*77#*777777*";
+pogelrightW2 += ".......*7##**7777*";
+pogelrightW2 += ".......*77#77*****";
+pogelrightW2 += ".......*7##*......";
+pogelrightW2 += "......**77***.....";
+pogelrightW2 += ".....*##7777#*....";
+pogelrightW2 += ".....*#7*777##*...";
+pogelrightW2 += "......*7***77*....";
+pogelrightW2 += ".......**7#**.....";
+pogelrightW2 += ".....****77*......";
+pogelrightW2 += ".....**777#*****..";
+pogelrightW2 += ".....*7777##*77*..";
+pogelrightW2 += ".....*777**7777*..";
+pogelrightW2 += ".....*777**77***..";
+pogelrightW2 += ".....*********....";
+
+var obetrl = "";
+obetrl += "..********......";
+obetrl += "..*777777*......";
+obetrl += "..*777777*......";
+obetrl += "...*77777*......";
+obetrl += "...*777777****..";
+obetrl += "....*77777*777*.";
+obetrl += "...*77****77777*";
+obetrl += "..*7##*###*777*.";
+obetrl += "..*7#*####*777*.";
+obetrl += ".*7#**##*#*77*..";
+obetrl += ".*7##*####*77*..";
+obetrl += ".*7##*###*777*..";
+obetrl += "..*77#***#777*..";
+obetrl += ".*7777####***...";
+obetrl += "*777777*##**....";
+obetrl += "*77777*7##*.....";
+obetrl += "*777**77#7**....";
+obetrl += ".*7*77777*77*...";
+obetrl += "..****77#*7***..";
+obetrl += ".....**7#***7*..";
+obetrl += "....*7###*7*7*..";
+obetrl += "...*77##7*77**..";
+obetrl += "...*7##7**7*7*..";
+obetrl += "....*#7777**....";
+obetrl += "...**#**7*......";
+obetrl += "..**77*77**.....";
+obetrl += "..*777777*......";
+obetrl += "..********......";
+
+
+var obetrlW1 = "";
+obetrlW1 += "..********......";
+obetrlW1 += "..*777777*......";
+obetrlW1 += "..*777777*......";
+obetrlW1 += "...*77777*......";
+obetrlW1 += "...*777777****..";
+obetrlW1 += "....*77777*777*.";
+obetrlW1 += "...*77****7777*";
+obetrlW1 += "..*7##*###*7777*";
+obetrlW1 += "..*7#*####*777*.";
+obetrlW1 += ".*7#**##*#*77*..";
+obetrlW1 += ".*7##*####*77*..";
+obetrlW1 += ".*7##*###*777*..";
+obetrlW1 += "..*77#***#777*..";
+obetrlW1 += ".*7777####***...";
+obetrlW1 += "*777777*##**....";
+obetrlW1 += "*77777*7##*.....";
+obetrlW1 += "*777**77#7**....";
+obetrlW1 += ".*7*77777*77*...";
+obetrlW1 += "..****77#*7***..";
+obetrlW1 += "....**###777*7*.";
+obetrlW1 += "...*#7####77*7*.";
+obetrlW1 += "...*77###7#7***.";
+obetrlW1 += "....**7##7##*7*.";
+obetrlW1 += ".....*#777***...";
+obetrlW1 += "...****####7*...";
+obetrlW1 += "...*7777##77*...";
+obetrlW1 += "...***777#***...";
+obetrlW1 += ".....******.....";
+
+var obetrlW2 = "";
+obetrlW2 += "...********.....";
+obetrlW2 += "...*777777*.....";
+obetrlW2 += "...*777777*.....";
+obetrlW2 += "...*77777*......";
+obetrlW2 += "...*777777****..";
+obetrlW2 += "....*77777*777*.";
+obetrlW2 += "...*77****77777*";
+obetrlW2 += "..*7##*###*777*.";
+obetrlW2 += "..*7#*####*777*.";
+obetrlW2 += ".*7#**##*#*77*..";
+obetrlW2 += ".*7##*####*77*..";
+obetrlW2 += ".*7##*###*777*..";
+obetrlW2 += "..*77#***#777*..";
+obetrlW2 += ".*7777####***...";
+obetrlW2 += "*777777*##**....";
+obetrlW2 += "*77777*7##*.....";
+obetrlW2 += "*777**77#7***...";
+obetrlW2 += ".*7*77777*77*7..";
+obetrlW2 += "..****77#*7****.";
+obetrlW2 += "....*#7777##*7*.";
+obetrlW2 += "...*##777*7#*7*.";
+obetrlW2 += "....*77***7*7*..";
+obetrlW2 += ".....**#77**....";
+obetrlW2 += "......*77****...";
+obetrlW2 += "..*****#777**...";
+obetrlW2 += "..*77*##7777*...";
+obetrlW2 += "..***77**777*...";
+obetrlW2 += "....*********...";
+
+var obetrlR = "";
+obetrlR += "......********..";
+obetrlR += "......*777777*..";
+obetrlR += "......*777777*..";
+obetrlR += "......*77777*...";
+obetrlR += "..****777777*...";
+obetrlR += ".*777*77777*....";
+obetrlR += "*77777****77*...";
+obetrlR += ".*777*###*##7*..";
+obetrlR += ".*777*####*#7*..";
+obetrlR += "..*77*#*##**#7*.";
+obetrlR += "..*77*####*##7*.";
+obetrlR += "..*777*###*##7*.";
+obetrlR += "..*777#***#77*..";
+obetrlR += "...***####7777*.";
+obetrlR += "....**##*777777*";
+obetrlR += ".....*##7*77777*";
+obetrlR += "....**7#77**777*";
+obetrlR += "...*77*77777*7*.";
+obetrlR += "..***7*#77****..";
+obetrlR += "..*7***#7**.....";
+obetrlR += "..*7*7*###7*....";
+obetrlR += "..**77*7##77*...";
+obetrlR += "..*7*7**7##7*...";
+obetrlR += "....**7777#*....";
+obetrlR += "......*7**#**...";
+obetrlR += "......*77*77**..";
+obetrlR += "......*777777*..";
+obetrlR += "......********..";
+
+
+
+var obetrlRW1 = "";
+obetrlRW1 += "......********..";
+obetrlRW1 += "......*777777*..";
+obetrlRW1 += "......*777777*..";
+obetrlRW1 += "......*77777*...";
+obetrlRW1 += "..****777777*...";
+obetrlRW1 += ".*777*77777*....";
+obetrlRW1 += ".*7777****77*...";
+obetrlRW1 += "*7777*###*##7*..";
+obetrlRW1 += ".*777*####*#7*..";
+obetrlRW1 += "..*77*#*##**#7*.";
+obetrlRW1 += "..*77*####*##7*.";
+obetrlRW1 += "..*777*###*##7*.";
+obetrlRW1 += "..*777#***#77*..";
+obetrlRW1 += "...***####7777*.";
+obetrlRW1 += "....**##*777777*";
+obetrlRW1 += ".....*##7*77777*";
+obetrlRW1 += "....**7#77**777*";
+obetrlRW1 += "....*77*77777*7*";
+obetrlRW1 += "..***7*#77****..";
+obetrlRW1 += ".*7*777###**....";
+obetrlRW1 += ".*7*77####7#*...";
+obetrlRW1 += ".***7#7###77*...";
+obetrlRW1 += ".*7*##7##7**....";
+obetrlRW1 += "...***777#*.....";
+obetrlRW1 += "...*7####****...";
+obetrlRW1 += "...*77##7777*...";
+obetrlRW1 += "...***#777***...";
+obetrlRW1 += ".....******.....";
+
+var obetrlRW2 = "";
+obetrlRW2 += ".....********...";
+obetrlRW2 += ".....*777777*...";
+obetrlRW2 += ".....*777777*...";
+obetrlRW2 += "......*77777*...";
+obetrlRW2 += "..****777777*...";
+obetrlRW2 += ".*777*77777*....";
+obetrlRW2 += "*77777****77*...";
+obetrlRW2 += ".*777*###*##7*..";
+obetrlRW2 += ".*777*####*#7*..";
+obetrlRW2 += "..*77*#*##**#7*.";
+obetrlRW2 += "..*77*####*##7*.";
+obetrlRW2 += "..*777*###*##7*.";
+obetrlRW2 += "..*777#***#77*..";
+obetrlRW2 += "...***####7777*.";
+obetrlRW2 += "....**##*777777*";
+obetrlRW2 += ".....*##7*77777*";
+obetrlRW2 += "...***7#77**777*";
+obetrlRW2 += "..7*77*77777*7*.";
+obetrlRW2 += ".****7*#77****..";
+obetrlRW2 += ".*7*##7777#*....";
+obetrlRW2 += ".*7*#7*777##*...";
+obetrlRW2 += "..*7*7***77*....";
+obetrlRW2 += "....**77#**.....";
+obetrlRW2 += "...****77*......";
+obetrlRW2 += "...**777#*****..";
+obetrlRW2 += "...*7777##*77*..";
+obetrlRW2 += "...*777**77***..";
+obetrlRW2 += "...*********....";
+
+
+
+var obetrlF = "";
+obetrlF += "....********....";
+obetrlF += "...*7777777*....";
+obetrlF += "...*7777777*....";
+obetrlF += "...*7777777*....";
+obetrlF += "....*777777*....";
+obetrlF += "....*777777*....";
+obetrlF += "...***777***....";
+obetrlF += "..*7##*77###*...";
+obetrlF += ".*7###*7####7*..";
+obetrlF += ".*7#*#*7#*##7*..";
+obetrlF += ".*7###*7####7*..";
+obetrlF += "..*##7777##7*...";
+obetrlF += "...**77777***...";
+obetrlF += "...*7777777*....";
+obetrlF += "...*77*7777*....";
+obetrlF += "...*77*777**....";
+obetrlF += "....*7*77*7*....";
+obetrlF += "...*7***7#77*...";
+obetrlF += "..*7*7####777*..";
+obetrlF += "..*7*7####777*..";
+obetrlF += "..*7*######*7*..";
+obetrlF += "...*77###77**...";
+obetrlF += ".....*7#77*.....";
+obetrlF += ".....*77#*......";
+obetrlF += "....**7*7*......";
+obetrlF += "...*77*777*.....";
+obetrlF += "..*777*7777*....";
+obetrlF += "..**********....";
+
+var obetrlFW1 = "";
+obetrlFW1 += "....********....";
+obetrlFW1 += "....*7777777*...";
+obetrlFW1 += "....*7777777*...";
+obetrlFW1 += "....*7777777*...";
+obetrlFW1 += "....*777777*....";
+obetrlFW1 += "....*777777*....";
+obetrlFW1 += "...***777***....";
+obetrlFW1 += "..*7##*77###*...";
+obetrlFW1 += ".*7###*7####7*..";
+obetrlFW1 += ".*7#*#*7#*##7*..";
+obetrlFW1 += ".*7###*7####7*..";
+obetrlFW1 += "..*##7777##7*...";
+obetrlFW1 += "...**77777***...";
+obetrlFW1 += "...*7777777*....";
+obetrlFW1 += "...*77*7777*....";
+obetrlFW1 += "...*77*777**....";
+obetrlFW1 += "....*7*77*7*77..";
+obetrlFW1 += ".....*7**##7*77.";
+obetrlFW1 += "....7*7####77*7.";
+obetrlFW1 += "....*77####*7*7.";
+obetrlFW1 += "....***###*77*..";
+obetrlFW1 += ".....7*7#77**...";
+obetrlFW1 += "....***###*.....";
+obetrlFW1 += "....*777##*.....";
+obetrlFW1 += "....*777*77*....";
+obetrlFW1 += "....*777*77*....";
+obetrlFW1 += "....**77****....";
+obetrlFW1 += ".....****.......";
+
+var obetrlFW2 = "";
+obetrlFW2 += ".....********...";
+obetrlFW2 += "....*7777777*...";
+obetrlFW2 += "....*7777777*...";
+obetrlFW2 += "....*7777777*...";
+obetrlFW2 += "....*777777*....";
+obetrlFW2 += "....*777777*....";
+obetrlFW2 += "....***777***...";
+obetrlFW2 += "...*7##*77###*..";
+obetrlFW2 += "..*7###*7####7*.";
+obetrlFW2 += "..*7#*#*7##*#7*.";
+obetrlFW2 += "..*7###*7####7*.";
+obetrlFW2 += "...*##7777##7*..";
+obetrlFW2 += "....**77777***..";
+obetrlFW2 += "....*7777777*...";
+obetrlFW2 += "....*777*777*...";
+obetrlFW2 += ".....*77*77*....";
+obetrlFW2 += "...77*77*7*7....";
+obetrlFW2 += "..77*7##**7*7...";
+obetrlFW2 += "..7*7*####7*7...";
+obetrlFW2 += "..7*7*####77*...";
+obetrlFW2 += "...*77*##7***...";
+obetrlFW2 += "....**77#7*.....";
+obetrlFW2 += "......*###***...";
+obetrlFW2 += "......*##777*...";
+obetrlFW2 += ".....*77*777*...";
+obetrlFW2 += ".....*77*777*...";
+obetrlFW2 += ".....****77**...";
+obetrlFW2 += "........****....";
+
+
+
+
+var obetrlB = "";
+obetrlB += "....*********...";
+obetrlB += "....*7777777*...";
+obetrlB += "....*7777777*...";
+obetrlB += "....*777777*....";
+obetrlB += "....****777*....";
+obetrlB += "..*7777777**....";
+obetrlB += "..*77777777***..";
+obetrlB += "..*777777777**..";
+obetrlB += "..*777777777**..";
+obetrlB += "..*77777777***..";
+obetrlB += "...*7777777***..";
+obetrlB += "...*7777777***..";
+obetrlB += "...*777777***...";
+obetrlB += "....*********...";
+obetrlB += "....7*####*7....";
+obetrlB += "....*7*##7*7....";
+obetrlB += "....******7*....";
+obetrlB += "...*777*77**....";
+obetrlB += "..*77*777*7**...";
+obetrlB += "..*7**77**7**...";
+obetrlB += "..**77*7777**...";
+obetrlB += ".7*77**77*7*#*..";
+obetrlB += "...*7777**7.....";
+obetrlB += "....******......";
+obetrlB += ".....*#7#*......";
+obetrlB += "....**7*7**.....";
+obetrlB += "...*777*777*....";
+obetrlB += "...**********...";
+
+
+
+var obetrlBW1 = "";
+obetrlBW1 += "...*********....";
+obetrlBW1 += "...*7777777*....";
+obetrlBW1 += "...*777777*.....";
+obetrlBW1 += "....****777*....";
+obetrlBW1 += "..*7777777**....";
+obetrlBW1 += "..*77777777***..";
+obetrlBW1 += "..*777777777**..";
+obetrlBW1 += "..*777777777**..";
+obetrlBW1 += "..*77777777***..";
+obetrlBW1 += "...*7777777***..";
+obetrlBW1 += "...*7777777***..";
+obetrlBW1 += "...*777777***...";
+obetrlBW1 += "....*********...";
+obetrlBW1 += "....7*####*7....";
+obetrlBW1 += "....*7*##7*7....";
+obetrlBW1 += ".....**#77*.....";
+obetrlBW1 += ".....*****7*....";
+obetrlBW1 += "... *777*77**...";
+obetrlBW1 += "..*#*7**77**7*..";
+obetrlBW1 += "..*#**77*7777*7.";
+obetrlBW1 += ".**#777**77*7*..";
+obetrlBW1 += "..**.*7777**7...";
+obetrlBW1 += "......*******...";
+obetrlBW1 += "......*###77....";
+obetrlBW1 += ".....*77*777*...";
+obetrlBW1 += ".....*77*777*...";
+obetrlBW1 += ".....****77**...";
+obetrlBW1 += "........****....";
+
+
+var obetrlBW2 = "";
+obetrlBW2 += ".....********...";
+obetrlBW2 += ".....*777777*...";
+obetrlBW2 += ".....*777777*...";
+obetrlBW2 += "....*****77*....";
+obetrlBW2 += "....**7777777*..";
+obetrlBW2 += "..***77777777*..";
+obetrlBW2 += "..**777777777*..";
+obetrlBW2 += "..**777777777*..";
+obetrlBW2 += "..***77777777*..";
+obetrlBW2 += "..***7777777*...";
+obetrlBW2 += "..***7777777*...";
+obetrlBW2 += "...***777777*...";
+obetrlBW2 += "...*********....";
+obetrlBW2 += "....7*####*7....";
+obetrlBW2 += "....*7*##7*7....";
+obetrlBW2 += ".....**#77*.....";
+obetrlBW2 += ".....******.....";
+obetrlBW2 += "...*777*7*7*....";
+obetrlBW2 += "..*77**77***#*..";
+obetrlBW2 += ".7*7*77*777*#*..";
+obetrlBW2 += "..*777**77*##*..";
+obetrlBW2 += "...*7*77**7**...";
+obetrlBW2 += "....*******.....";
+obetrlBW2 += ".....7##7#*.....";
+obetrlBW2 += "....*777*77*....";
+obetrlBW2 += "....*777*77*....";
+obetrlBW2 += "....**77****....";
+obetrlBW2 += ".....****.......";
+
+
+var obetrlB_unused = "";
+obetrlB_unused += "....********....";
+obetrlB_unused += "....*777777*....";
+obetrlB_unused += "....*777777*....";
+obetrlB_unused += "....*77777*.....";
+obetrlB_unused += "...****777*.....";
+obetrlB_unused += "..*77777*7*.....";
+obetrlB_unused += "..*777777***....";
+obetrlB_unused += "..*7777777*#*...";
+obetrlB_unused += "..*7777777*#7*..";
+obetrlB_unused += "..*77777*7*#7*..";
+obetrlB_unused += "...*7777*7*#7*..";
+obetrlB_unused += "...*7777*7*#7*..";
+obetrlB_unused += "...*777*7*#7*...";
+obetrlB_unused += "....*****##7*...";
+obetrlB_unused += ".....*####**7*..";
+obetrlB_unused += "......*##77*7*..";
+obetrlB_unused += "....*****7*7*...";
+obetrlB_unused += "...*777*7*#*....";
+obetrlB_unused += "..*77*777*#*....";
+obetrlB_unused += "..*7**77**##*...";
+obetrlB_unused += "..**77*77*7#7*..";
+obetrlB_unused += "..*77**77*#***..";
+obetrlB_unused += "...*7777**7.....";
+obetrlB_unused += ".....*77#*......";
+obetrlB_unused += "....**7*7**.....";
+obetrlB_unused += "....*77*777*....";
+obetrlB_unused += "....*77*7777*...";
+obetrlB_unused += "....*********...";
+
+
+var obetrlB_unused2 = "";
+obetrlB_unused2 += "..*********.....";
+obetrlB_unused2 += "..*7777777*.....";
+obetrlB_unused2 += "..*7777777*.....";
+obetrlB_unused2 += "...*777777*.....";
+obetrlB_unused2 += "...*77777*****..";
+obetrlB_unused2 += "....*777*77777*.";
+obetrlB_unused2 += "...*7***777777*.";
+obetrlB_unused2 += "..*7##7*777777*.";
+obetrlB_unused2 += "..*7#777*77777*.";
+obetrlB_unused2 += ".*7#7777*7777*..";
+obetrlB_unused2 += ".*7##7777*777*..";
+obetrlB_unused2 += "..*7##777*****..";
+obetrlB_unused2 += "..*77####777*...";
+obetrlB_unused2 += ".*77######7*....";
+obetrlB_unused2 += "*777######7*....";
+obetrlB_unused2 += "*777#####77*....";
+obetrlB_unused2 += "*7777###777*....";
+obetrlB_unused2 += ".*7*777#*#7#*...";
+obetrlB_unused2 += "...***7*#7##7*..";
+obetrlB_unused2 += ".....*7*7##7#*..";
+obetrlB_unused2 += "....*7##*#7##*..";
+obetrlB_unused2 += "...*77###*##7*..";
+obetrlB_unused2 += "...*#***##*7*...";
+obetrlB_unused2 += "....*##7777*....";
+obetrlB_unused2 += "...**#**777*....";
+obetrlB_unused2 += "..**77*77**.....";
+obetrlB_unused2 += "..*777777*......";
+obetrlB_unused2 += "..********......";
+
+
+// Array assignes textures to keys that will
+// correspond with their coordinates on the map
+var allSprites = {
+  "O": {
+    "texture": obetrl,
+    "walkframes": true,
+    "height": 28,
+    "width": 16,
+    "scale": 1,
+    "aspctRt": 1.46,
+    "hghtFctr": 0.7,
+    "angles":{
+      "F": {
+        "texture": obetrlF,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+        "W1": {
+          "texture": obetrlFW1,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": obetrlFW2,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+      },
+      "L": {
+        "texture": obetrl,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+        "W1": {
+          "texture": obetrlW1,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": obetrlW2,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+      },
+      "B": {
+        "texture": obetrlB,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+        "W1": {
+          "texture": obetrlBW1,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": obetrlBW2,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+      },
+      "R": {
+        "texture": obetrlR,
+        "height": 28,
+        "width": 16,
+        "scale": 1,
+        "W1": {
+          "texture": obetrlRW1,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": obetrlRW2,
+          "height": 28,
+          "width": 16,
+          "scale": 1,
+        },
+      },
+    }
+  },
+
+
+  "P": {
+    "texture": pogelfront,
+    "walkframes": true,
+    "height": 25,
+    "width": 18,
+    "scale": 1,
+    "aspctRt": 1.66,
+    "hghtFctr": 0.4,
+    "angles":{
+      "F": {
+        "texture": pogelfront,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "W1": {
+          "texture": pogelfrontW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelfrontW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+      },
+      "B": {
+        "texture": pogelback,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "W1": {
+          "texture": pogelbackW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelbackW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+      },
+
+      "L": {
+        "texture": pogelleft,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "W1": {
+          "texture": pogelleftW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelleftW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+      },
+      "R": {
+        "texture": pogelright,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "W1": {
+          "texture": pogelrightW1,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+        "W2": {
+          "texture": pogelrightW2,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+        },
+      },
+    },
+  },
+};

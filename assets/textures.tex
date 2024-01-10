@@ -43,6 +43,27 @@ woodplanks += "................";
 woodplanks += "................";
 woodplanks += "................";
 
+// wood planks color
+var woodplanksC = "";
+woodplanksC += "rrorrooorrooorrr";
+woodplanksC += "orrbrrobrrroorrp";
+woodplanksC += "rrorrooorrooorrr";
+woodplanksC += "rrorrooorrooorrr";
+woodplanksC += "rrrrpporrooorppp";
+woodplanksC += "ppobopoboorrrppp";
+woodplanksC += "orrooorrrorrooor";
+woodplanksC += "mmmmmmmmmmmmmmmm";
+woodplanksC += "ooorrooorpppoooo";
+woodplanksC += "rrorrooorrooobrr";
+woodplanksC += "orrooorpppooooor";
+woodplanksC += "oooooooooooorroo";
+woodplanksC += "oorppporrooorppp";
+woodplanksC += "orrooorppborobrr";
+woodplanksC += "orrooorppporroor";
+woodplanksC += "mmmmmmmmmmmmmmmm";
+woodplanksC += "mmmmmmmmmmmmmmmm";
+woodplanksC += "mmmmmmmmmmmmmmmm";
+
 
 // cobble stone
 var texWidth = 16;
@@ -118,18 +139,44 @@ textureC += "77777777";
 textureC += "ooooo.#7";
 
 
+
+// cobble stone COLOR
+var texWidth = 16;
+var texHeight = 16;
+var cobblestoneC = "";
+cobblestoneC += "rrmmrrtttttrorpo";
+cobblestoneC += "rprmmrprprmmrrbb";
+cobblestoneC += "bgtmmbbgggtbmgor";
+cobblestoneC += "goomooorrttpmppr";
+cobblestoneC += "pprmmpprroogmmoo";
+cobblestoneC += "oooooooorrrrrrrr";
+cobblestoneC += "mmmrrrgggbbbpppp";
+cobblestoneC += "rrmmrrtttttrorpo";
+cobblestoneC += "rprmmrprprmmrrbb";
+cobblestoneC += "bgtmmbbgggtbmgor";
+cobblestoneC += "goomooorrttpmppr";
+cobblestoneC += "pprmmpprroogmmoo";
+cobblestoneC += "oooooooorrrrrrrr";
+cobblestoneC += "mmmrrrgggbbbpppp";
+cobblestoneC += "oooooooorrrrrrrr";
+cobblestoneC += "goomooorrttpmppr";
+
+
+
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
 var textures = {
   "#": {
     "texture": cobblestone,
     "scale": 2,
+    "color": cobblestoneC,
   },
   "U": {
     "texture": woodplanks,
     "height": 18,
     "width": 16,
-    "scale": 4,
+    "scale": 2,
+    "color": woodplanksC,
   },
   "C": {
     "texture": textureC,

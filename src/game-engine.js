@@ -198,20 +198,21 @@ var gameEngineJS = (function () {
     var scaleFactor = texture["scale"] || defaultTexScale;
     var texWidth = texture["width"] || defaultTexWidth;
     var texHeight = texture["height"] || defaultTexHeight;
+    var colorPixels = texture["color"] || false;
 
     var texpixels = texture["texture"];
 
     if (texture["texture"] == "DIRECTIONAL") {
-      // Different Texture based on viewport
-      if (nDegrees > 0 && nDegrees < 180) {
-        texpixels = texture["S"];
-      } else {
-        texpixels = texture["N"];
-      }
+        // Different Texture based on viewport
+        if (nDegrees > 0 && nDegrees < 180) {
+            texpixels = texture["S"];
+        } else {
+            texpixels = texture["N"];
+        }
     }
 
     scaleFactor = scaleFactor || 2;
-
+    
     x = (scaleFactor * x) % 1;
     y = (scaleFactor * y) % 1;
 
@@ -220,12 +221,23 @@ var gameEngineJS = (function () {
 
     var samplePosition = texWidth * sampleY + sampleX;
 
+    var currentColor;
+
     if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-      return "+";
+        return "+";
     } else {
-      return texpixels[samplePosition];
+      var currentPixel = texpixels[samplePosition];
+      
+      if(colorPixels){
+        currentColor = colorPixels[samplePosition];
+      }else{
+        currentColor = 'm';
+      }
+  
+      return [currentPixel, currentColor];
     }
   };
+
 
   /**
    * Retrieve a fixed number of elements from an array, evenly distributed but
@@ -614,10 +626,15 @@ var gameEngineJS = (function () {
       x: [152, 248, 240],
       // Add more entries as needed
     },
-    renderWall: function (j, fDistanceToWall, sWallDirection, pixel, colorReference) {
-      var color = colorReference || 'm';
-
+    renderWall: function (j, fDistanceToWall, sWallDirection, pixelArray) {
       var fill = "";
+
+      // console.log( pixelArray );
+
+      var pixel = pixelArray[0];
+      var color = pixelArray[1] || 'm';
+
+      // console.log( color )
 
       // TODO: 
       // Maybe can pass the color-family for the pixel here, 
@@ -644,9 +661,9 @@ var gameEngineJS = (function () {
           }
         } else if (fDistanceToWall < fDepth / 3.66) {
           if (pixel === "#") {
-            fill = b80;
+            fill = b100;
           } else if (pixel === "7") {
-            fill = b60;
+            fill = b80;
           } else if (pixel === "*" ) {
             fill = b40;
           } else if ( pixel === "o") {
@@ -1802,8 +1819,7 @@ var gameEngineJS = (function () {
                   j,
                   fDistanceFromPlayer,
                   "W",
-                  sSamplePixel,
-                  'r'
+                  sSamplePixel
                 );
               } else {
                 sSpriteGlyph = sSamplePixel;
