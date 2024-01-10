@@ -673,15 +673,15 @@ var gameEngineJS = (function () {
       var fill = "2";
       if (j < nDoorFrameHeight) {
         if (fDistanceToWall < fDepth / 4) {
-          fill = "1;";
+          fill = "3";
         } else {
-          fill = "=";
+          fill = "1";
         }
       } else {
         if (fDistanceToWall < fDepth / 4) {
-          fill = "1";
+          fill = "3";
         } else {
-          fill = "|";
+          fill = "2";
         }
       }
       return fill;
@@ -1416,19 +1416,15 @@ var gameEngineJS = (function () {
         // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         // // var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         var nCeiling =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) -
-          nScreenHeight / fDistanceToWall;
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / fDistanceToWall;
         var nFloor =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
-          nScreenHeight / fDistanceToWall;
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / fDistanceToWall;
 
         // similar for towers and gates
         var nTower =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) -
-          nScreenHeight / (fDistanceToWall - 2);
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / (fDistanceToWall - 2);
         var nDoorFrameHeight =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) -
-          nScreenHeight / (fDistanceToWall + 2);
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
         var nObjectCeiling =
@@ -1439,7 +1435,7 @@ var gameEngineJS = (function () {
           nScreenHeight / fDistanceToObject;
         var nFObjectBackwall =
           nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
-          nScreenHeight / (fDistanceToInverseObject + 0); // 0 makes the object flat, higher the number, the higher the object :)
+          nScreenHeight / (fDistanceToInverseObject + 4); // 0 makes the object flat, higher the number, the higher the object :)
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
