@@ -229,7 +229,8 @@ var gameEngineJS = (function () {
       if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
         return "+";
       } else {  
-        return[texpixels[samplePosition][0],texpixels[samplePosition][2], ];
+        // TODO: this somehow is EXTREMELY slow
+        return[texpixels[samplePosition][0],texpixels[samplePosition][1], ];
       }
     }else{
 
