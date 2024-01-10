@@ -33,10 +33,20 @@
     }
 
     canvas {
-      border: 1px solid #000;
-      transform: scale(6);
+      /* transform: scale(10); */
       image-rendering: pixelated;
       transform-origin: top left;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .canvas-sizer {
+      position: relative;
+      width: 160px;
+      height: 160px;
     }
 
     .import-export {
@@ -52,9 +62,7 @@
     .color {
       width: 32px;
       height: 32px;
-      /* margin: 0.25rem; */
       cursor: pointer;
-      border: 1px solid #000;
     }
 
     textarea {
@@ -76,12 +84,15 @@
     <div class="canvasholder">
       <div class="dimensioninput">
         <label for="widthInput">Width:</label>
-        <input type="number" id="widthInput" value="32" min="1">
+        <input type="number" id="widthInput" value="16" min="1">
         <label for="heightInput">Height:</label>
-        <input type="number" id="heightInput" value="32" min="1">
+        <input type="number" id="heightInput" value="16" min="1">
       </div>
 
-      <canvas id="pixelCanvas" width="32" height="32"></canvas>
+      <div class="canvas-sizer">
+        <canvas id="pixelCanvas" width="16" height="16"></canvas>
+        <canvas id="cursorCanvas" width="16" height="16"></canvas>
+      </div>
     </div>
 
     <div class="controls">
@@ -114,22 +125,64 @@
         <div class="color" style="background-color: #008088;"></div>
         <div class="color" style="background-color: #00e8d9;"></div>
         <div class="color" style="background-color: #98f8f0;"></div>
-        <div class="color" style="background-color: #000;"></div>
-      </div>
-
-      <div class="import-export">
-        <button onclick="exportPixels()">Export Pixels</button>
-        <textarea id="exportTextArea" readonly></textarea>
+        <div class="color" style="background-color: #000000;"></div>
       </div>
     </div>
   </div>
 
+  <div class="import-export">
+    <button onclick="exportPixels()">Export Pixels</button>
+    <br>
+    <textarea id="exportTextArea" readonly></textarea>
+  </div>
+
   <script>
+    const texelLookupTable = {
+      "#000000": ['.', 'm'], // Black
+
+      "#424242": ['o', 'm'], // Grays
+      "#858585": ['*', 'm'],
+      "#c8c8c8": ['7', 'm'],
+      "#ffffff": ['#', 'm'],
+
+      "#201888": ['o', 'b'], // Blues
+      "#2038e8": ['*', 'b'],
+      "#5890f8": ['7', 'b'],
+      "#c0d0f8": ['#', 'b'],
+
+      "#880070": ['o', 'p'], // Pinks
+      "#b800b8": ['*', 'p'],
+      "#f078f8": ['7', 'p'],
+      "#f8b8f8": ['#', 'p'],
+
+      "#a00000": ['o', 'r'], // Reds
+      "#d82842": ['*', 'r'],
+      "#f87060": ['7', 'r'],
+      "#f8b8b0": ['#', 'r'],
+
+      "#724007": ['o', 'o'], // Oranges
+      "#887000": ['*', 'o'],
+      "#c7b41c": ['7', 'o'],
+      "#dccf70": ['#', 'o'],
+
+      "#005000": ['o', 'g'], // Greens
+      "#00a800": ['*', 'g'],
+      "#48d848": ['7', 'g'],
+      "#a8f8b8": ['#', 'g'],
+
+      "#183858": ['o', 't'], // Teals
+      "#008088": ['*', 't'],
+      "#00e8d9": ['7', 't'],
+      "#98f8f0": ['#', 't'],
+    };
+
     const widthInput = document.getElementById("widthInput");
     const heightInput = document.getElementById("heightInput");
 
     const canvas = document.getElementById("pixelCanvas");
+    const cCanvas = document.getElementById("cursorCanvas");
     const ctx = canvas.getContext("2d");
+    const cCtx = cCanvas.getContext("2d");
     let currentColor = "#000"; // Default color is black
 
     // Set every pixel on the canvas to black initially
@@ -138,13 +191,18 @@
     widthInput.addEventListener("input", resetCanvas);
     heightInput.addEventListener("input", resetCanvas);
 
-    canvas.addEventListener("mousedown", function (e) {
+    cCanvas.addEventListener("mousemove", showCursorPreview);
+
+    cCanvas.addEventListener("mousedown", function (e) {
       drawPixel(e);
-      canvas.addEventListener("mousemove", drawPixel);
+      cCanvas.addEventListener("mousemove", drawPixel);
     });
 
-    canvas.addEventListener("mouseup", function () {
-      canvas.removeEventListener("mousemove", drawPixel);
+    cCanvas.addEventListener("mouseup", function () {
+      cCanvas.removeEventListener("mousemove", drawPixel);
+    });
+    cCanvas.addEventListener("mouseleave", function () {
+      cCanvas.removeEventListener("mousemove", drawPixel);
     });
 
     function resetCanvas() {
@@ -158,6 +216,18 @@
       ctx.fillRect(0, 0, width, height);
     }
 
+    function showCursorPreview(e) {
+      const x = Math.floor((e.offsetX / cCanvas.clientWidth) * cCanvas.width);
+      const y = Math.floor((e.offsetY / cCanvas.clientHeight) * cCanvas.height);
+
+      // Clear previous preview
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+
+      // Draw preview pixel
+      cCtx.fillStyle = currentColor;
+      cCtx.fillRect(x, y, 1, 1);
+    }
+
     function drawPixel(e) {
       const x = Math.floor((e.offsetX / canvas.clientWidth) * canvas.width);
       const y = Math.floor((e.offsetY / canvas.clientHeight) * canvas.height);
@@ -165,6 +235,7 @@
       ctx.fillStyle = currentColor;
       ctx.fillRect(x, y, 1, 1);
     }
+
 
     // Color Selector
     document.querySelectorAll(".color").forEach((element) => {
@@ -184,11 +255,25 @@
         const blue = imageData[i + 2].toString(16).padStart(2, '0');
 
         const hexValue = `#${red}${green}${blue}`;
-        pixelArray.push(hexValue);
+
+        // convert the hexValue to the corresponding Texel Value
+        const currentTexel = texelLookupTable[hexValue];
+
+        pixelArray.push(currentTexel);
       }
 
+
+      const arrayString = JSON.stringify(pixelArray, null, 2)
+        .replace(/\n/g, '')
+        .replace(/\s{2,}/g, ' ');
+      // Set the text area value
+
+
       const exportTextArea = document.getElementById("exportTextArea");
-      exportTextArea.value = pixelArray.join(', ');
+
+      exportTextArea.value = arrayString;
+      // // console.log(pixelArray);
+      // exportTextArea.value = pixelArray.join('||||');
     }
   </script>
 </body>
