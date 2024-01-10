@@ -177,6 +177,8 @@ cobblestoneC += "oooooooorrrrrrrr";
 cobblestoneC += "goomooorrttpmppr";
 
 
+var colorMapTest = "#tobobobobobob7g7r#tobobobob7g7r7r7r#tobob7g7r7r7r7r7r#t7g7r7r7r7r7r7r7g*b7r7r7r7r7r7g#o#o*b7r7r7r7g#o#o#o#o*b7r7g#o#o#o#o#o#o*b";
+
 
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
@@ -184,7 +186,6 @@ var textures = {
   "T": {
     "texture": cobblestone,
     "scale": 2,
-    "color": cobblestoneC,
   },
   "U": {
     "texture": woodplanks,
@@ -205,15 +206,12 @@ var textures = {
     "scale": 2,
   },
   "#": {
-    // "texture": cobblestone,
-    // "scale": 2,
-    // "color": cobblestoneC,
-
-    "texture": testTexture,
+    "texture": colorMapTest,
+    "scale": 2,
+    "colorEmbed": true,
     "height": 8,
     "width": 8,
-    "scale": 4,
-    "isobject": true,
+    "scale": 3,
   },
   "W": {
     "texture": "DIRECTIONAL",

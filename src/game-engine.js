@@ -200,6 +200,7 @@ var gameEngineJS = (function () {
     var texHeight = texture["height"] || defaultTexHeight;
     var colorPixels = texture["color"] || false;
     var isobject = texture["isobject"] || false;
+    var colorEmbed = texture["colorEmbed"] || false;
 
 
     var texpixels = texture["texture"];
@@ -222,7 +223,7 @@ var gameEngineJS = (function () {
     var sampleY = ~~(texHeight * y);
 
     var samplePosition = texWidth * sampleY + sampleX;
-
+    var samplePosition2 = texWidth * sampleY + sampleX * 2;
 
 
     if(isobject){
@@ -239,13 +240,26 @@ var gameEngineJS = (function () {
       if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
         return "+";
       } else {
-        var currentPixel = texpixels[samplePosition];
         
-        if(colorPixels){
-          currentColor = colorPixels[samplePosition];
+        if( colorEmbed ){
+          for (var i = 0; i < texpixels.length; i++) {
+            // Alternate every other pixel to grab color or gray value
+            if (i % 2 !== 0) {
+              var currentColor = texpixels[samplePosition*2-1];
+            }else{
+              var currentPixel = texpixels[samplePosition*2];  
+            }
+          }
         }else{
-          currentColor = 'm';
+          var currentPixel = texpixels[samplePosition];
+          if(colorPixels){
+            currentColor = colorPixels[samplePosition];
+          }else{
+            currentColor = 'm';
+          }
         }
+        
+        
     
         return [currentPixel, currentColor];
       }
