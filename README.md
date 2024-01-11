@@ -12,7 +12,7 @@ I am working on a Canvas/Color version, there's a branch for it, which includes 
 Based on the Javidx9 code-it-yourself, but re-written and optimized in JavaScript for your browser, this is a quick rundown or the text-only 3D engine complete with mouselook, sprites, textures, lighting, water and more!
 
 ### Where can I play it?
-`-->` Play it at http://pogel.xyz/ !!! `<--`
+`-->` Play it at https://3d-game-engine.moritz.work/ !!! `<--`
 
 Or you can download the repo, and just open the `index.html` file in your browser!
 
