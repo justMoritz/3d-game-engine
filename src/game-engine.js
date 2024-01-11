@@ -1578,6 +1578,11 @@ var gameEngineJS = (function () {
         var nFObjectBackwall =
           nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
           nScreenHeight / (fDistanceToInverseObject + 4); // 0 makes the object flat, higher the number, the higher the object :)
+        
+        // TODO: This renders the front of the object only
+        // var nFObjectFront =
+        //   nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
+        //   nScreenHeight / (fDistanceToObject + 4); // 0 makes the object flat, higher the number, the higher the object :)
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
@@ -1680,6 +1685,8 @@ var gameEngineJS = (function () {
           }
         } // end draw column loop
 
+        // TODO: This needs some work :)
+        // TODO: Also needs to be put into the depthbuffer properly
         // Object-Draw (removed overlayscreen)
         for (var y = 0; y < nScreenHeight; y++) {
           if (y > nObjectCeiling && y <= nObjectFloor) {

@@ -58,8 +58,8 @@
 
     .canvas-sizer {
       position: relative;
-      width: 160px;
-      height: 160px;
+      width: 80px;
+      height: 80px;
     }
 
     .import-export {
@@ -108,8 +108,8 @@
     <div class="canvasholder">
       <div class="canvas-sizer">
         <div class="">
-          <canvas id="pixelCanvas" width="16" height="16"></canvas>
-          <canvas id="cursorCanvas" width="16" height="16"></canvas>
+          <canvas id="pixelCanvas" width="8" height="8"></canvas>
+          <canvas id="cursorCanvas" width="8" height="8"></canvas>
         </div>
       </div>
     </div>
@@ -152,9 +152,9 @@
   <div class="dimensioninput">
     <div>
       <label for="widthInput">Width:</label>
-      <input type="number" id="widthInput" value="16" min="1">
+      <input type="number" id="widthInput" value="8" min="2">
       <label for="heightInput">Height:</label>
-      <input type="number" id="heightInput" value="16" min="1">
+      <input type="number" id="heightInput" value="8" min="2">
     </div>
     <div>
       <button id="updateDimensions">Update & Clear</button>
@@ -332,29 +332,39 @@
     // Pixel Import
     function importPixels() {
       const importTextArea = document.getElementById("exportTextArea");
-      const importedData = JSON.parse(importTextArea.value);
+      const importedData = importTextArea.value;
 
       const width = parseInt(widthInput.value);
       const height = parseInt(heightInput.value);
+
+      console.log('clicked');
 
       // Clear the canvas
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, width, height);
 
-      // Loop through each texel in importedData and set the corresponding color on the canvas
+      let index = 0;
+
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-          const texel = importedData[y * width + x];
-          let color = texelLookupTable[texel];
+          // Extract lightness and color values from the imported data string
+          const lightness = importedData[index++];
+          let color = importedData[index++];
+          const texel = [lightness, color];
+
+          // console.log(texel);
 
           // Looks up the RGB value from the lookuptable;
           for (const [key, value] of Object.entries(texelLookupTable)) {
+            console.log(`value: ${JSON.stringify(value)} against texel: ${JSON.stringify(texel)}`)
             if (JSON.stringify(value) == JSON.stringify(texel)) {
+              // console.log('------MATCH------');
               color = key;
               continue;
             }
           }
 
+          // Set the corresponding color on the canvas
           if (color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, 1, 1);
