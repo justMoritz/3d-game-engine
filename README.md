@@ -1,3 +1,9 @@
+# Canvas/Color Version
+
+I am working on a Canvas/Color version, there's a branch for it, which includes its own pixel/texture editor. 
+**More info coming soon**
+
+
 # 3D ASCII Game Engine
 
 ![3D ASCII Game Engine](https://raw.githubusercontent.com/justMoritz/images/master/3d-game-engine.gif)
