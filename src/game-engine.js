@@ -9,6 +9,10 @@
  *
  *  - TODO: Inline more function calls in high-frequency loops
  *  - TODO: Limit Object Access in high-frequency loops
+ * 
+ * 
+ * TODO: Performance DROPS SIGNIFICANTLY when one is close to a color-sprite!! 
+ *         Possibly too many lookups?
  */
 
 var gameEngineJS = (function () {
@@ -199,6 +203,8 @@ var gameEngineJS = (function () {
     var texWidth = texture["width"] || defaultTexWidth;
     var texHeight = texture["height"] || defaultTexHeight;
     var colorPixels = texture["color"] || false;
+
+    // TODO: Let's make this the default, and have the texture pass fault for legacy implementations
     var colorEmbed = texture["colorEmbed"] || false;
 
     var texpixels = texture["texture"];
@@ -233,7 +239,7 @@ var gameEngineJS = (function () {
         for (var i = 0; i < texpixels.length; i++) {
           // Alternate every other pixel to grab color or gray value
           if (i % 2 !== 0) {
-            var currentColor = texpixels[samplePosition*2-1];
+            var currentColor = texpixels[samplePosition*2+1];
           }else{
             var currentPixel = texpixels[samplePosition*2];  
           }
@@ -653,9 +659,8 @@ var gameEngineJS = (function () {
 
       // console.log( color )
 
-      // TODO: 
-      // Maybe can pass the color-family for the pixel here, 
-      // and then change the bxx variables accordingly
+      // There are 4 lightness values in each color
+      // This assigns the appropriate color value to the current pixel
       var b0 = "0";
       var b20 = _rh.colorReferenceTable[color][0];
       var b40 = _rh.colorReferenceTable[color][1];

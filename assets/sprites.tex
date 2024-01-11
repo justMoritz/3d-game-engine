@@ -1,4 +1,8 @@
 
+var pogelTest = "...##..##.....#**##**#...#***7***7#..#********7##****7****7##**#*7*#**7##****7****7#.#7*777**7#...#77777##.....#7777#......#777#........#77#.......#*7*7#.....#7****7#....#7****7#....#******#....#7***77#.....#7*77#......#77*#.......#*7*#.....###7#7###...#777#7777#..#777#7777#..##########.";
+
+// ...##..##.....#**##**#...#***7***7#..#********7##****7****7##**#*7*#**7##****7****7#.#7*777**7#...#77777##.....#7777#......#777#........#77#.......#*7*7#.....#7****7#....#7****7#....#******#....#7***77#.....#7*77#......#77*#.......#*7*#.....###7#7###...#777#7777#..#777#7777#..##########.
+
 // pogel
 var pogel = "";
 pogel += "...##..##...";
@@ -53,6 +57,8 @@ pogelfront += "....***7*7***.....";
 pogelfront += "....*777*7777*....";
 pogelfront += "....*777*7777*....";
 pogelfront += "....**********....";
+
+pogelfrontC = ".m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#mob#m7m#mob#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m*r7r7r7r*r*r*m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r*o.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r#t*o.m.m.m.m.m.m.m.m.m.m.m.m.mot7m#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot*t#t#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot*t#t#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot#t#t#t#t#t#tot.m.m.m.m.m.m.m.m.m.m*m7m#t#t#t7m7m*m.m.m.m.m.m.m.m.m.m.m.mop7p*p7m7m*m.m.m.m.m.m.m.m.m.m.m.m.mop7p7p*pop.m.m.m.m.m.m.m.m.m.m.m.m.mop*p7p*pop.m.m.m.m.m.m.m.m.m.m.moooooo7o*o7o*o*o*o.m.m.m.m.m.m.m.m.moo7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.moo7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.moooooooo*o*o*o*o*o*o.m.m.m.m";
 
 
 var pogelfrontW1 = "";
@@ -883,7 +889,7 @@ var allSprites = {
   },
 
 
-  "P": {
+  "P-old": {
     "texture": pogelfront,
     "walkframes": true,
     "height": 25,
@@ -963,6 +969,104 @@ var allSprites = {
           "height": 25,
           "width": 18,
           "scale": 1,
+        },
+      },
+    },
+  },
+
+  "P": {
+    "texture": pogelfrontC,
+    "walkframes": true,
+    "height": 25,
+    "width": 18,
+    "scale": 1,
+    "aspctRt": 1.33,
+    "hghtFctr": 0.4,
+    "colorEmbed": true,
+    "angles":{
+      "F": {
+        "texture": pogelfrontC,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "colorEmbed": true,
+        "W1": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+        "W2": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+      },
+      "B": {
+        "texture": pogelfrontC,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "colorEmbed": true,
+        "W1": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+        "W2": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+      },
+
+      "L": {
+        "texture": pogelfrontC,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "colorEmbed": true,
+        "W1": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+        "W2": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+      },
+      "R": {
+        "texture": pogelfrontC,
+        "height": 25,
+        "width": 18,
+        "scale": 1,
+        "colorEmbed": true,
+        "W1": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
+        },
+        "W2": {
+          "texture": pogelfrontC,
+          "height": 25,
+          "width": 18,
+          "scale": 1,
+          "colorEmbed": true,
         },
       },
     },

@@ -169,7 +169,9 @@
     <textarea id="exportTextArea" data-not-readonly></textarea>
     <small>To import pixels, paste an existing texture array into this field. Make sure you set the correct height and
       width.</small>
-    <button onclick="importPixels()">Import Pixels</button>
+    <button onclick="importPixels()">Import Texture</button>
+    <br />
+    <button onclick="importOSPixels()">Import Monochrome (legacy)</button>
   </div>
 
   <script>
@@ -337,8 +339,6 @@
       const width = parseInt(widthInput.value);
       const height = parseInt(heightInput.value);
 
-      console.log('clicked');
-
       // Clear the canvas
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, width, height);
@@ -352,16 +352,56 @@
           let color = importedData[index++];
           const texel = [lightness, color];
 
-          // console.log(texel);
-
           // Looks up the RGB value from the lookuptable;
           for (const [key, value] of Object.entries(texelLookupTable)) {
-            console.log(`value: ${JSON.stringify(value)} against texel: ${JSON.stringify(texel)}`)
             if (JSON.stringify(value) == JSON.stringify(texel)) {
-              // console.log('------MATCH------');
               color = key;
               continue;
             }
+          }
+
+          // Set the corresponding color on the canvas
+          if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+
+    // Pixel Import OLD STYLE
+    function importOSPixels() {
+      const importTextArea = document.getElementById("exportTextArea");
+      const importedData = importTextArea.value;
+
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      // Clear the canvas
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+
+      let index = 0;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          // Extract lightness and color values from the imported data string
+          const lightness = importedData[index++];
+          let color = "#000000";
+          // const texel = [lightness, color];
+
+          console.log(lightness);
+          if (lightness === '#') {
+            color = "#ffffff";
+          }
+          else if (lightness === "7") {
+            color = "#c8c8c8";
+          }
+          else if (lightness === "*") {
+            color = "#858585";
+          }
+          else if (lightness === "0") {
+            color = "#424242";
           }
 
           // Set the corresponding color on the canvas
