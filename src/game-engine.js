@@ -31,7 +31,7 @@ var gameEngineJS = (function () {
   var eDebugOut;
 
   var nScreenWidth = 320;
-  var nScreenHeight = 120;
+  var nScreenHeight = 130;
 
   var fFOV = PI___ / 1.667; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
@@ -199,9 +199,7 @@ var gameEngineJS = (function () {
     var texWidth = texture["width"] || defaultTexWidth;
     var texHeight = texture["height"] || defaultTexHeight;
     var colorPixels = texture["color"] || false;
-    var isobject = texture["isobject"] || false;
     var colorEmbed = texture["colorEmbed"] || false;
-
 
     var texpixels = texture["texture"];
 
@@ -225,44 +223,33 @@ var gameEngineJS = (function () {
     var samplePosition = texWidth * sampleY + sampleX;
     var samplePosition2 = texWidth * sampleY + sampleX * 2;
 
+    var currentColor;
 
-    if(isobject){
-      if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-        return "+";
-      } else {  
-        // TODO: this somehow is EXTREMELY slow
-        return[texpixels[samplePosition][0],texpixels[samplePosition][1], ];
-      }
-    }else{
-
-      var currentColor;
-
-      if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-        return "+";
-      } else {
-        
-        if( colorEmbed ){
-          for (var i = 0; i < texpixels.length; i++) {
-            // Alternate every other pixel to grab color or gray value
-            if (i % 2 !== 0) {
-              var currentColor = texpixels[samplePosition*2-1];
-            }else{
-              var currentPixel = texpixels[samplePosition*2];  
-            }
-          }
-        }else{
-          var currentPixel = texpixels[samplePosition];
-          if(colorPixels){
-            currentColor = colorPixels[samplePosition];
+    if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
+      return "+";
+    } else {
+      
+      if( colorEmbed ){
+        for (var i = 0; i < texpixels.length; i++) {
+          // Alternate every other pixel to grab color or gray value
+          if (i % 2 !== 0) {
+            var currentColor = texpixels[samplePosition*2-1];
           }else{
-            currentColor = 'm';
+            var currentPixel = texpixels[samplePosition*2];  
           }
         }
-        
-        
-    
-        return [currentPixel, currentColor];
+      }else{
+        var currentPixel = texpixels[samplePosition];
+        if(colorPixels){
+          currentColor = colorPixels[samplePosition];
+        }else{
+          currentColor = 'm';
+        }
       }
+      
+      
+  
+      return [currentPixel, currentColor];
     }
 
 
@@ -528,6 +515,7 @@ var gameEngineJS = (function () {
     cCtx.putImageData(imageData, 0, 0);
   }
 
+
   var _fDrawFrame = function (screen, overlayscreen, target) {
     var frame = _fPrepareFrame(screen, overlayscreen);
     var target = target || eScreen;
@@ -539,9 +527,7 @@ var gameEngineJS = (function () {
     var printIndex = 0;
     var removePixels = nScreenHeight / 2;
 
-    // _debugOutput( removePixels );
-
-
+    
     for (var row = 0; row < nScreenHeight; row++) {
       for (var pix = 0; pix < nScreenWidth; pix++) {
         // H-blank based on screen-width
@@ -551,10 +537,10 @@ var gameEngineJS = (function () {
 
         if (pix < removePixels) {
           sOutput += "";
-          sCanvasOutput += "0";
+          sCanvasOutput += "4";
         } else if (pix > nScreenWidth - removePixels) {
           sOutput += "";
-          sCanvasOutput += "0";
+          sCanvasOutput += "4";
         } else {
           sOutput += frame[printIndex];
           sCanvasOutput += frame[printIndex];
