@@ -60,6 +60,8 @@ pogelfront += "....**********....";
 
 pogelfrontC = ".m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#mob#m7m#mob#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m*r7r7r7r*r*r*m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r*o.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r#t*o.m.m.m.m.m.m.m.m.m.m.m.m.mot7m#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot*t#t#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot*t#t#t#t#t*tot.m.m.m.m.m.m.m.m.m.mot#t#t#t#t#t#tot.m.m.m.m.m.m.m.m.m.m*m7m#t#t#t7m7m*m.m.m.m.m.m.m.m.m.m.m.mop7p*p7m7m*m.m.m.m.m.m.m.m.m.m.m.m.mop7p7p*pop.m.m.m.m.m.m.m.m.m.m.m.m.mop*p7p*pop.m.m.m.m.m.m.m.m.m.m.moooooo7o*o7o*o*o*o.m.m.m.m.m.m.m.m.moo7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.moo7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.moooooooo*o*o*o*o*o*o.m.m.m.m";
 
+pogelfrontW1C = ".m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m*m#m7m#m*m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m7r7r7r7r7ror*m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7r*r.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r*r.m.m.m.m.m.m.m.m.m.m.m.m.m*m#t7r#t7m*m.m.m.m.m.m.m.m.m.m.m.m*m7t#t#t#t#t7t*m.m.m.m.m.m.m.m.m.m.m*m7t#t#t#t#t7t7t*m.m.m.m.m.m.m.m.m*m7o7o#t#t#t#t7t#o*m.m.m.m.m.m.m.m.m*m*m*m#t#t#t7m#o#o*m.m.m.m.m.m.m.m.m.m.m*m7m7p7m7m*m*m.m.m.m.m.m.m.m.m.m*o*o*o7p7p7p*m.m.m.m.m.m.m.m.m.m.m.m*o#o#o#o7p7p*m.m.m.m.m.m.m.m.m.m.m.m*o#o#o#o*o#o#ooo.m.m.m.m.m.m.m.m.m.m*o#o#o#o*o#o#ooo.m.m.m.m.m.m.m.m.m.m*o*o#o#o*ooooooo.m.m.m.m.m.m.m.m.m.m.m*o*o*o*o.m.m.m.m.m.m.m.m";
+
 
 var pogelfrontW1 = "";
 pogelfrontW1 += "..................";
@@ -810,6 +812,7 @@ var allSprites = {
     "height": 28,
     "width": 16,
     "scale": 1,
+    "noColor": true,
     "aspctRt": 1.25,
     "hghtFctr": 0.7,
     "angles":{
@@ -818,17 +821,20 @@ var allSprites = {
         "height": 28,
         "width": 16,
         "scale": 1,
+        "noColor": true,
         "W1": {
           "texture": obetrlFW1,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
         "W2": {
           "texture": obetrlFW2,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
       },
       "L": {
@@ -836,17 +842,20 @@ var allSprites = {
         "height": 28,
         "width": 16,
         "scale": 1,
+        "noColor": true,
         "W1": {
           "texture": obetrlW1,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
         "W2": {
           "texture": obetrlW2,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
       },
       "B": {
@@ -854,17 +863,20 @@ var allSprites = {
         "height": 28,
         "width": 16,
         "scale": 1,
+        "noColor": true,
         "W1": {
           "texture": obetrlBW1,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
         "W2": {
           "texture": obetrlBW2,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
       },
       "R": {
@@ -872,17 +884,20 @@ var allSprites = {
         "height": 28,
         "width": 16,
         "scale": 1,
+        "noColor": true,
         "W1": {
           "texture": obetrlRW1,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
         "W2": {
           "texture": obetrlRW2,
           "height": 28,
           "width": 16,
           "scale": 1,
+          "noColor": true,
         },
       },
     }
@@ -982,27 +997,23 @@ var allSprites = {
     "scale": 1,
     "aspctRt": 1.33,
     "hghtFctr": 0.4,
-    "colorEmbed": true,
     "angles":{
       "F": {
         "texture": pogelfrontC,
         "height": 25,
         "width": 18,
         "scale": 1,
-        "colorEmbed": true,
         "W1": {
-          "texture": pogelfrontC,
+          "texture": pogelfrontW1C,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
         "W2": {
-          "texture": pogelfrontC,
+          "texture": pogelfrontW1C,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
       },
       "B": {
@@ -1010,20 +1021,17 @@ var allSprites = {
         "height": 25,
         "width": 18,
         "scale": 1,
-        "colorEmbed": true,
         "W1": {
-          "texture": pogelfrontC,
+          "texture": pogelfrontW1C,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
         "W2": {
-          "texture": pogelfrontC,
+          "texture": pogelfrontW1C,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
       },
 
@@ -1032,20 +1040,17 @@ var allSprites = {
         "height": 25,
         "width": 18,
         "scale": 1,
-        "colorEmbed": true,
         "W1": {
           "texture": pogelfrontC,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
         "W2": {
           "texture": pogelfrontC,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
       },
       "R": {
@@ -1053,20 +1058,17 @@ var allSprites = {
         "height": 25,
         "width": 18,
         "scale": 1,
-        "colorEmbed": true,
         "W1": {
           "texture": pogelfrontC,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
         "W2": {
           "texture": pogelfrontC,
           "height": 25,
           "width": 18,
           "scale": 1,
-          "colorEmbed": true,
         },
       },
     },

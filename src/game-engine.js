@@ -202,10 +202,11 @@ var gameEngineJS = (function () {
     var scaleFactor = texture["scale"] || defaultTexScale;
     var texWidth = texture["width"] || defaultTexWidth;
     var texHeight = texture["height"] || defaultTexHeight;
-    var colorPixels = texture["color"] || false;
 
     // TODO: Let's make this the default, and have the texture pass fault for legacy implementations
-    var colorEmbed = texture["colorEmbed"] || false;
+    var noColor = texture["noColor"] || false;
+    
+    // console.log(noColor);
 
     var texpixels = texture["texture"];
 
@@ -227,33 +228,22 @@ var gameEngineJS = (function () {
     var sampleY = ~~(texHeight * y);
 
     var samplePosition = texWidth * sampleY + sampleX;
-    var samplePosition2 = texWidth * sampleY + sampleX * 2;
+    var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
 
     var currentColor;
+    var currentPixel;
 
     if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
       return "+";
     } else {
       
-      if( colorEmbed ){
-        for (var i = 0; i < texpixels.length; i++) {
-          // Alternate every other pixel to grab color or gray value
-          if (i % 2 !== 0) {
-            var currentColor = texpixels[samplePosition*2+1];
-          }else{
-            var currentPixel = texpixels[samplePosition*2];  
-          }
-        }
+      if( noColor ){
+        currentPixel = texpixels[samplePosition];
+        currentColor = 'm';
       }else{
-        var currentPixel = texpixels[samplePosition];
-        if(colorPixels){
-          currentColor = colorPixels[samplePosition];
-        }else{
-          currentColor = 'm';
-        }
+        currentPixel = texpixels[samplePosition2];
+        currentColor = texpixels[samplePosition2+1];
       }
-      
-      
   
       return [currentPixel, currentColor];
     }
