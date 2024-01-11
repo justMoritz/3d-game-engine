@@ -1426,8 +1426,10 @@ var gameEngineJS = (function () {
 
         var nRayLength = 0.0;
 
+        // The smaller, the finer, and slower. 
         // var nGrainControl = 0.1;
-        var nGrainControl = 0.05;
+        // var nGrainControl = 0.05;
+        var nGrainControl = 0.01;
 
         /**
          * Ray Casting Loop
