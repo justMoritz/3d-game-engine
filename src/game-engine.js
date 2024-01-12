@@ -177,14 +177,14 @@ var gameEngineJS = (function () {
         window[sLevelstring].background;
     });
 
-    main();
+    // main();
 
     // pauses, then starts the game loop
-    // _testScreenSizeAndStartTheGame();
-    // window.addEventListener("resize", function () {
-    //   clearInterval(gameRun);
-    //   _testScreenSizeAndStartTheGame();
-    // });
+    _testScreenSizeAndStartTheGame();
+    window.addEventListener("resize", function () {
+      clearInterval(gameRun);
+      _testScreenSizeAndStartTheGame();
+    });
   };
 
   /**
@@ -388,6 +388,7 @@ var gameEngineJS = (function () {
   };
 
   /**
+   * CURRENTLY NOT USED, BUT MIGHT BE USEFUL FOR UI TYPE ELEMENTS LATER
    * Determines with Pixels to use, sInput
    * @param  {string} oInput    Main Pixel
    * @param  {string} sOverlay  Overlay Pixel
@@ -411,8 +412,7 @@ var gameEngineJS = (function () {
    * the aim is to remove the first and last 30 pixels of very row,
    * to obscure the skewing
    */
-  var _fPrepareFrame = function (oInput, oOverlay, eTarget) {
-    var oOverlay = oOverlay || false;
+  var _fPrepareFrame = function (oInput, eTarget) {
     var eTarget = eTarget || eScreen;
     var sOutput = [];
 
@@ -471,7 +471,8 @@ var gameEngineJS = (function () {
           // don"t print
         } else {
           // print
-          sOutput.push(_printCompositPixel(oInput, oOverlay, globalPrintIndex));
+          sOutput.push( oInput[globalPrintIndex] );
+          // sOutput.push(_printCompositPixel(oInput, oOverlay, globalPrintIndex));
         }
 
         globalPrintIndex++;
@@ -487,10 +488,9 @@ var gameEngineJS = (function () {
   };
 
   var _drawToCanvas = function ( pixels, removePixels ) {
-
     // Assuming your canvas has a width and height
     // canvas.width = nScreenWidth - removePixels/2;
-    _debugOutput( eCanvas.width );
+    // _debugOutput( eCanvas.width );
 
     eCanvas.width = nScreenWidth;
     eCanvas.height = nScreenHeight;
@@ -512,8 +512,8 @@ var gameEngineJS = (function () {
   }
 
 
-  var _fDrawFrame = function (screen, overlayscreen, target) {
-    var frame = _fPrepareFrame(screen, overlayscreen);
+  var _fDrawFrame = function (screen, target) {
+    var frame = _fPrepareFrame(screen);
     var target = target || eScreen;
 
     var sOutput = "";
@@ -549,22 +549,15 @@ var gameEngineJS = (function () {
     _drawToCanvas( sCanvasOutput, removePixels );
   };
 
+
+
   // various shaders for walls, ceilings, objects
   // _renderHelpers
   //
   // each texture has 4 values: 3 hues plus black
   // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
-    // The 4 color values for these start at this point in the array
-    colorReferenceTableMin:{
-      m: '1',
-      b: '5',
-      p: '9',
-      r: '13',
-      o: '17',
-      g: '21',
-      t: '25',
-    },    
+    // The 4 color values for these start at this point in the array  
     colorReferenceTable:{
       m: ['1', '2', '3', '4'],
       b: ['a', 'b', 'c', 'd'],
@@ -575,38 +568,6 @@ var gameEngineJS = (function () {
       t: ['u', 'v', 'w', 'x'],
     },
     // the color values
-    pixelLookupTableMin: [
-      [0, 0, 0], // Black
-      [66, 66, 66], // 4 Grey Values
-      [133, 133, 133],
-      [200, 200, 200],
-      [255, 255, 255], // White
-      [32, 24, 136], // 4 Blues
-      [32, 56, 232],
-      [88, 144, 248],
-      [192, 208, 248],
-      [136, 0, 112], // 4 pinks
-      [184, 0, 184],
-      [240, 120, 248],
-      [248, 192, 248],
-      [160, 0, 0], // 4 reds
-      [216, 40, 66],
-      [248, 112, 96],
-      [248, 184, 176],
-      [114, 64, 7], // 4 oranges
-      [136, 112, 0],
-      [199, 178, 28],
-      [220, 206, 112],
-      [0, 80, 0], // 4 greens
-      [0, 168, 0], 
-      [72, 216, 72],
-      [168, 240, 184],
-      [24, 56, 88], // 4 teals
-      [0, 128, 136],
-      [0, 232, 217],
-      [152, 248, 240],
-      // Add more entries as needed
-    ],
     pixelLookupTable: {
       0: [0, 0, 0], // Black
       1: [66, 66, 66], // 4 Grey Values
@@ -657,6 +618,16 @@ var gameEngineJS = (function () {
       var b60 = _rh.colorReferenceTable[color][2];
       var b80 = _rh.colorReferenceTable[color][3];
       var b100 = "4";
+
+      
+      // "&#9109;"; // ⎕
+      
+      // var b0   = ".";
+      // var b20  = "&#9617;"; // ░
+      // var b40  = "&#9618;"; // ▒
+      // var b60  = "&#9618;"; // ▒
+      // var b80  = "&#9619;"; // ▓
+      // var b100 = "&#9608;"; // █
 
       // Controls the depth shading
       if (sWallDirection === "N" || sWallDirection === "S") {
@@ -1391,8 +1362,6 @@ var gameEngineJS = (function () {
 
       // holds the frames we"re going to send to the renderer
       var screen = [];
-      var spritescreen = [];
-      var overlayscreen = [];
 
       // Converts player turn position into degrees (used for texturing)
       nDegrees = ~~(fPlayerA * I80divPI) % 360;
@@ -1593,7 +1562,6 @@ var gameEngineJS = (function () {
               if (j > nTower) {
                 var fSampleY = (j - nCeiling + 6) / (nFloor - nCeiling + 6);
 
-                // screen[j*nScreenWidth+i] = _rh.renderSolidWall(j, fDistanceToWall, isBoundary);
                 screen[j * nScreenWidth + i] = _rh.renderWall(
                   j,
                   fDistanceToWall,
@@ -1873,7 +1841,7 @@ var gameEngineJS = (function () {
         }
       }
 
-      _fDrawFrame(screen, false);
+      _fDrawFrame(screen);
     }
   };
 
