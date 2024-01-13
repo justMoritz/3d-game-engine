@@ -680,7 +680,9 @@ var gameEngineJS = (function () {
             fill = b0;
           }
         } else {
-          fill = "0";
+          // fill = "0";
+          // fill = b20;
+          fill = "1";
         }
       }
 
@@ -735,7 +737,9 @@ var gameEngineJS = (function () {
             fill = b0;
           }
         } else {
-          fill = "0";
+          // fill = "0";
+          // fill = b20;
+          fill = "1";
         }
       }
 
