@@ -1395,6 +1395,7 @@ var gameEngineJS = (function () {
         var fEyeY = Math.sin(fRayAngle);
 
         var fSampleX = 0.0;
+        var fSampleXo = 0.0;
         var sWallDirection = "N";
 
         var nRayLength = 0.0;
@@ -1494,6 +1495,9 @@ var gameEngineJS = (function () {
             var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
             var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
 
+            var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject;
+            var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject;
+
             // now we have the location of the middle of the cell,
             // and the location of point of collision, work out angle
             var fTestAngle = Math.atan2(
@@ -1504,18 +1508,22 @@ var gameEngineJS = (function () {
 
             if (fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25) {
               fSampleX = fTestPointY - +nTestY;
+              fSampleXo = fTestPointYo - +nTestY;
               sWallDirection = "W";
             }
             if (fTestAngle >= PIx0_25 && fTestAngle < PIx0_75) {
               fSampleX = fTestPointX - +nTestX;
+              fSampleXo = fTestPointXo - +nTestX;
               sWallDirection = "N";
             }
             if (fTestAngle < -PIx0_25 && fTestAngle >= -PIx0_75) {
               fSampleX = fTestPointX - +nTestX;
+              fSampleXo = fTestPointXo - +nTestX;
               sWallDirection = "S";
             }
             if (fTestAngle >= PIx0_75 || fTestAngle < -PIx0_75) {
               fSampleX = fTestPointY - +nTestY;
+              fSampleXo = fTestPointYo - +nTestY;
               sWallDirection = "E";
             }
           }
@@ -1540,14 +1548,12 @@ var gameEngineJS = (function () {
 
         // similar operation for objects
         var nObjectCeiling =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) -
-          nScreenHeight / fDistanceToObject;
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / fDistanceToObject;
         var nObjectFloor =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
-          nScreenHeight / fDistanceToObject;
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / fDistanceToObject;
         var nFObjectBackwall =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
-          nScreenHeight / (fDistanceToInverseObject + 4); // 0 makes the object flat, higher the number, the higher the object :)
+          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / (fDistanceToInverseObject + 4); 
+          // 0 makes the object flat, higher the number, the higher the object :)
         
         // TODO: This renders the front of the object only
         // var nFObjectFront =
@@ -1658,18 +1664,24 @@ var gameEngineJS = (function () {
         // TODO: Also needs to be put into the depthbuffer properly
         // Object-Draw (removed overlayscreen)
         for (var y = 0; y < nScreenHeight; y++) {
+          
+          
+          // This should just render a normal wall, and it looks like it do
           if (y > nObjectCeiling && y <= nObjectFloor) {
-            if (sObjectType == "o") {
-              if (y >= nFObjectBackwall) {
-                screen[y * nScreenWidth + i] = _rh.renderSolidWall(
+            var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
+            if (sObjectType === "o" ) {
+              // if (y >= nFObjectBackwall) {
+                screen[y * nScreenWidth + i] = _rh.renderWall(
                   y,
                   fDistanceToObject,
-                  isBoundary
+                  sWallDirection,
+                  _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                 );
-              }
+              // }
             }
           }
         } // end draw column loop
+        
       } // end column loop
 
       // draw sprites
