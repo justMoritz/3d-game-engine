@@ -1515,7 +1515,7 @@ var gameEngineJS = (function () {
             (bHitObject == true && map[nTestY * nMapWidth + nTestX] == ".")
           ) {
             bHitBackObject = true;
-          }
+          } // end if OBJECT
 
           // Test for walls
           else if (map[nTestY * nMapWidth + nTestX] != ".") {
@@ -1584,7 +1584,8 @@ var gameEngineJS = (function () {
               fSampleX = fTestPointY - +nTestY;
               sWallDirection = "E";
             }
-          }
+          } // end if WALL
+
         } // end ray casting loop
 
         // at the end of ray casting, we should have the lengths of the rays
@@ -1723,34 +1724,18 @@ var gameEngineJS = (function () {
         // Object-Draw (removed overlayscreen)
         for (var y = 0; y < nScreenHeight; y++) {
           
-          
-          // // This should just render a normal wall, and it looks like it do but with texture errors
-          // if (y > nObjectCeiling && y <= nObjectFloor) {
-          //   var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
-          //   if (sObjectType === "o" ) {
-          //     // if (y >= nFObjectBackwall) {
-          //       screen[y * nScreenWidth + i] = _rh.renderWall(
-          //         y,
-          //         fDistanceToObject,
-          //         sWallDirection,
-          //         _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
-          //       );
-          //     // }
-          //   }
-          // }
-          
           // This should just render a normal wall, and it looks like it do but with texture errors
           if (y > nObjectCeiling && y <= nObjectFloor) {
             var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
             if (sObjectType === "o" ) {
-              // if (y >= nFObjectBackwall) {
+              if (y >= nFObjectBackwall) {
                 screen[y * nScreenWidth + i] = _rh.renderWall(
                   y,
                   fDistanceToObject,
                   sWallDirection,
                   _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                 );
-              // }
+              }
             }
           }
 
