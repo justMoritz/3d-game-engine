@@ -1,27 +1,53 @@
 var map = "";
-map += "#############..#....#";
-map += "#...........U..#....#";
-map += "#...C.......U.......#";
-map += "#...W.......U.......#";
+map += "#############.......#";
+map += "#..........U........#";
+map += "#...C......U........#";
+map += "#...W......U........#";
 map += "#...W...............#";
 map += "#...W...............#";
-map += "#...C.....oo....oo,,#";
+map += "#...C.....oo....o...#";
 map += "#......##...........#";
 map += "#......##...........#";
 map += "#...................#";
-map += "#.............o.....#";
-map += "#.............o.....#";
-map += "#oooo.....$$$$$.....#";
+map += "#,,,......W...o.....#";
+map += "#,,,......W...o.....#";
+map += "#,,,......$$$$$.....#";
 map += "#...................#";
 map += "#...................#";
 map += "#....T.T....T.T.....#";
 map += "######X#....#X#.....#";
 
+// var map = "";
+// map += "#############..#oooo#";
+// map += "#...........U..#....#";
+// map += "#...C.......U.......#";
+// map += "#...W.......U.......#";
+// map += "#...W...............#";
+// map += "#...W...............#";
+// map += "#...C.....oo....o...,#";
+// map += "#......##...........#";
+// map += "#......##...........#";
+// map += "#...................#";
+// map += "#,,,......W...o.....#";
+// map += "#,,,......W...o.....#";
+// map += "#,,,......$$$$$.....#";
+// map += "#...................#";
+// map += "#...................#";
+// map += "#....T.T....T.T.....#";
+// map += "######X#....#X#.....#";
+
+var chairPos1x = 14.5;
+var chairPos1y = 5.5,
+
+
+// cxxxc
+// cxxxc
+
 levelfile1 = {
   nMapHeight: 17,
   nMapWidth: 21,
   map: map,
-  fPlayerX: 14.5,
+  fPlayerX: 14.4,
   fPlayerY: 1.5,
   fPlayerA: 2.0,
   // fPlayerA: 4.7,
@@ -29,45 +55,81 @@ levelfile1 = {
   color: "white",
   background: "black",
   sprites: {
-    "1": {
-      "x": "12.75",
-      "y": "3.5",
-      "r": "1.5",
-      "name": "O",
-      "move": true,
-      "stuckcounter": 0
-    },
-    "o1": {
-      "x": "10.75",
-      "y": "5.5",
-      "r": "4.5",
-      "name": "O",
-      "move": false,
-      "stuckcounter": 0
-    },
-    "2": {
-      "x": "3.5",
-      "y": "3.5",
-      "r": "0.1",
-      "name": "P",
-      "move": true,
-      "stuckcounter": 0
-    },
-    "3": {
-      "x": "3.5",
-      "y": "3.5",
-      "r": "0.1",
-      "name": "P",
-      "move": true,
-      "stuckcounter": 0
-    },
-    "4": {
-      "x": "2",
-      "y": "8",
-      "r": "1.1",
-      "name": "O",
-      "stuckcounter": 0
-    },
+    "chBaLe1":{
+        "x": chairPos1x - 0.2, "y": chairPos1y - 0.2, "name": "chBaLe",
+      },
+    "chBaLe2":{
+        "x": chairPos1x + 0.2, "y": chairPos1y - 0.2, "name": "chBaLe",
+      },
+    "chBaSp1":{
+        "x": chairPos1x - 0.1, "y": chairPos1y - 0.2, "name": "chBaSp",
+      },
+    "chBaSp2":{
+        "x": chairPos1x + 0.0, "y": chairPos1y - 0.2, "name": "chBaSp",
+      },
+    "chBaSp3":{
+        "x": chairPos1x + 0.1, "y": chairPos1y - 0.2, "name": "chBaSp",
+      },
+    "chSt1":{
+        "x": chairPos1x -0.2, "y": chairPos1y - 0.1, "name": "chSt",
+      },
+    "chSt2":{
+        "x": chairPos1x -0.1, "y": chairPos1y - 0.1, "name": "chSt",
+      },
+    "chSt3":{
+        "x": chairPos1x +0.0, "y": chairPos1y - 0.1, "name": "chSt",
+      },
+    "chSt4":{
+        "x": chairPos1x +0.1, "y": chairPos1y - 0.1, "name": "chSt",
+      },
+    "chSt5":{
+        "x": chairPos1x +0.2, "y": chairPos1y - 0.1, "name": "chSt",
+      },
+    "chSt11":{
+        "x": chairPos1x -0.2, "y": chairPos1y + 0.0, "name": "chSt",
+      },
+    "chSt12":{
+        "x": chairPos1x -0.1, "y": chairPos1y + 0.0, "name": "chSt",
+      },
+    "chSt13":{
+        "x": chairPos1x +0.0, "y": chairPos1y + 0.0, "name": "chSt",
+      },
+    "chSt14":{
+        "x": chairPos1x +0.1, "y": chairPos1y + 0.0, "name": "chSt",
+      },
+    "chSt15":{
+        "x": chairPos1x +0.2, "y": chairPos1y + 0.0, "name": "chSt",
+      },
+    "chSt21":{
+        "x": chairPos1x -0.2, "y": chairPos1y + 0.1, "name": "chSt",
+      },
+    "chSt22":{
+        "x": chairPos1x -0.1, "y": chairPos1y + 0.1, "name": "chSt",
+      },
+    "chSt23":{
+        "x": chairPos1x +0.0, "y": chairPos1y + 0.1, "name": "chSt",
+      },
+    "chSt24":{
+        "x": chairPos1x +0.1, "y": chairPos1y + 0.1, "name": "chSt",
+      },
+    "chSt25":{
+        "x": chairPos1x +0.2, "y": chairPos1y + 0.1, "name": "chSt",
+      },
+    "chFrLe1":{
+        "x": chairPos1x - 0.2, "y": chairPos1y + 0.2, "name": "chFrLe",
+      },
+    "chFrLe2":{
+        "x": chairPos1x + 0.2, "y": chairPos1y + 0.2, "name": "chFrLe",
+      },
+    "chFrSp1":{
+        "x": chairPos1x - 0.1, "y": chairPos1y + 0.2, "name": "chFrSp",
+      },
+    "chFrSp2":{
+        "x": chairPos1x + 0.0, "y": chairPos1y + 0.2, "name": "chFrSp",
+      },
+    "chFrSp3":{
+        "x": chairPos1x + 0.1, "y": chairPos1y + 0.2, "name": "chFrSp",
+      },
   },
   // sprites: "autogen",
 };

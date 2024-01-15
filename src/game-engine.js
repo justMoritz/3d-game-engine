@@ -51,7 +51,7 @@ var gameEngineJS = (function () {
   var bFalling;
   var bRunning;
   var bPaused;
-  var bPlayerMayMoveForward;
+  var bPlayerMayMoveForward = true;
 
   var nJumptimer = 0;
   var fLooktimer = 0;
@@ -1645,14 +1645,14 @@ var gameEngineJS = (function () {
 
         // var nObjectHeightModifier = 4 ; // 0 makes the object flat, higher the number, the higher the object :)
 
-        // if( sObjectType === "," ){
-          // var nObjectHeightModifier = nScreenHeight / fPerspectiveCalculation; // this somehow halves an object in height 
-        // }else{
-          var nObjectHeightModifier = nScreenHeight / (nScreenHeight/2 - nJumptimer * 0.15 - fLooktimer * 0.15); 
-        // }
+        if( sObjectType === "o" ){
+          var nObjectHeightModifier = nScreenHeight / fPerspectiveCalculation; // this somehow halves an object in height 
+        }else{
+          var nObjectHeightModifier = nScreenHeight / (nScreenHeight/3 - nJumptimer * 0.15 - fLooktimer * 0.15); 
+        }
         
 
-        _debugOutput(nObjectHeightModifier);
+        // _debugOutput(nObjectHeightModifier);
 
         // height of entire object, backwall to front wall
         var nFObjectBackwall =

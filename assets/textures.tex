@@ -179,8 +179,8 @@ cobblestoneC += "goomooorrttpmppr";
 
 var colorMapTest = "#tobobobobobob7g7r#tobobobob7g7r7r7r#tobob7g7r7r7r7r7r#t7g7r7r7r7r7r7r7g*b7r7r7r7r7r7g#o#o*b7r7r7r7g#o#o#o#o*b7r7g#o#o#o#o#o#o*b";
 var objectTest = "*r*r*r7r7r7r7r#o*r#p#p#p*b*b*b7r*r#p#p*b*b*b#o7r7r#p*b*b*b#o#o7r7r*b*b*b#o#o7p7r7r*b*b#o#o7p7p7t7r*b#o#o7p7p7p7t#o7r7r7r7r7t7t7t";
-
 var stairsTest = ".m.m.m.m.m.m.m.m#o#o#o#o*r*r*r*r.m.m.m.m#o#o#o#o*r*r*r*r*g*g*g*g#o#o#o#o*r*r*r*r*g*g*g*g*g*g*g*g*r*r*r*r*g*g*g*g*g*g*g*g*g*g*g*g.m.m.m.m.m.m.m.m.m.m.m.m7b7b7b7b.m.m.m.m.m.m.m.m7b7b7b7b*p*p*p*p.m.m.m.m7b7b7b7b*r*r*r*r.m.m.m.m7b7b7b7b*t*t*t*t.m.m.m.m.m.m.m.m"
+var colorPlank = "*o*o*ooo*oor*ooo*o*o*o*o*o*o*o*o7o7o7oooooor*rotoo*o*o7o7o7o7o7o*o*o*o*o*oor*o*rooooooooooooooooorororororororororororororororor*r*r*r*r*r*o*o*o*o*oor*ooo*o*o*o*o*o*o*o*o*o*o*rot*ooroootoo*o*ooooooooooo*o*o*o*r*ooroo*o*o*oooororororororororororororororororor*ooo*r*r*r*r*r*r*r7o*o*o*ooo*oor*rotoo*o*o*o7o7o7o7o*o*o*rotooor*o*r*o*o*o*o*o*o*o*o*o*o*o*r*oorororororororororororororororor*r*r*o*o*o*o*ooo*oor*roo*r*r*r*r*o*o*o*o*o*o*rotooor*ootoo*o*o*ooooooooooo*o*o*r*oorooooooooooooorororororororororororororororor";
 
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
@@ -228,11 +228,11 @@ var textures = {
     "width": 8,
     "scale": 2,
   },
-  "o": {
-    "texture": stairsTest,
-    "height": 8,
+  ",": {
+    "texture": colorPlank,
+    "height": 16,
     "width": 16,
-    "scale": 1,
+    "scale": 2,
   },
   "W": {
     "texture": "DIRECTIONAL",
