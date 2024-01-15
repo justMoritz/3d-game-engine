@@ -37,7 +37,10 @@ map += "######X#....#X#.....#";
 // map += "######X#....#X#.....#";
 
 var chairPos1x = 14.5;
-var chairPos1y = 5.5,
+var chairPos1y = 5.5;
+
+var chairPos2x = 13.8;
+var chairPos2y = 5.5;
 
 
 // cxxxc
@@ -55,81 +58,58 @@ levelfile1 = {
   color: "white",
   background: "black",
   sprites: {
-    "chBaLe1":{
-        "x": chairPos1x - 0.2, "y": chairPos1y - 0.2, "name": "chBaLe",
-      },
-    "chBaLe2":{
-        "x": chairPos1x + 0.2, "y": chairPos1y - 0.2, "name": "chBaLe",
-      },
-    "chBaSp1":{
-        "x": chairPos1x - 0.1, "y": chairPos1y - 0.2, "name": "chBaSp",
-      },
-    "chBaSp2":{
-        "x": chairPos1x + 0.0, "y": chairPos1y - 0.2, "name": "chBaSp",
-      },
-    "chBaSp3":{
-        "x": chairPos1x + 0.1, "y": chairPos1y - 0.2, "name": "chBaSp",
-      },
-    "chSt1":{
-        "x": chairPos1x -0.2, "y": chairPos1y - 0.1, "name": "chSt",
-      },
-    "chSt2":{
-        "x": chairPos1x -0.1, "y": chairPos1y - 0.1, "name": "chSt",
-      },
-    "chSt3":{
-        "x": chairPos1x +0.0, "y": chairPos1y - 0.1, "name": "chSt",
-      },
-    "chSt4":{
-        "x": chairPos1x +0.1, "y": chairPos1y - 0.1, "name": "chSt",
-      },
-    "chSt5":{
-        "x": chairPos1x +0.2, "y": chairPos1y - 0.1, "name": "chSt",
-      },
-    "chSt11":{
-        "x": chairPos1x -0.2, "y": chairPos1y + 0.0, "name": "chSt",
-      },
-    "chSt12":{
-        "x": chairPos1x -0.1, "y": chairPos1y + 0.0, "name": "chSt",
-      },
-    "chSt13":{
-        "x": chairPos1x +0.0, "y": chairPos1y + 0.0, "name": "chSt",
-      },
-    "chSt14":{
-        "x": chairPos1x +0.1, "y": chairPos1y + 0.0, "name": "chSt",
-      },
-    "chSt15":{
-        "x": chairPos1x +0.2, "y": chairPos1y + 0.0, "name": "chSt",
-      },
-    "chSt21":{
-        "x": chairPos1x -0.2, "y": chairPos1y + 0.1, "name": "chSt",
-      },
-    "chSt22":{
-        "x": chairPos1x -0.1, "y": chairPos1y + 0.1, "name": "chSt",
-      },
-    "chSt23":{
-        "x": chairPos1x +0.0, "y": chairPos1y + 0.1, "name": "chSt",
-      },
-    "chSt24":{
-        "x": chairPos1x +0.1, "y": chairPos1y + 0.1, "name": "chSt",
-      },
-    "chSt25":{
-        "x": chairPos1x +0.2, "y": chairPos1y + 0.1, "name": "chSt",
-      },
-    "chFrLe1":{
-        "x": chairPos1x - 0.2, "y": chairPos1y + 0.2, "name": "chFrLe",
-      },
-    "chFrLe2":{
-        "x": chairPos1x + 0.2, "y": chairPos1y + 0.2, "name": "chFrLe",
-      },
-    "chFrSp1":{
-        "x": chairPos1x - 0.1, "y": chairPos1y + 0.2, "name": "chFrSp",
-      },
-    "chFrSp2":{
-        "x": chairPos1x + 0.0, "y": chairPos1y + 0.2, "name": "chFrSp",
-      },
-    "chFrSp3":{
-        "x": chairPos1x + 0.1, "y": chairPos1y + 0.2, "name": "chFrSp",
-      },
+    // Chair 1
+    "ch1BaLe1":{ "x": chairPos1x - 0.2, "y": chairPos1y - 0.2, "name": "chBaLe", },
+    "ch1BaLe2":{ "x": chairPos1x + 0.2, "y": chairPos1y - 0.2, "name": "chBaLe", },
+    "ch1BaSp1":{ "x": chairPos1x - 0.1, "y": chairPos1y - 0.2, "name": "chBaSp", },
+    "ch1BaSp2":{ "x": chairPos1x + 0.0, "y": chairPos1y - 0.2, "name": "chBaSp", },
+    "ch1BaSp3":{ "x": chairPos1x + 0.1, "y": chairPos1y - 0.2, "name": "chBaSp", },
+    "ch1St1":{ "x": chairPos1x -0.2, "y": chairPos1y - 0.1, "name": "chSt", },
+    "ch1St2":{ "x": chairPos1x -0.1, "y": chairPos1y - 0.1, "name": "chSt", },
+    "ch1St3":{ "x": chairPos1x +0.0, "y": chairPos1y - 0.1, "name": "chSt", },
+    "ch1St4":{ "x": chairPos1x +0.1, "y": chairPos1y - 0.1, "name": "chSt", },
+    "ch1St5":{ "x": chairPos1x +0.2, "y": chairPos1y - 0.1, "name": "chSt", },
+    "ch1St11":{ "x": chairPos1x -0.2, "y": chairPos1y + 0.0, "name": "chSt", },
+    "ch1St12":{ "x": chairPos1x -0.1, "y": chairPos1y + 0.0, "name": "chSt", },
+    "ch1St13":{ "x": chairPos1x +0.0, "y": chairPos1y + 0.0, "name": "chSt", },
+    "ch1St14":{ "x": chairPos1x +0.1, "y": chairPos1y + 0.0, "name": "chSt", },
+    "ch1St15":{ "x": chairPos1x +0.2, "y": chairPos1y + 0.0, "name": "chSt", },
+    "ch1St21":{ "x": chairPos1x -0.2, "y": chairPos1y + 0.1, "name": "chSt", },
+    "ch1St22":{ "x": chairPos1x -0.1, "y": chairPos1y + 0.1, "name": "chSt", },
+    "ch1St23":{ "x": chairPos1x +0.0, "y": chairPos1y + 0.1, "name": "chSt", },
+    "ch1St24":{ "x": chairPos1x +0.1, "y": chairPos1y + 0.1, "name": "chSt", },
+    "ch1St25":{ "x": chairPos1x +0.2, "y": chairPos1y + 0.1, "name": "chSt", },
+    "ch1FrLe1":{ "x": chairPos1x - 0.2, "y": chairPos1y + 0.2, "name": "chFrLe", },
+    "ch1FrLe2":{ "x": chairPos1x + 0.2, "y": chairPos1y + 0.2, "name": "chFrLe", },
+    "ch1FrSp1":{ "x": chairPos1x - 0.1, "y": chairPos1y + 0.2, "name": "chFrSp", },
+    "ch1FrSp2":{ "x": chairPos1x + 0.0, "y": chairPos1y + 0.2, "name": "chFrSp", },
+    "ch1FrSp3":{ "x": chairPos1x + 0.1, "y": chairPos1y + 0.2, "name": "chFrSp", },
+    // Chair 2
+    "ch2BaLe1":{ "x": chairPos2x - 0.2, "y": chairPos2y - 0.2, "name": "chBaLe", },
+    "ch2BaLe2":{ "x": chairPos2x + 0.2, "y": chairPos2y - 0.2, "name": "chBaLe", },
+    "ch2BaSp1":{ "x": chairPos2x - 0.1, "y": chairPos2y - 0.2, "name": "chBaSp", },
+    "ch2BaSp2":{ "x": chairPos2x + 0.0, "y": chairPos2y - 0.2, "name": "chBaSp", },
+    "ch2BaSp3":{ "x": chairPos2x + 0.1, "y": chairPos2y - 0.2, "name": "chBaSp", },
+    "ch2St1":{ "x": chairPos2x -0.2, "y": chairPos2y - 0.1, "name": "chSt", },
+    "ch2St2":{ "x": chairPos2x -0.1, "y": chairPos2y - 0.1, "name": "chSt", },
+    "ch2St3":{ "x": chairPos2x +0.0, "y": chairPos2y - 0.1, "name": "chSt", },
+    "ch2St4":{ "x": chairPos2x +0.1, "y": chairPos2y - 0.1, "name": "chSt", },
+    "ch2St5":{ "x": chairPos2x +0.2, "y": chairPos2y - 0.1, "name": "chSt", },
+    "ch2St11":{ "x": chairPos2x -0.2, "y": chairPos2y + 0.0, "name": "chSt", },
+    "ch2St12":{ "x": chairPos2x -0.1, "y": chairPos2y + 0.0, "name": "chSt", },
+    "ch2St13":{ "x": chairPos2x +0.0, "y": chairPos2y + 0.0, "name": "chSt", },
+    "ch2St14":{ "x": chairPos2x +0.1, "y": chairPos2y + 0.0, "name": "chSt", },
+    "ch2St15":{ "x": chairPos2x +0.2, "y": chairPos2y + 0.0, "name": "chSt", },
+    "ch2St21":{ "x": chairPos2x -0.2, "y": chairPos2y + 0.1, "name": "chSt", },
+    "ch2St22":{ "x": chairPos2x -0.1, "y": chairPos2y + 0.1, "name": "chSt", },
+    "ch2St23":{ "x": chairPos2x +0.0, "y": chairPos2y + 0.1, "name": "chSt", },
+    "ch2St24":{ "x": chairPos2x +0.1, "y": chairPos2y + 0.1, "name": "chSt", },
+    "ch2St25":{ "x": chairPos2x +0.2, "y": chairPos2y + 0.1, "name": "chSt", },
+    "ch2FrLe1":{ "x": chairPos2x - 0.2, "y": chairPos2y + 0.2, "name": "chFrLe", },
+    "ch2FrLe2":{ "x": chairPos2x + 0.2, "y": chairPos2y + 0.2, "name": "chFrLe", },
+    "ch2FrSp1":{ "x": chairPos2x - 0.1, "y": chairPos2y + 0.2, "name": "chFrSp", },
+    "ch2FrSp2":{ "x": chairPos2x + 0.0, "y": chairPos2y + 0.2, "name": "chFrSp", },
+    "ch2FrSp3":{ "x": chairPos2x + 0.1, "y": chairPos2y + 0.2, "name": "chFrSp", },
   },
   // sprites: "autogen",
 };
