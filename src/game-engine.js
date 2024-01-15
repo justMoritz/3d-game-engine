@@ -824,6 +824,29 @@ var gameEngineJS = (function () {
       return fill;
     },
 
+    renderObjectTop: function (j) {
+      var fill = "`";
+      
+      // draw floor, in different shades
+      b = 1 -
+        (j - nScreenHeight / (2 - fLooktimer * 0.15)) /
+          (nScreenHeight / (2 - fLooktimer * 0.15));
+
+      if (b < 0.25) {
+        fill = "a";
+      } else if (b < 0.5) {
+        fill = "a";
+      } else if (b < 0.75) {
+        fill = "b";
+      } else if (b < 0.9) {
+        fill = "b";
+      } else {
+        fill = "d";
+      }
+
+      return fill;
+    },
+
     renderCeiling: function (j) {
       var fill = "`";
 
@@ -1597,6 +1620,9 @@ var gameEngineJS = (function () {
 
         } // end ray casting loop
 
+        var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
+        var nObjectHeightModifier = 3; // 0 makes the object flat, higher the number, the higher the object :)
+
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
         // based on the distance to wall, determine how much floor and ceiling to show per column,
@@ -1604,29 +1630,28 @@ var gameEngineJS = (function () {
         // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         // // var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         var nCeiling =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / fDistanceToWall;
+          nScreenHeight / fPerspectiveCalculation - nScreenHeight / fDistanceToWall;
         var nFloor =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / fDistanceToWall;
+          nScreenHeight / fPerspectiveCalculation + nScreenHeight / fDistanceToWall;
 
         // similar for towers and gates
         var nTower =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / (fDistanceToWall - 2);
+          nScreenHeight / fPerspectiveCalculation - nScreenHeight / (fDistanceToWall - 2);
         var nDoorFrameHeight =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / (fDistanceToWall + 2);
+          nScreenHeight / fPerspectiveCalculation - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
         var nObjectCeiling =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) - nScreenHeight / fDistanceToObject;
+          nScreenHeight / fPerspectiveCalculation - nScreenHeight / fDistanceToObject;
         var nObjectFloor =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / fDistanceToObject;
+          nScreenHeight / fPerspectiveCalculation + nScreenHeight / fDistanceToObject;
         var nFObjectBackwall =
-          nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) + nScreenHeight / (fDistanceToInverseObject + 4); 
-          // 0 makes the object flat, higher the number, the higher the object :)
+          nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToInverseObject + nObjectHeightModifier); 
+          
         
         // TODO: This renders the front of the object only
-        // var nFObjectFront =
-        //   nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) +
-        //   nScreenHeight / (fDistanceToObject + 4); // 0 makes the object flat, higher the number, the higher the object :)
+        var nFObjectFront = 
+          nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToObject + nObjectHeightModifier); 
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
@@ -1737,13 +1762,23 @@ var gameEngineJS = (function () {
           if (y > nObjectCeiling && y <= nObjectFloor) {
             var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
             if (sObjectType === "o" ) {
+              // is within the boundaries of the object
               if (y >= nFObjectBackwall) {
-                screen[y * nScreenWidth + i] = _rh.renderWall(
-                  y,
-                  fDistanceToObject,
-                  sObjectDirection,
-                  _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
-                );
+
+                // between the back of the object and the front of the object, 
+                // it's the object top, render as ground
+                if (y < nFObjectFront) {
+                  screen[y * nScreenWidth + i] = _rh.renderObjectTop();
+                }
+                else{
+                  // if not, it's the front, render as wall
+                  screen[y * nScreenWidth + i] = _rh.renderWall(
+                    y,
+                    fDistanceToObject,
+                    sObjectDirection,
+                    _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
+                  );
+                }
               }
             }
           }
