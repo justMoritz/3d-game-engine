@@ -801,24 +801,21 @@ var gameEngineJS = (function () {
     renderFloor: function (j) {
       var fill = "`";
 
-      // b = 1 - 
-      //   (j - nScreenHeight / 2) / (nScreenHeight / 2);
+      // b = 1 - (j - nScreenHeight / 2) / (nScreenHeight / 2);
 
       // draw floor, in different shades
-      b = 1 -
-        (j - nScreenHeight / (2 - fLooktimer * 0.15)) /
-          (nScreenHeight / (2 - fLooktimer * 0.15));
+      b = 1 - (j - nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15))  / (nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) );
 
       if (b < 0.25) {
-        fill = "q";
+        fill = "t";
       } else if (b < 0.5) {
-        fill = "q";
+        fill = "s";
       } else if (b < 0.75) {
         fill = "r";
       } else if (b < 0.9) {
-        fill = "s";
+        fill = "q";
       } else {
-        fill = "t";
+        fill = "v";
       }
 
       return fill;
@@ -1621,7 +1618,7 @@ var gameEngineJS = (function () {
         } // end ray casting loop
 
         var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
-        var nObjectHeightModifier = 3; // 0 makes the object flat, higher the number, the higher the object :)
+        
 
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
@@ -1645,11 +1642,22 @@ var gameEngineJS = (function () {
           nScreenHeight / fPerspectiveCalculation - nScreenHeight / fDistanceToObject;
         var nObjectFloor =
           nScreenHeight / fPerspectiveCalculation + nScreenHeight / fDistanceToObject;
+
+        // var nObjectHeightModifier = 4 ; // 0 makes the object flat, higher the number, the higher the object :)
+
+        // if( sObjectType === "," ){
+          // var nObjectHeightModifier = nScreenHeight / fPerspectiveCalculation; // this somehow halves an object in height 
+        // }else{
+          var nObjectHeightModifier = nScreenHeight / (nScreenHeight/2 - nJumptimer * 0.15 - fLooktimer * 0.15); 
+        // }
+        
+
+        _debugOutput(nObjectHeightModifier);
+
+        // height of entire object, backwall to front wall
         var nFObjectBackwall =
           nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToInverseObject + nObjectHeightModifier); 
-          
-        
-        // TODO: This renders the front of the object only
+        // Height of the front of the object only
         var nFObjectFront = 
           nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToObject + nObjectHeightModifier); 
 
@@ -1754,14 +1762,14 @@ var gameEngineJS = (function () {
         } // end draw column loop
 
         // TODO: This needs some work :)
-        // TODO: Also needs to be put into the depthbuffer properly
+        // TODO: Also needs to be put into the depthbuffer properly (might have to render this after sprites in yet another loop)
         // Object-Draw (draw objects)
         for (var y = 0; y < nScreenHeight; y++) {
           
           // This should just render a normal wall, and it looks like it do but with texture errors
           if (y > nObjectCeiling && y <= nObjectFloor) {
             var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
-            if (sObjectType === "o" ) {
+            if (sObjectType === "o" || sObjectType === ",") {
               // is within the boundaries of the object
               if (y >= nFObjectBackwall) {
 
