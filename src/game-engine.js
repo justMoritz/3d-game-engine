@@ -1378,6 +1378,7 @@ var gameEngineJS = (function () {
         var fRayAngle = fPlayerA - fFOV / 1.8 + (i / nScreenWidth) * fFOV;
 
         var bBreakLoop = false;
+        var bBreakObjectLoop = false;
 
         var fDistanceToWall = 0;
         var fDistanceToObject = 0;
@@ -1387,6 +1388,7 @@ var gameEngineJS = (function () {
 
         var bHitObject = false;
         var bHitBackObject = false;
+        var bStopObjectSampling = false;
 
         var sWalltype = "#";
         var sObjectType = "0";
@@ -1445,69 +1447,73 @@ var gameEngineJS = (function () {
             map[nTestY * nMapWidth + nTestX] == ","
           ) {
             bHitObject = true;
-            bBreakLoop = true;
+            // bBreakLoop = true;
+            
             sObjectType = map[nTestY * nMapWidth + nTestX];
 
-            // test found boundaries of the OBJECT
-            var fBoundO = 0.01;
-            var isBoundaryO = false;
+            if( !bStopObjectSampling ){
+              // test found boundaries of the OBJECT
+              var fBoundO = 0.01;
+              var isBoundaryO = false;
 
-            var vectorPairListO = [];
-            for (var txO = 0; txO < 2; txO++) {
-              for (var tyO = 0; tyO < 2; tyO++) {
-                var vyO = +nTestY + tyO - fPlayerY;
-                var vxO = +nTestX + txO - fPlayerX;
-                var dO = Math.sqrt(vxO * vxO + vyO * vyO);
+              var vectorPairListO = [];
+              for (var txO = 0; txO < 2; txO++) {
+                for (var tyO = 0; tyO < 2; tyO++) {
+                  var vyO = +nTestY + tyO - fPlayerY;
+                  var vxO = +nTestX + txO - fPlayerX;
+                  var dO = Math.sqrt(vxO * vxO + vyO * vyO);
 
-                var dotO = (fEyeX * vxO) / d + (fEyeY * vyO) / dO;
-                vectorPairListO.push([dO, dotO]);
+                  var dotO = (fEyeX * vxO) / d + (fEyeY * vyO) / dO;
+                  vectorPairListO.push([dO, dotO]);
+                }
+              }
+
+              vectorPairListO.sort((a, b) => {
+                return a[0] - b[0];
+              });
+
+              if (Math.acos(vectorPairListO[0][1]) < fBoundO) {
+                isBoundaryO = true;
+              }
+              if (Math.acos(vectorPairListO[1][1]) < fBoundO) {
+                isBoundaryO = true;
+              }
+
+              // 1u wide cell into quarters
+              var fObjMidX = nTestX + 0.5;
+              var fObjMidY = nTestY + 0.5;
+
+              // using the distance to the wall and the player angle (Eye Vectors)
+              // to determine the collusion point
+              var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject;
+              var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject;
+
+              // now we have the location of the middle of the cell,
+              // and the location of point of collision, work out angle
+              var fTestAngleO = Math.atan2(
+                fTestPointYo - fObjMidY,
+                fTestPointXo - fObjMidX
+              );
+              // rotate by pi over 4
+
+              if (fTestAngleO >= -PIx0_25 && fTestAngleO < PIx0_25) {
+                fSampleXo = fTestPointYo - +nTestY; 
+                sObjectDirection = "W";
+              }
+              if (fTestAngleO >= PIx0_25 && fTestAngleO < PIx0_75) {
+                fSampleXo = fTestPointXo - +nTestX;
+                sObjectDirection = "N";
+              }
+              if (fTestAngleO < -PIx0_25 && fTestAngleO >= -PIx0_75) {
+                fSampleXo = fTestPointXo - +nTestX;
+                sObjectDirection = "S";
+              }
+              if (fTestAngleO >= PIx0_75 || fTestAngleO < -PIx0_75) {
+                fSampleXo = fTestPointYo - +nTestY;
+                sObjectDirection = "E";
               }
             }
-
-            vectorPairListO.sort((a, b) => {
-              return a[0] - b[0];
-            });
-
-            if (Math.acos(vectorPairListO[0][1]) < fBoundO) {
-              isBoundaryO = true;
-            }
-            if (Math.acos(vectorPairListO[1][1]) < fBoundO) {
-              isBoundaryO = true;
-            }
-
-            // 1u wide cell into quarters
-            var fObjMidX = nTestX + 0.5;
-            var fObjMidY = nTestY + 0.5;
-
-            // using the distance to the wall and the player angle (Eye Vectors)
-            // to determine the collusion point
-            var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject;
-            var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject;
-
-            // now we have the location of the middle of the cell,
-            // and the location of point of collision, work out angle
-            var fTestAngleO = Math.atan2(
-              fTestPointYo - fObjMidY,
-              fTestPointXo - fObjMidX
-            );
-            // rotate by pi over 4
-
-            if (fTestAngleO >= -PIx0_25 && fTestAngleO < PIx0_25) {
-              fSampleXo = fTestPointYo - +nTestY; // this has to move into the object loop above :)
-              sObjectDirection = "W";
-            }
-            if (fTestAngleO >= PIx0_25 && fTestAngleO < PIx0_75) {
-              fSampleXo = fTestPointXo - +nTestX;
-              sObjectDirection = "N";
-            }
-            if (fTestAngleO < -PIx0_25 && fTestAngleO >= -PIx0_75) {
-              fSampleXo = fTestPointXo - +nTestX;
-              sObjectDirection = "S";
-            }
-            if (fTestAngleO >= PIx0_75 || fTestAngleO < -PIx0_75) {
-              fSampleXo = fTestPointYo - +nTestY;
-              sObjectDirection = "E";
-            }
+            bStopObjectSampling = true;
 
 
           } else if (
@@ -1515,6 +1521,7 @@ var gameEngineJS = (function () {
             (bHitObject == true && map[nTestY * nMapWidth + nTestX] == ".")
           ) {
             bHitBackObject = true;
+            
           } // end if OBJECT
 
           // Test for walls
@@ -1585,6 +1592,8 @@ var gameEngineJS = (function () {
               sWallDirection = "E";
             }
           } // end if WALL
+
+
 
         } // end ray casting loop
 
@@ -1721,7 +1730,7 @@ var gameEngineJS = (function () {
 
         // TODO: This needs some work :)
         // TODO: Also needs to be put into the depthbuffer properly
-        // Object-Draw (removed overlayscreen)
+        // Object-Draw (draw objects)
         for (var y = 0; y < nScreenHeight; y++) {
           
           // This should just render a normal wall, and it looks like it do but with texture errors
@@ -1732,7 +1741,7 @@ var gameEngineJS = (function () {
                 screen[y * nScreenWidth + i] = _rh.renderWall(
                   y,
                   fDistanceToObject,
-                  sWallDirection,
+                  sObjectDirection,
                   _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                 );
               }
