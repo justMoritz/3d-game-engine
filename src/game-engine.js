@@ -1765,19 +1765,15 @@ var gameEngineJS = (function () {
         } // end draw column loop
 
         
-        // TODO: Objects draw okay now, but we need to account for the depth buffer, consider drawing after Sprites
         // Object-Draw (draw objects)
         for (var y = 0; y < nScreenHeight; y++) {
           if (y > nObjectCeiling && y <= nObjectFloor) {
-            // objectScreenBuffer[y * nScreenWidth + i] = "0";
             var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
             if (sObjectType === "o" || sObjectType === ",") {
               // is within the boundaries of the object
               if (y >= nFObjectBackwall) {
-
-                // between the back of the object and the front of the object, 
-                // it's the object top, render as ground,
-                // tentatively renders object into the background...
+                // if we hit between the back of the object and the front of the object, 
+                // it's the object-top!
                 if (y < nFObjectFront) {
                   screen[y * nScreenWidth + i] = _rh.renderObjectTop();
                 }
@@ -1788,9 +1784,9 @@ var gameEngineJS = (function () {
                     sObjectDirection,
                     _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                   );
-                  // ... but also stores it in the objectBuffer, to be able to overlay over sprites if needed later
-                  screen[y * nScreenWidth + i] = objectScreenBuffer[y * nScreenWidth + i] = screen[y * nScreenWidth + i]
                 }
+                // We tentatively render object onto the background,
+                // but we also store it in the objectBuffer, to be able to overlay over sprites if needed later
                 objectScreenBuffer[y * nScreenWidth + i] = screen[y * nScreenWidth + i]
               }
             }
@@ -1825,7 +1821,6 @@ var gameEngineJS = (function () {
         }
 
         var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
-        // var bInPlayerView = true;
 
         // only proceed if sprite is visible
         if (bInPlayerView && fDistanceFromPlayer >= 0.5) {
@@ -1868,8 +1863,6 @@ var gameEngineJS = (function () {
               var fSampleY = sy / fSpriteHeight;
 
               var sSamplePixel = "";
-
-              // var sSpAngle = false;
               var sAnimationFrame = false;
 
               // animation-cycle available, determine the current cycle

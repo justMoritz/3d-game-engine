@@ -544,9 +544,94 @@ var chairWidth     = 2;
 var chairScale     = 1;
 
 
+var tableTop = ".m.m.m.m.m.m*o*o.m.m.m.m.m.m.m.m";
+var tableLeg = ".m.m.m.m.m.m*o*o*o*r*o*r*o*r*o*p";
+
+
+
 // Array assignes textures to keys that will
 // correspond with their coordinates on the map
 var allSprites = {
+
+  "chair": {
+    "texture": chairBackLeg,
+    "height": 8,
+    "width": 2,
+    "aspctRt": 1,
+    "hghtFctr": -0.05,
+    "scale": 1,
+    "voxSprites": {
+      "chBaLe": {
+        "texture": chairBackLeg,
+        get "width"() { return this.parent.height; },
+        get "width"() { return this.parent.height; },
+        get "aspctRt"() { return this.parent.aspctRt; },
+        get "hghtFctr"() { return this.parent.hghtFctr; },
+        get "scale"() { return this.parent.scale; },
+        get "offsetX"() { return -0.2 },
+        get "offsetY"() { return 0 },
+      },  
+      "chBaSp": {
+        "texture": chairBackSpan,
+        get "width"() { return this.parent.height; },
+        get "width"() { return this.parent.height; },
+        get "aspctRt"() { return this.parent.aspctRt; },
+        get "hghtFctr"() { return this.parent.hghtFctr; },
+        get "scale"() { return this.parent.scale; },
+        get "offsetX"() { return -0.1 },
+        get "offsetY"() { return 0 },
+      },
+      "chFrLe": {
+        "texture": chariFrontLeg,
+        get "width"() { return this.parent.height; },
+        get "width"() { return this.parent.height; },
+        get "aspctRt"() { return this.parent.aspctRt; },
+        get "hghtFctr"() { return this.parent.hghtFctr; },
+        get "scale"() { return this.parent.scale; },
+        get "offsetX"() { return 0 },
+        get "offsetY"() { return +0.1 },
+      },
+      "chFrSp": {
+        "texture": chariFrontspan,
+        get "width"() { return this.parent.height; },
+        get "width"() { return this.parent.height; },
+        get "aspctRt"() { return this.parent.aspctRt; },
+        get "hghtFctr"() { return this.parent.hghtFctr; },
+        get "scale"() { return this.parent.scale; },
+        get "offsetX"() { return 0 },
+        get "offsetY"() { return +0.2 },
+      },
+      "chSt": {
+        "texture": chairSeat,
+        get "width"() { return this.parent.height; },
+        get "width"() { return this.parent.height; },
+        get "aspctRt"() { return this.parent.aspctRt; },
+        get "hghtFctr"() { return this.parent.hghtFctr; },
+        get "scale"() { return this.parent.scale; },
+        get "offsetX"() { return 0 },
+        get "offsetY"() { return +0.3 },
+      },
+    }
+  },
+
+  "tblLeg": {
+    "texture": tableLeg,
+    "height": chairHeight,
+    "width": chairWidth,
+    "aspctRt": chairAspctRt,
+    "hghtFctr": chairHghtFctr,
+    "scale": chairScale,
+  },  
+
+  "tblTop": {
+    "texture": tableTop,
+    "height": chairHeight,
+    "width": chairWidth,
+    "aspctRt": chairAspctRt,
+    "hghtFctr": chairHghtFctr,
+    "scale": chairScale,
+  },  
+
   "chBaLe": {
     "texture": chairBackLeg,
     "height": chairHeight,
