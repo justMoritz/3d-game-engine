@@ -34,7 +34,7 @@ var gameEngineJS = (function () {
   var cCtx;
   var eDebugOut;
 
-  var nScreenWidth = 320;
+  var nScreenWidth = 480;
   var nScreenHeight = 130;
 
   var fFOV = PI___ / 1.667; // (PI___ / 4.0 originally)
@@ -57,6 +57,7 @@ var gameEngineJS = (function () {
   var fLooktimer = 0;
 
   var fDepthBuffer = [];
+  var fDepthBufferO = [];
 
   // defaults
   var fPlayerX = 14.0;
@@ -177,14 +178,14 @@ var gameEngineJS = (function () {
         window[sLevelstring].background;
     });
 
-    // main();
+    main();
 
     // pauses, then starts the game loop
-    _testScreenSizeAndStartTheGame();
-    window.addEventListener("resize", function () {
-      clearInterval(gameRun);
-      _testScreenSizeAndStartTheGame();
-    });
+    // _testScreenSizeAndStartTheGame();
+    // window.addEventListener("resize", function () {
+    //   clearInterval(gameRun);
+    //   _testScreenSizeAndStartTheGame();
+    // });
   };
 
   /**
@@ -1386,6 +1387,7 @@ var gameEngineJS = (function () {
 
       // holds the frames we"re going to send to the renderer
       var screen = [];
+      var objectScreenBuffer = [];
 
       // Converts player turn position into degrees (used for texturing)
       nDegrees = ~~(fPlayerA * I80divPI) % 360;
@@ -1663,6 +1665,7 @@ var gameEngineJS = (function () {
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
+        fDepthBufferO[i] = fDistanceToObject;
 
         // draw the columns one screenheight-pixel at a time
         for (var j = 0; j < nScreenHeight; j++) {
@@ -1761,37 +1764,37 @@ var gameEngineJS = (function () {
           }
         } // end draw column loop
 
-        // TODO: This needs some work :)
-        // TODO: Also needs to be put into the depthbuffer properly (might have to render this after sprites in yet another loop)
+        
+        // TODO: Objects draw okay now, but we need to account for the depth buffer, consider drawing after Sprites
         // Object-Draw (draw objects)
         for (var y = 0; y < nScreenHeight; y++) {
-          
-          // This should just render a normal wall, and it looks like it do but with texture errors
           if (y > nObjectCeiling && y <= nObjectFloor) {
+            // objectScreenBuffer[y * nScreenWidth + i] = "0";
             var fSampleYo = (y - nObjectCeiling) / (nObjectFloor - nObjectCeiling);
             if (sObjectType === "o" || sObjectType === ",") {
               // is within the boundaries of the object
               if (y >= nFObjectBackwall) {
 
                 // between the back of the object and the front of the object, 
-                // it's the object top, render as ground
+                // it's the object top, render as ground,
+                // tentatively renders object into the background...
                 if (y < nFObjectFront) {
                   screen[y * nScreenWidth + i] = _rh.renderObjectTop();
                 }
                 else{
-                  // if not, it's the front, render as wall
                   screen[y * nScreenWidth + i] = _rh.renderWall(
                     y,
                     fDistanceToObject,
                     sObjectDirection,
                     _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                   );
+                  // ... but also stores it in the objectBuffer, to be able to overlay over sprites if needed later
+                  screen[y * nScreenWidth + i] = objectScreenBuffer[y * nScreenWidth + i] = screen[y * nScreenWidth + i]
                 }
+                objectScreenBuffer[y * nScreenWidth + i] = screen[y * nScreenWidth + i]
               }
             }
           }
-
-
         } // end draw column loop
         
       } // end column loop
@@ -1931,18 +1934,14 @@ var gameEngineJS = (function () {
                 );
               }
 
-              // assign based on render mode
-              if (nRenderMode == 2 || nRenderMode == 0) {
-                sSpriteGlyph = _rh.renderWall(
-                  j,
-                  fDistanceFromPlayer,
-                  "W",
-                  sSamplePixel
-                );
-              } else {
-                sSpriteGlyph = sSamplePixel;
-              }
-
+              // assign the Sprite Glyph
+              sSpriteGlyph = _rh.renderWall(
+                j,
+                fDistanceFromPlayer,
+                "W",
+                sSamplePixel
+              );
+              
               var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2);
 
               if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
@@ -1952,11 +1951,12 @@ var gameEngineJS = (function () {
                   sSpriteGlyph != "0" &&
                   fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
                 ) {
-                  // render pixels to screen
-                  var yccord = fSpriteCeiling + sy;
-                  var xccord = nSpriteColumn;
-                  screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                  fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                    // render pixels to screen
+                    var yccord = fSpriteCeiling + sy;
+                    var xccord = nSpriteColumn;
+                    screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
+                    fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                  
                 }
               }
             }
@@ -1966,6 +1966,27 @@ var gameEngineJS = (function () {
         // player was hit
         else {
           // clearInterval(gameRun);
+        }
+      }
+
+      // // Draw objects (over sprites, if needed)
+      for (var oi = 0; oi < nScreenWidth; oi++) {
+        for (var oy = 0; oy < nScreenHeight; oy++) {
+          var currentPixel = [oy * nScreenWidth + oi];
+          // if there is an object to be drawn
+          
+          if( objectScreenBuffer[currentPixel] ){
+            // and that object is supposed to be before a sprite at that pixel
+            if( fDepthBufferO[oi] < fDepthBuffer[oi] ){
+              screen[currentPixel] = objectScreenBuffer[currentPixel];  
+            }else{
+
+            }
+            
+          }else{
+            //
+            
+          }
         }
       }
 
