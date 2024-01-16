@@ -180,7 +180,7 @@ var gameEngineJS = (function () {
 
     main();
 
-    // pauses, then starts the game loop
+    // // pauses, then starts the game loop
     // _testScreenSizeAndStartTheGame();
     // window.addEventListener("resize", function () {
     //   clearInterval(gameRun);
