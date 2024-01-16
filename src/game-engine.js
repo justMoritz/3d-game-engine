@@ -374,10 +374,10 @@ var gameEngineJS = (function () {
         return 3;
         break;
       case -14:
-        return 2;
+        return 3;
         break;
       case -15:
-        return 2;
+        return 3;
         break;
       case -16:
         return 2;
