@@ -579,7 +579,7 @@ var gameEngineJS = (function () {
       b: [32, 56, 232],
       c: [88, 144, 248],
       d: [192, 208, 248],
-      e: [136, 0, 112], // 4 pinks
+      e: [136, 0, 112], // 4 pinks (consider replacing with orange/brown)
       f: [184, 0, 184],
       g: [240, 120, 248],
       h: [248, 192, 248],
@@ -587,7 +587,7 @@ var gameEngineJS = (function () {
       j: [216, 40, 66],
       k: [248, 112, 96],
       l: [248, 184, 176],
-      m: [114, 64, 7], // 4 oranges
+      m: [114, 64, 7], // 4 oranges (really yellow)
       n: [136, 112, 0],
       o: [199, 178, 28],
       p: [220, 206, 112],
@@ -1800,6 +1800,13 @@ var gameEngineJS = (function () {
         // the sprite in the level-side
         var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
+        // TODO: // We need to do all these calculations only once for voxels
+        // Each voxel needs to be a sprite with sub-sprites.
+        // We do the calculation once for the parent-voxel, and the offset the child-voxels.
+        // This also inclusions collision, the ONLY thing child voxels will do is RENDER based on 
+        // As a rule, voxels can also not move, so we can skip all those calculations, too.
+        // probably don't need to calculate direction angles etc. either.
+
         // reference to the global-side sprite
         var currentSpriteObject = allSprites[sprite["name"]];
 
@@ -1808,7 +1815,7 @@ var gameEngineJS = (function () {
         var fVecY = sprite["y"] - fPlayerY;
         var fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
 
-        // calculate angle between sprite and player, to see if in fov
+        // calculate angle between sprite an nd player, to see if in fov
         var fEyeX = Math.cos(fPlayerA);
         var fEyeY = Math.sin(fPlayerA);
 
@@ -1864,6 +1871,7 @@ var gameEngineJS = (function () {
 
               var sSamplePixel = "";
               var sAnimationFrame = false;
+
 
               // animation-cycle available, determine the current cycle
               // TODO: randomize cycle position
