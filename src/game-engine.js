@@ -1746,6 +1746,8 @@ var gameEngineJS = (function () {
         // I also think, since we DO have to calculate each voxel's position individually, we can probably
         // put the voxel check in the beginning, since these follow calculation will be redone either way, 
         // so there is no point in doing them first, no?
+        // Actually, there's something to be said for leaving some of them, like the initial aspect ration, etc.
+        // since those are NOT repeated, still saving some. Player angle etc. can probably move though.
 
 
         // can object be seen?
@@ -1787,16 +1789,6 @@ var gameEngineJS = (function () {
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-          // The angle the sprite is facing relative to the player
-          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
-          // normalize
-          if (fSpriteBeautyAngle < 0) {
-            fSpriteBeautyAngle += PIx2;
-          }
-          if (fSpriteBeautyAngle > PIx2) {
-            fSpriteBeautyAngle -= PIx2;
-          }
-
           // if ("vox" in currentSpriteObject{
           if(currentSpriteObject["vox"]){
 
@@ -1819,8 +1811,6 @@ var gameEngineJS = (function () {
                 fSpriteAngle -= PIx2;
               }
 
-              // only proceed if voxel is visible
-              // if (bInPlayerViewV && fDistanceFromPlayerV >= 0.5) {
               // very similar operation to background floor and ceiling.
               // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
               fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
@@ -1898,6 +1888,17 @@ var gameEngineJS = (function () {
 
 
           }else{
+
+            // The angle the sprite is facing relative to the player
+            // (not needed for voxels)
+            var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
+            // normalize
+            if (fSpriteBeautyAngle < 0) {
+              fSpriteBeautyAngle += PIx2;
+            }
+            if (fSpriteBeautyAngle > PIx2) {
+              fSpriteBeautyAngle -= PIx2;
+            }
 
             // loops through the sprite pixels
             for (var sx = 0; sx < fSpriteWidth; sx++) {
