@@ -721,7 +721,7 @@ var gameEngineJS = (function () {
           } else if (pixel === "*") {
             fill = b20;
           } else if (pixel === "o") {
-            fill = b0;
+            fill = b20;
           } else {
             fill = b0;
           }
@@ -733,7 +733,7 @@ var gameEngineJS = (function () {
           } else if (pixel === "*") {
             fill = b20;
           } else if (pixel === "o") {
-            fill = b0;
+            fill = b20;
           } else {
             fill = b0;
           }
