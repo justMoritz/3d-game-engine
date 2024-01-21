@@ -58,6 +58,7 @@ var gameEngineJS = (function () {
 
   var fDepthBuffer = [];
   var fDepthBufferO = [];
+  var fDepthBufferV = [];
 
   // defaults
   var fPlayerX = 14.0;
@@ -1792,6 +1793,8 @@ var gameEngineJS = (function () {
           // if ("vox" in currentSpriteObject{
           if(currentSpriteObject["vox"]){
 
+            var spritesWithDistances = [];
+
             // go through each sub-voxel
             for (var voxKey in currentSpriteObject["vox"]) {
               var currentVox = currentSpriteObject["vox"][voxKey]
@@ -1801,8 +1804,6 @@ var gameEngineJS = (function () {
               fVecX = sprite["x"] + currentVox["x"] - fPlayerX;
               fVecY = sprite["y"] + currentVox["y"] - fPlayerY;
 
-              fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
-
               fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX);
               if (fSpriteAngle < -PI___) {
                 fSpriteAngle += PIx2;
@@ -1811,10 +1812,28 @@ var gameEngineJS = (function () {
                 fSpriteAngle -= PIx2;
               }
 
+              fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+              spritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
+            }
+
+            // Sort the voxels by distance
+            spritesWithDistances.sort(function(a, b) {
+              return b.distance - a.distance;
+            });
+
+            // go through all sorted voxels to render
+            spritesWithDistances.forEach(function(spriteWithDistance) {
+
+              var currentVox = spriteWithDistance.sprite;
+              var currentDistance = spriteWithDistance.distance;
+              var currentAngle = spriteWithDistance.angle;
+
+              
+
               // very similar operation to background floor and ceiling.
               // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
-              fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
-              fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayer;
+              fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +currentDistance) * currentSpriteObject["hghtFctr"];
+              fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +currentDistance;
 
               fSpriteCeiling = Math.round(fSpriteCeiling);
               fSpriteFloor = Math.round(fSpriteFloor);
@@ -1825,7 +1844,7 @@ var gameEngineJS = (function () {
                 // +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
               //  fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
               
-              fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
+              fMiddleOfSprite = (0.5 * (currentAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
               // The angle the sprite is facing relative to the player
               //  fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
@@ -1860,34 +1879,46 @@ var gameEngineJS = (function () {
 
                   // assign the Sprite Glyph
                   sSpriteGlyph = _rh.renderWall(
-                    fDistanceFromPlayer,
+                    currentDistance,
                     "W",
                     sSamplePixel
                   );
 
+                  // TODO: I think here, we need some sort of vox/sprite internal depth buffer:
+                  // Is the current voxel closer to the player than the last voxel?
+                  // This sounds simple, but I'm drawing a blank here :/
                   var nSpriteColumn = ~~(fMiddleOfSprite + vx - fSpriteWidth / 2 );
                   if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
                     // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                     if (
-                      sSpriteGlyph != "." &&
-                      sSpriteGlyph != "0" &&
-                      fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
+                      sSpriteGlyph != "." 
+                      &&
+                      sSpriteGlyph != "0" 
                     ) {
-                        // render pixels to screen
-                        var yccord = fSpriteCeiling + vy;
-                        var xccord = nSpriteColumn;
+                      // render pixels to screen
+                      var yccord = fSpriteCeiling + vy;
+                      var xccord = nSpriteColumn;
+
+                      if( fDepthBuffer[nSpriteColumn] >= currentDistance ){
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                        fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                        fDepthBuffer[nSpriteColumn] = currentDistance;
+                      }else{
+                        // screen[yccord * nScreenWidth + xccord] = "f";
+                      }
                     }
                   }
                   
                 } // end vx
               } // end vy
+              
             }
+            );
             
 
 
-          }else{
+          }
+          
+          else{
 
             // The angle the sprite is facing relative to the player
             // (not needed for voxels)
