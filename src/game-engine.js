@@ -37,7 +37,7 @@ var gameEngineJS = (function () {
   var nScreenWidth = 480;
   var nScreenHeight = 130;
 
-  var fFOV = PI___ / 1.667; // (PI___ / 4.0 originally)
+  var fFOV = PI___ / 1.6; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -747,39 +747,6 @@ var gameEngineJS = (function () {
       return fill;
     },
 
-    // figures out shading for given section
-    renderSolidWall: function (j, fDistanceToWall, isBoundary) {
-      var fill = "&#9617;";
-
-      if (fDistanceToWall < fDepth / 6.5) {
-        fill = "4";
-      } else if (fDistanceToWall < fDepth / 4.66) {
-        fill = "3";
-      } else if (fDistanceToWall < fDepth / 3.33) {
-        fill = "2";
-      } else if (fDistanceToWall < fDepth / 1) {
-        fill = "1";
-      } else {
-        fill = "0";
-      }
-
-      if (isBoundary) {
-        if (fDistanceToWall < fDepth / 6.5) {
-          fill = "1";
-        } else if (fDistanceToWall < fDepth / 4.66) {
-          fill = "1";
-        } else if (fDistanceToWall < fDepth / 3.33) {
-          fill = "0";
-        } else if (fDistanceToWall < fDepth / 1) {
-          fill = "0";
-        } else {
-          fill = "0";
-        }
-      }
-
-      return fill;
-    },
-
     // shading and sectionals for gate
     renderGate: function (j, fDistanceToWall, nDoorFrameHeight) {
       var fill = "2";
@@ -1474,9 +1441,6 @@ var gameEngineJS = (function () {
             sObjectType = map[nTestY * nMapWidth + nTestX];
 
             if( !bStopObjectSampling ){
-              // test found boundaries of the OBJECT
-              var fBoundO = 0.01;
-              var isBoundaryO = false;
 
               var vectorPairListO = [];
               for (var txO = 0; txO < 2; txO++) {
@@ -1493,13 +1457,6 @@ var gameEngineJS = (function () {
               vectorPairListO.sort((a, b) => {
                 return a[0] - b[0];
               });
-
-              if (Math.acos(vectorPairListO[0][1]) < fBoundO) {
-                isBoundaryO = true;
-              }
-              if (Math.acos(vectorPairListO[1][1]) < fBoundO) {
-                isBoundaryO = true;
-              }
 
               // 1u wide cell into quarters
               var fObjMidX = nTestX + 0.5;
@@ -1555,7 +1512,6 @@ var gameEngineJS = (function () {
 
             // test found boundries of the wall
             var fBound = 0.01;
-            var isBoundary = false;
 
             var vectorPairList = [];
             for (var tx = 0; tx < 2; tx++) {
@@ -1573,12 +1529,6 @@ var gameEngineJS = (function () {
               return a[0] - b[0];
             });
 
-            if (Math.acos(vectorPairList[0][1]) < fBound) {
-              isBoundary = true;
-            }
-            if (Math.acos(vectorPairList[1][1]) < fBound) {
-              isBoundary = true;
-            }
 
             // 1u wide cell into quarters
             var fBlockMidX = nTestX + 0.5;
@@ -1739,15 +1689,6 @@ var gameEngineJS = (function () {
                   fDistanceToWall,
                   sWallDirection,
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
-                );
-              }
-
-              // old, solid-style shading
-              if (nRenderMode == 0) {
-                screen[j * nScreenWidth + i] = _rh.renderSolidWall(
-                  j,
-                  fDistanceToWall,
-                  isBoundary
                 );
               }
             }
