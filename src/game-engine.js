@@ -601,7 +601,7 @@ var gameEngineJS = (function () {
       x: [152, 248, 240],
       // Add more entries as needed
     },
-    renderWall: function (j, fDistanceToWall, sWallDirection, pixelArray) {
+    renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
       var fill = "";
 
       // console.log( pixelArray );
@@ -1430,13 +1430,12 @@ var gameEngineJS = (function () {
             bBreakLoop = true;
           }
 
-          // test for objects
+          // TEST FOR OBJECTS
           else if (
             map[nTestY * nMapWidth + nTestX] == "o" ||
             map[nTestY * nMapWidth + nTestX] == ","
           ) {
             bHitObject = true;
-            // bBreakLoop = true;
             
             sObjectType = map[nTestY * nMapWidth + nTestX];
 
@@ -1501,17 +1500,15 @@ var gameEngineJS = (function () {
           ) {
             bHitBackObject = true;
             
-          } // end if OBJECT
+          } 
+          // END TEST FOR OBJECTS
 
-          // Test for walls
+          // TEST FOR WALLS
           else if (map[nTestY * nMapWidth + nTestX] != ".") {
             bHitWall = true;
             bBreakLoop = true;
 
             sWalltype = map[nTestY * nMapWidth + nTestX];
-
-            // test found boundries of the wall
-            var fBound = 0.01;
 
             var vectorPairList = [];
             for (var tx = 0; tx < 2; tx++) {
@@ -1563,14 +1560,12 @@ var gameEngineJS = (function () {
               fSampleX = fTestPointY - +nTestY;
               sWallDirection = "E";
             }
-          } // end if WALL
+          } 
+          // END TEST FOR WALLS
 
-
-
-        } // end ray casting loop
+        } /** End Ray Casting Loop **/
 
         var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
-        
 
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
@@ -1627,7 +1622,6 @@ var gameEngineJS = (function () {
                 var fSampleY = (j - nCeiling + 6) / (nFloor - nCeiling + 6);
 
                 screen[j * nScreenWidth + i] = _rh.renderWall(
-                  j,
                   fDistanceToWall,
                   sWallDirection,
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
@@ -1685,7 +1679,6 @@ var gameEngineJS = (function () {
               // Render Texture with Shading
               if (nRenderMode == 2) {
                 screen[j * nScreenWidth + i] = _rh.renderWall(
-                  j,
                   fDistanceToWall,
                   sWallDirection,
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
@@ -1702,6 +1695,11 @@ var gameEngineJS = (function () {
           // floor
           else {
             screen[j * nScreenWidth + i] = _rh.renderFloor(j);
+            // screen[j * nScreenWidth + i] = _rh.renderWall(
+            //   fDistanceToWall,
+            //   sWallDirection,
+            //   _getSamplePixel(textures["#"], fSampleX, fSampleY)
+            // );
           }
         } // end draw column loop
 
@@ -1720,7 +1718,6 @@ var gameEngineJS = (function () {
                 }
                 else{
                   screen[y * nScreenWidth + i] = _rh.renderWall(
-                    y,
                     fDistanceToObject,
                     sObjectDirection,
                     _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
@@ -1878,7 +1875,6 @@ var gameEngineJS = (function () {
 
               // assign the Sprite Glyph
               sSpriteGlyph = _rh.renderWall(
-                j,
                 fDistanceFromPlayer,
                 "W",
                 sSamplePixel
