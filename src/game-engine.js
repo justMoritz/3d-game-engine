@@ -1742,11 +1742,10 @@ var gameEngineJS = (function () {
         var currentSpriteObject = allSprites[sprite["name"]];
 
         // TODO: // We need to do all these calculations only once for voxels
-        // Each voxel needs to be a sprite with sub-sprites.
-        // We do the calculation once for the parent-voxel, and the offset the child-voxels.
-        // This also inclusions collision, the ONLY thing child voxels will do is RENDER based on 
-        // As a rule, voxels can also not move, so we can skip all those calculations, too.
-        // probably don't need to calculate direction angles etc. either.
+        // Right now we have each sub-voxel being calculated, but they are overlaying and obstructing another
+        // I also think, since we DO have to calculate each voxel's position individually, we can probably
+        // put the voxel check in the beginning, since these follow calculation will be redone either way, 
+        // so there is no point in doing them first, no?
 
 
         // can object be seen?
