@@ -1807,8 +1807,8 @@ var gameEngineJS = (function () {
 
               // position re-calculations for every voxel
               // can voxel be seen?
-              fVecX = +(sprite["x"]) + currentVox["x"] - fPlayerX;
-              fVecY = +(sprite["y"])+ currentVox["y"] - fPlayerY;
+              fVecX = sprite["x"] + currentVox["x"] - fPlayerX;
+              fVecY = sprite["y"] + currentVox["y"] - fPlayerY;
 
               fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
 
@@ -1822,34 +1822,32 @@ var gameEngineJS = (function () {
 
               // only proceed if voxel is visible
               // if (bInPlayerViewV && fDistanceFromPlayerV >= 0.5) {
-                // very similar operation to background floor and ceiling.
-                // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
-                fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
-                fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayer;
+              // very similar operation to background floor and ceiling.
+              // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
+              fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
+              fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayer;
 
-                fSpriteCeiling = Math.round(fSpriteCeiling);
-                fSpriteFloor = Math.round(fSpriteFloor);
+              fSpriteCeiling = Math.round(fSpriteCeiling);
+              fSpriteFloor = Math.round(fSpriteFloor);
 
-                fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-                //  fSpriteAspectRatio =
-                  // +currentSpriteObject["height"] /
-                  // +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
-                //  fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
-                
-                fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
+              fSpriteHeight = fSpriteFloor - fSpriteCeiling;
+              //  fSpriteAspectRatio =
+                // +currentSpriteObject["height"] /
+                // +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+              //  fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
+              
+              fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-                // The angle the sprite is facing relative to the player
-                //  fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
-                // normalize
-                // if (fSpriteBeautyAngleV < 0) {
-                //   fSpriteBeautyAngleV += PIx2;
-                // }
-                // if (fSpriteBeautyAngleV > PIx2) {
-                //   fSpriteBeautyAngleV -= PIx2;
-                // }
+              // The angle the sprite is facing relative to the player
+              //  fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
+              // normalize
+              // if (fSpriteBeautyAngleV < 0) {
+              //   fSpriteBeautyAngleV += PIx2;
+              // }
+              // if (fSpriteBeautyAngleV > PIx2) {
+              //   fSpriteBeautyAngleV -= PIx2;
+              // }
 
-
-              // console.log( currentVox );
               currentVox["scale"] = currentSpriteObject["scale"];
               currentVox["width"] = currentSpriteObject["width"];
               currentVox["height"] = currentSpriteObject["height"];
@@ -1857,11 +1855,11 @@ var gameEngineJS = (function () {
               currentVox["hghtFctr"] = currentSpriteObject["hghtFctr"];
 
               // loops through the vox pixels
-              for (var sx = 0; sx < fSpriteWidth; sx++) {
-                for (var sy = 0; sy < fSpriteHeight; sy++) {
-                  // sample sprite
-                  var fSampleX = sx / fSpriteWidth;
-                  var fSampleY = sy / fSpriteHeight;
+              for (var vx = 0; vx < fSpriteWidth; vx++) {
+                for (var vy = 0; vy < fSpriteHeight; vy++) {
+                  // updates sample point for voxel
+                  var fSampleX = vx / fSpriteWidth;
+                  var fSampleY = vy / fSpriteHeight;
 
                   var sSamplePixel = "";
 
@@ -1878,7 +1876,7 @@ var gameEngineJS = (function () {
                     sSamplePixel
                   );
 
-                  var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2 );
+                  var nSpriteColumn = ~~(fMiddleOfSprite + vx - fSpriteWidth / 2 );
                   if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
                     // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                     if (
@@ -1887,18 +1885,15 @@ var gameEngineJS = (function () {
                       fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
                     ) {
                         // render pixels to screen
-                        var yccord = fSpriteCeiling + sy;
+                        var yccord = fSpriteCeiling + vy;
                         var xccord = nSpriteColumn;
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                        // fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
-                      
+                        fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                     }
                   }
                   
-                }
-
-
-              }
+                } // end vx
+              } // end vy
             }
             
 

@@ -64,9 +64,9 @@ levelfile1 = {
   background: "black",
   sprites: {
     "Pogel":{
-      "x": "12",
-      "y": "5.5",
-      "r": "2.0",
+      "x": 12,
+      "y": 5.5,
+      "r": 2.0,
       "name": "P",
     },
 
