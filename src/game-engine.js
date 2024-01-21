@@ -37,7 +37,7 @@ var gameEngineJS = (function () {
   var nScreenWidth = 480;
   var nScreenHeight = 130;
 
-  var fFOV = PI___ / 1.6; // (PI___ / 4.0 originally)
+  var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -1364,7 +1364,7 @@ var gameEngineJS = (function () {
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
         // and then chop it up into equal little bits of the screen width (at the current colum)
-        var fRayAngle = fPlayerA - fFOV / 1.8 + (i / nScreenWidth) * fFOV;
+        var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
         var bBreakLoop = false;
         var bBreakObjectLoop = false;
@@ -1733,10 +1733,13 @@ var gameEngineJS = (function () {
         
       } // end column loop
 
-      // draw sprites
+      // RENDER SPRITES, DRAW SPRITES
       for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
         // the sprite in the level-side
         var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+        // reference to the global-side sprite
+        var currentSpriteObject = allSprites[sprite["name"]];
 
         // TODO: // We need to do all these calculations only once for voxels
         // Each voxel needs to be a sprite with sub-sprites.
@@ -1745,8 +1748,6 @@ var gameEngineJS = (function () {
         // As a rule, voxels can also not move, so we can skip all those calculations, too.
         // probably don't need to calculate direction angles etc. either.
 
-        // reference to the global-side sprite
-        var currentSpriteObject = allSprites[sprite["name"]];
 
         // can object be seen?
         var fVecX = sprite["x"] - fPlayerX;
@@ -1783,12 +1784,9 @@ var gameEngineJS = (function () {
           var fSpriteFloor = Math.round(fSpriteFloor);
 
           var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-          var fSpriteAspectRatio =
-            +currentSpriteObject["height"] /
-            +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+          var fSpriteAspectRatio = +currentSpriteObject["height"] / +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
-          var fMiddleOfSprite =
-            (0.5 * (fSpriteAngle / (fFOV / 2.0)) + 0.5) * +nScreenWidth;
+          var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
           // The angle the sprite is facing relative to the player
           var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
@@ -1800,101 +1798,206 @@ var gameEngineJS = (function () {
             fSpriteBeautyAngle -= PIx2;
           }
 
-          // loops through the sprite pixels
-          for (var sx = 0; sx < fSpriteWidth; sx++) {
-            for (var sy = 0; sy < fSpriteHeight; sy++) {
-              // sample sprite
-              var fSampleX = sx / fSpriteWidth;
-              var fSampleY = sy / fSpriteHeight;
+          // if ("vox" in currentSpriteObject{
+          if(currentSpriteObject["vox"]){
 
-              var sSamplePixel = "";
-              var sAnimationFrame = false;
+            // go through each sub-voxel
+            for (var voxKey in currentSpriteObject["vox"]) {
+              var currentVox = currentSpriteObject["vox"][voxKey]
 
+              // position re-calculations for every voxel
+              // can voxel be seen?
+              var fVecXv = sprite["x"]+currentVox["x"] - fPlayerX;
+              var fVecYv = sprite["y"]+currentVox["x"] - fPlayerY;
+              var fDistanceFromPlayerV = Math.sqrt(fVecXv * fVecXv + fVecYv * fVecYv);
 
-              // animation-cycle available, determine the current cycle
-              // TODO: randomize cycle position
-              if (sprite["move"] && "walkframes" in currentSpriteObject) {
-                if (animationTimer < 5) {
-                  sAnimationFrame = "W1";
-                } else if (animationTimer >= 5 && animationTimer < 10) {
-                  sAnimationFrame = "W2";
-                } else if (animationTimer >= 10) {
-                  sAnimationFrame = false;
-                }
+              var fSpriteAngleV = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX);
+              if (fSpriteAngleV < -PI___) {
+                fSpriteAngleV += PIx2;
+              }
+              if (fSpriteAngleV > PI___) {
+                fSpriteAngleV -= PIx2;
               }
 
-              // sample-angled glyph is available
-              if ("angles" in currentSpriteObject) {
-                if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
-                  sprite["a"] = "B";
-                } else if (
-                  +fSpriteBeautyAngle >= +PIx05 &&
-                  +fSpriteBeautyAngle < +PIx1
-                ) {
-                  sprite["a"] = "L";
-                } else if (
-                  +fSpriteBeautyAngle >= +PIx1 &&
-                  +fSpriteBeautyAngle < +PIx1_5
-                ) {
-                  sprite["a"] = "F";
-                } else if (
-                  +fSpriteBeautyAngle >= +PIx1_5 &&
-                  +fSpriteBeautyAngle < +PIx2
-                ) {
-                  sprite["a"] = "R";
-                }
-              }
+              // only proceed if voxel is visible
+              // if (bInPlayerViewV && fDistanceFromPlayerV >= 0.5) {
+                // very similar operation to background floor and ceiling.
+                // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
+                var fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayerV) * currentSpriteObject["hghtFctr"];
+                var fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayerV;
 
-              // check if object has both, angles, or animations
-              if (sprite["a"] && sAnimationFrame) {
-                sSamplePixel = _getSamplePixel(
-                  currentSpriteObject["angles"][sprite["a"]][sAnimationFrame],
-                  fSampleX,
-                  fSampleY
-                );
-              } else if (sprite["a"]) {
-                sSamplePixel = _getSamplePixel(
-                  currentSpriteObject["angles"][sprite["a"]],
-                  fSampleX,
-                  fSampleY
-                );
-              } else if (sAnimationFrame) {
-                sSamplePixel = _getSamplePixel(
-                  currentSpriteObject[sAnimationFrame],
-                  fSampleX,
-                  fSampleY
-                );
-              } else {
-                // if not, use basic sprite
-                sSamplePixel = _getSamplePixel(
-                  currentSpriteObject,
-                  fSampleX,
-                  fSampleY
-                );
-              }
+                // var fSpriteCeiling = Math.round(fSpriteCeiling);
+                // var fSpriteFloor = Math.round(fSpriteFloor);
 
-              // assign the Sprite Glyph
-              sSpriteGlyph = _rh.renderWall(
-                fDistanceFromPlayer,
-                "W",
-                sSamplePixel
-              );
-              
-              var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2);
+                // var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
+                // var fSpriteAspectRatio =
+                //   +currentSpriteObject["height"] /
+                //   +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+                // var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
+                
+                var fMiddleOfSprite = (0.5 * (fSpriteAngleV / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-              if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
-                // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
-                if (
-                  sSpriteGlyph != "." &&
-                  sSpriteGlyph != "0" &&
-                  fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
-                ) {
-                    // render pixels to screen
-                    var yccord = fSpriteCeiling + sy;
-                    var xccord = nSpriteColumn;
-                    screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                    fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                // // The angle the sprite is facing relative to the player
+                // var fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
+                // // normalize
+                // if (fSpriteBeautyAngleV < 0) {
+                //   fSpriteBeautyAngleV += PIx2;
+                // }
+                // if (fSpriteBeautyAngleV > PIx2) {
+                //   fSpriteBeautyAngleV -= PIx2;
+                // }
+
+
+              // console.log( currentVox );
+              currentVox["scale"] = currentSpriteObject["scale"];
+              currentVox["width"] = currentSpriteObject["width"];
+              currentVox["height"] = currentSpriteObject["height"];
+              currentVox["aspctRt"] = currentSpriteObject["aspctRt"];
+              currentVox["hghtFctr"] = currentSpriteObject["hghtFctr"];
+
+              // loops through the vox pixels
+              for (var sx = 0; sx < fSpriteWidth; sx++) {
+                for (var sy = 0; sy < fSpriteHeight; sy++) {
+                  // sample sprite
+                  var fSampleX = sx / fSpriteWidth;
+                  var fSampleY = sy / fSpriteHeight;
+
+                  var sSamplePixel = "";
+
+                  sSamplePixel = _getSamplePixel(
+                    currentVox,
+                    fSampleX,
+                    fSampleY
+                  );
+
+                  // assign the Sprite Glyph
+                  sSpriteGlyph = _rh.renderWall(
+                    fDistanceFromPlayer,
+                    "W",
+                    sSamplePixel
+                  );
+
+                  var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2 );
+                  if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
+                    // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
+                    if (
+                      sSpriteGlyph != "." &&
+                      sSpriteGlyph != "0" &&
+                      fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
+                    ) {
+                        // render pixels to screen
+                        var yccord = fSpriteCeiling + sy;
+                        var xccord = nSpriteColumn;
+                        screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
+                        fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                      
+                    }
+                  }
                   
+                }
+
+
+              }
+            }
+            
+
+
+          }else{
+
+            // loops through the sprite pixels
+            for (var sx = 0; sx < fSpriteWidth; sx++) {
+              for (var sy = 0; sy < fSpriteHeight; sy++) {
+                // sample sprite
+                var fSampleX = sx / fSpriteWidth;
+                var fSampleY = sy / fSpriteHeight;
+
+                var sSamplePixel = "";
+                var sAnimationFrame = false;
+
+                // animation-cycle available, determine the current cycle
+                // TODO: randomize cycle position
+                if (sprite["move"] && "walkframes" in currentSpriteObject) {
+                  if (animationTimer < 5) {
+                    sAnimationFrame = "W1";
+                  } else if (animationTimer >= 5 && animationTimer < 10) {
+                    sAnimationFrame = "W2";
+                  } else if (animationTimer >= 10) {
+                    sAnimationFrame = false;
+                  }
+                }
+
+                // sample-angled glyph is available
+                if ("angles" in currentSpriteObject) {
+                  if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
+                    sprite["a"] = "B";
+                  } else if (
+                    +fSpriteBeautyAngle >= +PIx05 &&
+                    +fSpriteBeautyAngle < +PIx1
+                  ) {
+                    sprite["a"] = "L";
+                  } else if (
+                    +fSpriteBeautyAngle >= +PIx1 &&
+                    +fSpriteBeautyAngle < +PIx1_5
+                  ) {
+                    sprite["a"] = "F";
+                  } else if (
+                    +fSpriteBeautyAngle >= +PIx1_5 &&
+                    +fSpriteBeautyAngle < +PIx2
+                  ) {
+                    sprite["a"] = "R";
+                  }
+                }
+
+                // check if object has both, angles, or animations
+                if (sprite["a"] && sAnimationFrame) {
+                  sSamplePixel = _getSamplePixel(
+                    currentSpriteObject["angles"][sprite["a"]][sAnimationFrame],
+                    fSampleX,
+                    fSampleY
+                  );
+                } else if (sprite["a"]) {
+                  sSamplePixel = _getSamplePixel(
+                    currentSpriteObject["angles"][sprite["a"]],
+                    fSampleX,
+                    fSampleY
+                  );
+                } else if (sAnimationFrame) {
+                  sSamplePixel = _getSamplePixel(
+                    currentSpriteObject[sAnimationFrame],
+                    fSampleX,
+                    fSampleY
+                  );
+                } else {
+                  // if not, use basic sprite
+                  sSamplePixel = _getSamplePixel(
+                    currentSpriteObject,
+                    fSampleX,
+                    fSampleY
+                  );
+                }
+
+                // assign the Sprite Glyph
+                sSpriteGlyph = _rh.renderWall(
+                  fDistanceFromPlayer,
+                  "W",
+                  sSamplePixel
+                );
+                
+                var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2);
+                if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
+                  // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
+                  if (
+                    sSpriteGlyph != "." &&
+                    sSpriteGlyph != "0" &&
+                    fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
+                  ) {
+                      // render pixels to screen
+                      var yccord = fSpriteCeiling + sy;
+                      var xccord = nSpriteColumn;
+                      screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
+                      fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                    
+                  }
                 }
               }
             }
