@@ -1807,39 +1807,40 @@ var gameEngineJS = (function () {
 
               // position re-calculations for every voxel
               // can voxel be seen?
-              var fVecXv = sprite["x"]+currentVox["x"] - fPlayerX;
-              var fVecYv = sprite["y"]+currentVox["x"] - fPlayerY;
-              var fDistanceFromPlayerV = Math.sqrt(fVecXv * fVecXv + fVecYv * fVecYv);
+              fVecX = +(sprite["x"]) + currentVox["x"] - fPlayerX;
+              fVecY = +(sprite["y"])+ currentVox["y"] - fPlayerY;
 
-              var fSpriteAngleV = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX);
-              if (fSpriteAngleV < -PI___) {
-                fSpriteAngleV += PIx2;
+              fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+
+              fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX);
+              if (fSpriteAngle < -PI___) {
+                fSpriteAngle += PIx2;
               }
-              if (fSpriteAngleV > PI___) {
-                fSpriteAngleV -= PIx2;
+              if (fSpriteAngle > PI___) {
+                fSpriteAngle -= PIx2;
               }
 
               // only proceed if voxel is visible
               // if (bInPlayerViewV && fDistanceFromPlayerV >= 0.5) {
                 // very similar operation to background floor and ceiling.
                 // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
-                var fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayerV) * currentSpriteObject["hghtFctr"];
-                var fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayerV;
+                fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
+                fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +fDistanceFromPlayer;
 
-                // var fSpriteCeiling = Math.round(fSpriteCeiling);
-                // var fSpriteFloor = Math.round(fSpriteFloor);
+                fSpriteCeiling = Math.round(fSpriteCeiling);
+                fSpriteFloor = Math.round(fSpriteFloor);
 
-                // var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-                // var fSpriteAspectRatio =
-                //   +currentSpriteObject["height"] /
-                //   +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
-                // var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
+                fSpriteHeight = fSpriteFloor - fSpriteCeiling;
+                //  fSpriteAspectRatio =
+                  // +currentSpriteObject["height"] /
+                  // +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+                //  fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
                 
-                var fMiddleOfSprite = (0.5 * (fSpriteAngleV / (fFOV / 2)) + 0.5) * +nScreenWidth;
+                fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-                // // The angle the sprite is facing relative to the player
-                // var fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
-                // // normalize
+                // The angle the sprite is facing relative to the player
+                //  fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
+                // normalize
                 // if (fSpriteBeautyAngleV < 0) {
                 //   fSpriteBeautyAngleV += PIx2;
                 // }
@@ -1889,7 +1890,7 @@ var gameEngineJS = (function () {
                         var yccord = fSpriteCeiling + sy;
                         var xccord = nSpriteColumn;
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                        fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+                        // fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                       
                     }
                   }
