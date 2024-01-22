@@ -603,7 +603,6 @@ var gameEngineJS = (function () {
       // Add more entries as needed
     },
     renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
-      var fill = "";
 
       // console.log( pixelArray );
 
@@ -614,12 +613,20 @@ var gameEngineJS = (function () {
 
       // There are 4 lightness values in each color
       // This assigns the appropriate color value to the current pixel
-      var b0 = "0";
-      var b20 = _rh.colorReferenceTable[color][0];
-      var b40 = _rh.colorReferenceTable[color][1];
-      var b60 = _rh.colorReferenceTable[color][2];
-      var b80 = _rh.colorReferenceTable[color][3];
-      var b100 = "4";
+
+      var b255 = "4";
+      var b100 = _rh.colorReferenceTable[color][3];
+      var b75  = _rh.colorReferenceTable[color][2];
+      var b50  = _rh.colorReferenceTable[color][1];
+      var b25  = _rh.colorReferenceTable[color][0];
+      var b0   = "0";
+
+      var depthRatio1 = 5.5;
+      var depthRatio2 = 3.66;
+      var depthRatio3 = 2.33;
+
+      // Set default fill value
+      let fill = b0;
 
       
       // "&#9109;"; // ⎕
@@ -632,118 +639,59 @@ var gameEngineJS = (function () {
       // var b100 = "&#9608;"; // █
 
       // Controls the depth shading
-      if (sWallDirection === "N" || sWallDirection === "S") {
-        if (fDistanceToWall < fDepth / 5.5) {
-          if (pixel === "#") {
-            fill = b100;
-          } else if (pixel === "7") {
-            fill = b80;
-          } else if (pixel === "*" ) {
-            fill = b60;
-          } else if (pixel === "o") {
-            fill = b40;
-          } else {
-            fill = b20;
+      switch (sWallDirection) {
+        case "N":
+        case "S":
+          if (fDistanceToWall < fDepth / depthRatio1) {
+            if (pixel === "#")fill = b255;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" || pixel === "o") fill = b50;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth / depthRatio2) {
+            if (pixel === "#") fill = b100;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" || pixel === "o") fill = b50;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth / depthRatio3) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#") fill = b50;
+            else if (pixel === "7") fill = b25;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
           }
-        } else if (fDistanceToWall < fDepth / 3.66) {
-          if (pixel === "#") {
-            fill = b100;
-          } else if (pixel === "7") {
-            fill = b80;
-          } else if (pixel === "*" ) {
-            fill = b40;
-          } else if ( pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
+          break;
+
+        case "W":
+        case "E":
+          if (fDistanceToWall < fDepth / depthRatio1) {
+            if (pixel === "#")fill = b100;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" || pixel === "o") fill = b50;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth / depthRatio2) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepth / depthRatio3) {
+            if (pixel === "#") fill = b50;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#") fill = b25;
+            else if (pixel === "7") fill = b25;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
           }
-        } else if (fDistanceToWall < fDepth / 2.33) {
-          if (pixel === "#") {
-            fill = b60;
-          } else if (pixel === "7") {
-            fill = b40;
-          } else if (pixel === "*" ) {
-            fill = b20;
-          } else if (pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else if (fDistanceToWall < fDepth / 1) {
-          if (pixel === "#") {
-            fill = b40;
-          } else if (pixel === "7") {
-            fill = b20;
-          } else if (pixel === "*") {
-            fill = b20;
-          } else if ( pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else {
-          // fill = "0";
-          // fill = b20;
-          fill = "1";
-        }
+          break;
+      
       }
 
-      // walldirection W/E
-      else {
-        if (fDistanceToWall < fDepth / 5.5) {
-          if (pixel === "#") {
-            fill = b80;
-          } else if (pixel === "7") {
-            fill = b40;
-          } else if (pixel === "*" ) {
-            fill = b20;
-          } else if (pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else if (fDistanceToWall < fDepth / 3.66) {
-          if (pixel === "#") {
-            fill = b60;
-          } else if (pixel === "7") {
-            fill = b40;
-          } else if (pixel === "*") {
-            fill = b20;
-          } else if (pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else if (fDistanceToWall < fDepth / 2.33) {
-          if (pixel === "#") {
-            fill = b60;
-          } else if (pixel === "7") {
-            fill = b40;
-          } else if (pixel === "*") {
-            fill = b20;
-          } else if (pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else if (fDistanceToWall < fDepth / 1) {
-          if (pixel === "#") {
-            fill = b40;
-          } else if (pixel === "7") {
-            fill = b40;
-          } else if (pixel === "*") {
-            fill = b20;
-          } else if (pixel === "o") {
-            fill = b20;
-          } else {
-            fill = b0;
-          }
-        } else {
-          // fill = "0";
-          // fill = b20;
-          fill = "1";
-        }
-      }
 
       return fill;
     },
@@ -1360,6 +1308,10 @@ var gameEngineJS = (function () {
       // Converts player turn position into degrees (used for texturing)
       nDegrees = ~~(fPlayerA * I80divPI) % 360;
 
+      // Some constants for each loop
+      var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
+      var fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+
       // for the length of the screenwidth (one frame)
       for (var i = 0; i < nScreenWidth; i++) {
         // calculates the ray angle into the world space
@@ -1566,7 +1518,6 @@ var gameEngineJS = (function () {
 
         } /** End Ray Casting Loop **/
 
-        var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
 
         // at the end of ray casting, we should have the lengths of the rays
         // set to their last value, representing their distances
@@ -1575,26 +1526,26 @@ var gameEngineJS = (function () {
         // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         // // var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         var nCeiling =
-          nScreenHeight / fPerspectiveCalculation - nScreenHeight / fDistanceToWall;
+          fscreenHeightFactor - nScreenHeight / fDistanceToWall;
         var nFloor =
-          nScreenHeight / fPerspectiveCalculation + nScreenHeight / fDistanceToWall;
+          fscreenHeightFactor + nScreenHeight / fDistanceToWall;
 
         // similar for towers and gates
         var nTower =
-          nScreenHeight / fPerspectiveCalculation - nScreenHeight / (fDistanceToWall - 2);
+          fscreenHeightFactor - nScreenHeight / (fDistanceToWall - 2);
         var nDoorFrameHeight =
-          nScreenHeight / fPerspectiveCalculation - nScreenHeight / (fDistanceToWall + 2);
+          fscreenHeightFactor - nScreenHeight / (fDistanceToWall + 2);
 
         // similar operation for objects
         var nObjectCeiling =
-          nScreenHeight / fPerspectiveCalculation - nScreenHeight / fDistanceToObject;
+          fscreenHeightFactor - nScreenHeight / fDistanceToObject;
         var nObjectFloor =
-          nScreenHeight / fPerspectiveCalculation + nScreenHeight / fDistanceToObject;
+          fscreenHeightFactor + nScreenHeight / fDistanceToObject;
 
         // var nObjectHeightModifier = 4 ; // 0 makes the object flat, higher the number, the higher the object :)
 
         if( sObjectType === "o" ){
-          var nObjectHeightModifier = nScreenHeight / fPerspectiveCalculation; // this somehow halves an object in height 
+          var nObjectHeightModifier = fscreenHeightFactor; // this somehow halves an object in height 
         }else{
           var nObjectHeightModifier = nScreenHeight / (nScreenHeight/3 - nJumptimer * 0.15 - fLooktimer * 0.15); 
         }
@@ -1604,10 +1555,10 @@ var gameEngineJS = (function () {
 
         // height of entire object, backwall to front wall
         var nFObjectBackwall =
-          nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToInverseObject + nObjectHeightModifier); 
+          fscreenHeightFactor + nScreenHeight / (fDistanceToInverseObject + nObjectHeightModifier); 
         // Height of the front of the object only
         var nFObjectFront = 
-          nScreenHeight / fPerspectiveCalculation + nScreenHeight / (fDistanceToObject + nObjectHeightModifier); 
+          fscreenHeightFactor + nScreenHeight / (fDistanceToObject + nObjectHeightModifier); 
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
@@ -1742,15 +1693,6 @@ var gameEngineJS = (function () {
         // reference to the global-side sprite
         var currentSpriteObject = allSprites[sprite["name"]];
 
-        // TODO: // We need to do all these calculations only once for voxels
-        // Right now we have each sub-voxel being calculated, but they are overlaying and obstructing another
-        // I also think, since we DO have to calculate each voxel's position individually, we can probably
-        // put the voxel check in the beginning, since these follow calculation will be redone either way, 
-        // so there is no point in doing them first, no?
-        // Actually, there's something to be said for leaving some of them, like the initial aspect ration, etc.
-        // since those are NOT repeated, still saving some. Player angle etc. can probably move though.
-
-
         // can object be seen?
         var fVecX = sprite["x"] - fPlayerX;
         var fVecY = sprite["y"] - fPlayerY;
@@ -1775,11 +1717,11 @@ var gameEngineJS = (function () {
           // very similar operation to background floor and ceiling.
           // Sprite height is default 1, but we can adjust with the factor passed in the sprite object/
           var fSpriteCeiling =
-            +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) -
+            +(fscreenHeightFactor) -
             (nScreenHeight / +fDistanceFromPlayer) *
               currentSpriteObject["hghtFctr"];
           var fSpriteFloor =
-            +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) +
+            +(fscreenHeightFactor) +
             nScreenHeight / +fDistanceFromPlayer;
 
           var fSpriteCeiling = Math.round(fSpriteCeiling);
@@ -1790,17 +1732,16 @@ var gameEngineJS = (function () {
           var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
           var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-          // if ("vox" in currentSpriteObject{
+          // If the current Sprite is a Voxel Object
           if(currentSpriteObject["vox"]){
 
-            var spritesWithDistances = [];
+            var oSpritesWithDistances = [];
 
             // go through each sub-voxel
             for (var voxKey in currentSpriteObject["vox"]) {
               var currentVox = currentSpriteObject["vox"][voxKey]
 
               // position re-calculations for every voxel
-              // can voxel be seen?
               fVecX = sprite["x"] + currentVox["x"] - fPlayerX;
               fVecY = sprite["y"] + currentVox["y"] - fPlayerY;
 
@@ -1813,49 +1754,36 @@ var gameEngineJS = (function () {
               }
 
               fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
-              spritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
+              oSpritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
             }
 
-            // Sort the voxels by distance
-            spritesWithDistances.sort(function(a, b) {
+            // Sort the voxels by distance to player
+            oSpritesWithDistances.sort(function(a, b) {
               return b.distance - a.distance;
             });
 
-            // go through all sorted voxels to render
-            spritesWithDistances.forEach(function(spriteWithDistance) {
+            // go through all now sorted voxels to render
+            for (var voxelKey in oSpritesWithDistances) {
 
+              var spriteWithDistance = oSpritesWithDistances[voxelKey];
               var currentVox = spriteWithDistance.sprite;
               var currentDistance = spriteWithDistance.distance;
               var currentAngle = spriteWithDistance.angle;
 
-              
 
               // very similar operation to background floor and ceiling.
               // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
-              fSpriteCeiling = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) - (nScreenHeight / +currentDistance) * currentSpriteObject["hghtFctr"];
-              fSpriteFloor = +(nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15)) + nScreenHeight / +currentDistance;
+              fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +currentDistance) * currentSpriteObject["hghtFctr"];
+              fSpriteFloor = +(fscreenHeightFactor) + nScreenHeight / +currentDistance;
 
               fSpriteCeiling = Math.round(fSpriteCeiling);
               fSpriteFloor = Math.round(fSpriteFloor);
 
               fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-              //  fSpriteAspectRatio =
-                // +currentSpriteObject["height"] /
-                // +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
-              //  fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
-              
+
               fMiddleOfSprite = (0.5 * (currentAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
 
-              // The angle the sprite is facing relative to the player
-              //  fSpriteBeautyAngleV = fPlayerA - sprite["r"] + PIdiv4;
-              // normalize
-              // if (fSpriteBeautyAngleV < 0) {
-              //   fSpriteBeautyAngleV += PIx2;
-              // }
-              // if (fSpriteBeautyAngleV > PIx2) {
-              //   fSpriteBeautyAngleV -= PIx2;
-              // }
-
+              // Voxels always have the same levels as the parent
               currentVox["scale"] = currentSpriteObject["scale"];
               currentVox["width"] = currentSpriteObject["width"];
               currentVox["height"] = currentSpriteObject["height"];
@@ -1877,29 +1805,24 @@ var gameEngineJS = (function () {
                     fSampleY
                   );
 
-                  // assign the Sprite Glyph
-                  sSpriteGlyph = _rh.renderWall(
-                    currentDistance,
-                    "W",
-                    sSamplePixel
-                  );
-
-                  // TODO: I think here, we need some sort of vox/sprite internal depth buffer:
-                  // Is the current voxel closer to the player than the last voxel?
-                  // This sounds simple, but I'm drawing a blank here :/
+                  //
                   var nSpriteColumn = ~~(fMiddleOfSprite + vx - fSpriteWidth / 2 );
                   if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
                     // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
-                    if (
-                      sSpriteGlyph != "." 
-                      &&
-                      sSpriteGlyph != "0" 
-                    ) {
+                    if ( sSamplePixel[0] != "." ) {
                       // render pixels to screen
                       var yccord = fSpriteCeiling + vy;
                       var xccord = nSpriteColumn;
 
                       if( fDepthBuffer[nSpriteColumn] >= currentDistance ){
+
+                        // assign the Sprite Glyph
+                        sSpriteGlyph = _rh.renderWall(
+                          currentDistance,
+                          "W",
+                          sSamplePixel
+                        );
+
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
                         fDepthBuffer[nSpriteColumn] = currentDistance;
                       }else{
@@ -1912,7 +1835,6 @@ var gameEngineJS = (function () {
               } // end vy
               
             }
-            );
             
 
 
@@ -2002,28 +1924,27 @@ var gameEngineJS = (function () {
                     fSampleY
                   );
                 }
-
-                // assign the Sprite Glyph
-                sSpriteGlyph = _rh.renderWall(
-                  fDistanceFromPlayer,
-                  "W",
-                  sSamplePixel
-                );
                 
                 var nSpriteColumn = ~~(fMiddleOfSprite + sx - fSpriteWidth / 2);
                 if (nSpriteColumn >= 0 && nSpriteColumn < nScreenWidth) {
                   // only render the sprite pixel if it is not a . or a space, and if the sprite is far enough from the player
                   if (
-                    sSpriteGlyph != "." &&
-                    sSpriteGlyph != "0" &&
+                    sSamplePixel[0] != "." &&
                     fDepthBuffer[nSpriteColumn] >= fDistanceFromPlayer
                   ) {
-                      // render pixels to screen
-                      var yccord = fSpriteCeiling + sy;
-                      var xccord = nSpriteColumn;
-                      screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
-                      fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
-                    
+
+                    // assign the Sprite Glyph
+                    sSpriteGlyph = _rh.renderWall(
+                      fDistanceFromPlayer,
+                      "N",
+                      sSamplePixel
+                    );
+
+                    // render pixels to screen
+                    var yccord = fSpriteCeiling + sy;
+                    var xccord = nSpriteColumn;
+                    screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
+                    fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
                   }
                 }
               }
@@ -2047,13 +1968,7 @@ var gameEngineJS = (function () {
             // and that object is supposed to be before a sprite at that pixel
             if( fDepthBufferO[oi] < fDepthBuffer[oi] ){
               screen[currentPixel] = objectScreenBuffer[currentPixel];  
-            }else{
-
             }
-            
-          }else{
-            //
-            
           }
         }
       }
