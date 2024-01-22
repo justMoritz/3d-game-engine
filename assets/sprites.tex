@@ -1,95 +1,20 @@
-
-var pogelTest = "...##..##.....#**##**#...#***7***7#..#********7##****7****7##**#*7*#**7##****7****7#.#7*777**7#...#77777##.....#7777#......#777#........#77#.......#*7*7#.....#7****7#....#7****7#....#******#....#7***77#.....#7*77#......#77*#.......#*7*#.....###7#7###...#777#7777#..#777#7777#..##########.";
-
-// ...##..##.....#**##**#...#***7***7#..#********7##****7****7##**#*7*#**7##****7****7#.#7*777**7#...#77777##.....#7777#......#777#........#77#.......#*7*7#.....#7****7#....#7****7#....#******#....#7***77#.....#7*77#......#77*#.......#*7*#.....###7#7###...#777#7777#..#777#7777#..##########.
-
-// pogel
-var pogel = "";
-pogel += "...##..##...";
-pogel += "..#**##**#..";
-pogel += ".#***7***7#.";
-pogel += ".#********7#";
-pogel += "#****7****7#";
-pogel += "#**#*7*#**7#";
-pogel += "#****7****7#";
-pogel += ".#7*777**7#.";
-pogel += "..#77777##..";
-pogel += "...#7777#...";
-pogel += "...#777#....";
-pogel += "....#77#....";
-pogel += "...#*7*7#...";
-pogel += "..#7****7#..";
-pogel += "..#7****7#..";
-pogel += "..#******#..";
-pogel += "..#7***77#..";
-pogel += "...#7*77#...";
-pogel += "...#77*#....";
-pogel += "...#*7*#....";
-pogel += ".###7#7###..";
-pogel += ".#777#7777#.";
-pogel += ".#777#7777#.";
-pogel += ".##########.";
-
-// pogel
-var pogelfront = "";
-pogelfront += "......**..**......";
-pogelfront += ".....*##**##*.....";
-pogelfront += "....*###7###7*....";
-pogelfront += "....*########7*...";
-pogelfront += "...*####7####7*...";
-pogelfront += "...*##*#7#*##7*...";
-pogelfront += "...*####7####7*...";
-pogelfront += "....*7#777##7*....";
-pogelfront += ".....*77777**.....";
-pogelfront += "......*7777*......";
-pogelfront += "......*777*.......";
-pogelfront += ".......*77*.......";
-pogelfront += ".......*7#*.......";
-pogelfront += "......*7###7*.....";
-pogelfront += ".....*7####7*.....";
-pogelfront += ".....*7####7*.....";
-pogelfront += ".....*######*.....";
-pogelfront += ".....*7###77*.....";
-pogelfront += "......*7#77*......";
-pogelfront += "......*77#*.......";
-pogelfront += "......*#7#*.......";
-pogelfront += "....***7*7***.....";
-pogelfront += "....*777*7777*....";
-pogelfront += "....*777*7777*....";
-pogelfront += "....**********....";
-
 pogelfrontC = ".m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#mob#m7m#mob#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m7r#r7r7r7ror*m.m.m.m.m.m.m.m.m.m.m.m*r#r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r#o*o.m.m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*o#o#m#m#m#m#o*o.m.m.m.m.m.m.m.m.m.m*o7o#m#m#m7o7o*o.m.m.m.m.m.m.m.m.m.m.m*m7m#m7m7m*m.m.m.m.m.m.m.m.m.m.m.m.m*m7m7m#m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7m#m*m.m.m.m.m.m.m.m.m.m.m.moooooo7o*o7o*o*o*o.m.m.m.m.m.m.m.m.moo#o7o7o*o7o7o#o#o*o.m.m.m.m.m.m.m.moo7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.moooooooo*o*o*o*o*o*o.m.m.m.m";
-
 pogelfrontW1C = ".m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#mob#m7m#mob#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m7r#r7r7r7ror*m.m.m.m.m.m.m.m.m.m.m.m*r#r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7r*r.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r*r.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7r#m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m7m*m.m.m.m.m.m.m.m.m7o#o#o#m#m#m#m7m#o*o.m.m.m.m.m.m.m.m7o7o7o#m#m#m7m#o#o*o.m.m.m.m.m.m.m.m.m.m*m7m#m7m7m*o*o.m.m.m.m.m.m.m.m.m*o*o*o#m#m#m*m.m.m.m.m.m.m.m.m.m.m.m*o#o7o7o#m#m*m.m.m.m.m.m.m.m.m.m.m.m*o7o7o7o*o#o7ooo.m.m.m.m.m.m.m.m.m.m*o7o7o7o*o7o7ooo.m.m.m.m.m.m.m.m.m.m*o*o7o7o*ooooooo.m.m.m.m.m.m.m.m.m.m.m*o*o*o*o.m.m.m.m.m.m.m.m";
-
 pogelfrontW2C = ".m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*m*m.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m*m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m*m#m#mob#m7m#mob#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m7m#m7r7r7r#m#m7m*m.m.m.m.m.m.m.m.m.m*m7r#r7r7r7ror*m.m.m.m.m.m.m.m.m.m.m.m*r#r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*r7r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m.m.m*r7r7ror.m.m.m.m.m.m.m.m.m.m.m.m*m7m#m7r#m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m*m7m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m*m#o7m#m#m#m#m#o#o7o.m.m.m.m.m.m.m.m7o#o#o7m#m#m7m7o7o7o.m.m.m.m.m.m.m.m.m7o7o7m7m#m7m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m*o*o*o.m.m.m.m.m.m.m.m.m.m.m*m#m#m#o#o7o*o.m.m.m.m.m.m.m.m.m.moo#o7o*o7o7o7o*o.m.m.m.m.m.m.m.m.m.moo7o7o*o7o7o7o*o.m.m.m.m.m.m.m.m.m.moooooo*o7o7o*o*o.m.m.m.m.m.m.m.m.m.m.m.m.m*o*o*o*o.m.m.m.m.m.m";
-
 pogelbackC = ".m.m.m.m.m.m*mob.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#mobob*m7m7m*m.m.m.m.m.m.m.m.m.m*m#m#m#mob#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#mobob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#mobob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#mobob7m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m#mob7m#m#m7m*m.m.m.m.m.m.m.m*m7m#m#m#m#m7m7m7m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m7m7m*m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*o#o*o.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*o#o*o.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*m7m*m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7m#m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m*m.m.m.m.m.m.m.m.m.m.m7o#o#m#m#m7m#o7o.m.m.m.m.m.m.m.m.m.m.moo7m#m7m7moo.m.m.m.m.m.m.m.m.m.m.m.m*m7m7m#m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7m#m*m.m.m.m.m.m.m.m.m.m.m.moo*o*o7o*o7o*o*o*o.m.m.m.m.m.m.m.m.m*o#o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.m*o7o7o7o*o7o7o7o7o*o.m.m.m.m.m.m.m.m*o*o*o*ooo*o*o*o*o*o.m.m.m.m";
-
 pogelbackW1C = ".m.m.m.m.m.m.mob.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*mob.m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#mobob*m7m7m*m.m.m.m.m.m.m.m.m.m*m#m#m#mob#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#mobob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#mobob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#mobob#b#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m#mob#b#m#m7m*m.m.m.m.m.m.m.m*m7m#m#m#m#m7m7m7m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m7m7m*m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*o#o*o.m.m.m.m.m.m.m.m.m.m.m.m.m.m.m*o#o*o*m.m.m.m.m.m.m.m.m.m.m.m.m*m*m#m7m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m*m7m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m7o#o#o7o#m#m#m7m7ooo.m.m.m.m.m.m.m.m7o#o#o7o#m#m7m*moooo.m.m.m.m.m.m.m.m.m7o7o7m7m#m7m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#moooooo.m.m.m.m.m.m.m.m.m.m.m*m#m#m#o7o7ooo.m.m.m.m.m.m.m.m.m.m*o7o7o*o7o7o7ooo.m.m.m.m.m.m.m.m.m.m*o7o7o*o7o7o7ooo.m.m.m.m.m.m.m.m.m.m*o*o*o*o7o7ooooo.m.m.m.m.m.m.m.m.m.m.m.m.moooooooo.m.m.m.m.m.m";
-
 pogelbackW2C = ".m.m.m.m.m.m.m.m.m.m.mob.m.m.m.m.m.m.m.m.m.m.m.m*m*m.m.mobob.m.m.m.m.m.m.m.m.m.m.m*m#m#m*mobob7m*m.m.m.m.m.m.m.m.m.m*m#m#m#m7mob#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m#m#mob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m#bob#m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#mobob7m#m#m7m*m.m.m.m.m.m.m*m#m#m#m#m#m#m7m#m#m7m*m.m.m.m.m.m.m.m*m7m#m#m#m#m7m7m7m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m7m7m*m*m.m.m.m.m.m.m.m.m.m.m.m.m.moo#ooo.m.m.m.m.m.m.m.m.m.m.m.m.m.m.moo#ooo*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7m#m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m7m*m.m.m.m.m.m.m.m.m*o7o7m#m#m#m7o#o#o7o.m.m.m.m.m.m.m.m*o*o*m#m#m#m7o#o#o7o.m.m.m.m.m.m.m.m.m.m*m7m#m7m7m7o7o.m.m.m.m.m.m.m.m.m*o*o*o#m#m#m*m.m.m.m.m.m.m.m.m.m.m.m*o7o7o#o#m#m*m.m.m.m.m.m.m.m.m.m.m.m*o7o7o7o*o7o#ooo.m.m.m.m.m.m.m.m.m.m*o7o7o7o*o7o7ooo.m.m.m.m.m.m.m.m.m.m*o*o7o7o*ooooooo.m.m.m.m.m.m.m.m.m.m.moo*o*o*o.m.m.m.m.m.m.m.m.m";
-
 pogelleftC = ".m.m.m.m.m.m*m*m.m*m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m#m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m#m7m*m.m.mobob.m.m.m*m#mob#m7m#mob#m#m7m*m.mob.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.mob.m.m.m.m.m.moror*r*r#m7m7m7m#m7mob.m.mob.m.m.m*r*r#r7r7r*r#m#m#m#m7mobob.m.mob.m*r#r#r7r7r7r*r#m#m#m7m*m.mob.m.m.m*r7r7r7r7r7r7ror#m7m7m*m.m.m.m.m.m.m*r7r7r7r7roror#m#m7m*m.m.m.m.m.m.m.m*r*r*roror7r*r#o7o7o*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m*o#o7m#m#o#o7o*m.m.m.m.m.m.m.m.m.m.m*o#o#m#m#o7o7o*m.m.m.m.m.m.m.m.m.m.m.m*m7m*m*m*m*m.m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m*m.m.m.m.m.m.m.m.m.m.m.m.m*m#m*m*m#m*m.m.m.m.m.m.m.m.m.m.m*o*o*o7o*m7o7ooo.m.m.m.m.m.m.m.m.m.m*o#o7o#o7o7o7ooo.m.m.m.m.m.m.m.m.m.m*o7o7o7o7o7o7ooo.m.m.m.m.m.m.m.m.m.m*o*o*o*o*ooooooo.m.m.m.m.m.m.m";
-
 pogelleftW1C = ".m.m.m.m.m.m*m*m.m*m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m#m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m#m7m*m.m.mobob.m.m.m*m#mob#m7m#mob#m#m7m*m.mob.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.mob.m.m.m.m.m.moror*r*r#m7m7m7m#m7mob.m.mob.m.m.m*r#r#r7r7r*r#m#m#m#m7mobob.m.mob.m*r#r7r7r7r7r*r#m#m#m7m*m.mob.m.m.m*r7r7r7r7r7r7ror#m7m7m*m.m.m.m.m.m.m*r7r7r7r7roror#m#m7m*m.m.m.m.m.m.m.m*r*r*roror7r*r#o*o*o*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#o#o7m7m*m.m.m.m.m.m.m.m.m.m.m.m.m*m#m7m7m7m*m.m.m.m.m.m.m.m.m.m.m*o*o#m#m#m7m7m7m*m.m.m.m.m.m.m.m.m*o#o7o#m#m#m#m7m7m*m.m.m.m.m.m.m.m.m*o7o7o#m#m#m7o#o7m*m.m.m.m.m.m.m.m.m.m*o*o7m#m#m7o#o#o*o.m.m.m.m.m.m.m.m.m.m*m#m7m7m7m*o*o*o.m.m.m.m.m.m.m.m*o*o*o*o#m#m#m#m7moo.m.m.m.m.m.m.m.m*o#o7o7o*o#m#m#m7ooo.m.m.m.m.m.m.m.m*o7o7o7o7o#m#m7o7ooo.m.m.m.m.m.m.m.m*o*o*o7o7o7o#moooooo.m.m.m.m.m.m.m.m.m.m*o*o*o*ooooo.m.m.m.m.m.m.m";
-
 pogelleftW2C = ".m.m.m.m.m.m*m*m.m*m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m*m#m#m#m*m.m.m.m.m.m.m.m.m.m*m#m#m#m#m#m#m#m7m*m.m.m.m.m.m.m.m.m*m#m#m7m#m#m#m#m7m*m.m.m.m.m.m.m.m*m#m#m#m7m#m#m#m#m7m*m.m.mobob.m.m.m*m#mob#m7m#mob#m#m7m*m.mob.m.m.m.m.m*m#m#m#m7m#m#m#m7m*m.mob.m.m.m.m.m.moror*r*r#m7m7m7m#m7mob.m.mob.m.m.m*r#r#r7r7r*r#m#m#m#m7mobob.m.mob.m*r#r7r7r7r7r*r#m#m#m7m*m.mob.m.m.m*r7r7r7r7r7r7ror#m7m7m*m.m.m.m.m.m.m*r7r7r7r7roror#m#m7m*m.m.m.m.m.m.m.m*r*r*roror7r*r#o7m7m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m#o#o7o*m.m.m.m.m.m.m.m.m.m.m.m.m*m*m*m7m7m*o*o.m.m.m.m.m.m.m.m.m.m*o#o7m7m7m7m#o#o*o.m.m.m.m.m.m.m.m*o#o#o7m7m7m*o7o#o*o.m.m.m.m.m.m.m.m.m*o7m7m*m*m*o7o*o.m.m.m.m.m.m.m.m.m.m.m*m*m#m7m*m*m.m.m.m.m.m.m.m.m.m.m.m.m.m*m7m7m*m*o*ooo.m.m.m.m.m.m.moooooooo*m#m7o7o7o*o*o.m.m.m.m.m.m.moo#o7ooo#m#m7o7o7o7o*o.m.m.m.m.m.m.moo7o7o7o7ooo*o#o7o7o*o.m.m.m.m.m.m.moooooo7o7ooo*o#o#o7o*o.m.m.m.m.m.m.m.m.moooooooo*o*o*o*o*o.m.m.m.m.m";
-
 pogelrightC = ".m.m.m.m.m.m*m*m*m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m*m#m#m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m#m#m#m*m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m#m#m*m.m.m.m.mobob.m.m*m7m#m#m#m#m7m#m#m#m*m.m.m.m.m.mob.m*m7m#m#mob#m7m#mob#m*m.m.m.m.m.m.mob.m*m7m#m#m#m7m#m#m#m*m.m.m.m.mob.m.m*m7m#m7m7m7m#m*r7roror.m.m.mob.m.mob*m7m#m#m#m#m*r#r#r7r7ror.m.m.m.m.mob.m*m7m#m#m#m*r#r7r7r7r7ror.m.m.m.m.m.m.m*m7m7m#m*r7r7r7r7r7r7ror.m.m.m.m.m.m.m*m7m#m#moror7r7r7r7ror.m.m.m.m.m.m.m*m7o7o#o*r7roror*r*ror.m.m.m.m.m.m*m7m#m#m#m*m.m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m*m.m.m.m.m.m.m.m.m.m.m.m.m*m7m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m.m*m7m#o#o#m7m#o*o.m.m.m.m.m.m.m.m.m.m*m7o7o#o#m#m#o*o.m.m.m.m.m.m.m.m.m.m.m*m*m*m*m7m*m.m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m7m*m.m.m.m.m.m.m.m.m.m.m.m.m*m#m*m*m#m*m.m.m.m.m.m.m.m.m.m.m.m.moo7o7o*o7o*o*o*o.m.m.m.m.m.m.m.m.m.moo7o7o#o7o7o#o*o.m.m.m.m.m.m.m.m.m.moo7o7o7o7o7o7o*o.m.m.m.m.m.m.m.m.m.moooooooo*o*o*o*o.m.m.m";
-
 pogelrightW1C = ".m.m.m.m.m.m*m*m*m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m*m#m#m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m#m#m#m*m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m#m#m*m.m.m.m.mobob.m.m*m7m#m#m#m#m7m#m#m#m*m.m.m.m.m.mob.m*m7m#m#mob#m7m#mob#m*m.m.m.m.m.m.mob.m*m7m#m#m#m7m#m#m#m*m.m.m.m.mob.m.m*m7m#m7m7m7m#m*r7roror.m.m.mob.m.mob*m7m#m#m#m#m*r#r#r7r7ror.m.m.m.m.mob.m*m7m#m#m#m*r#r7r7r7r7ror.m.m.m.m.m.m.m*m7m7m#m*r7r7r7r7r7r7ror.m.m.m.m.m.m.m*m7m#m#moror7r7r7r7ror.m.m.m.m.m.m.m*m7o7o#o*r7roror*r*ror.m.m.m.m.m.m*m7m7m#m#m*m.m.m.m.m.m.m.m.m.m.m.m.m*m7m7m7m#m*m.m.m.m.m.m.m.m.m.m.m.m*m7m7m7m#m#m#moooo.m.m.m.m.m.m.m.m.m*m7m7m#m#m#m#m7o#ooo.m.m.m.m.m.m.m.moo7m#o*o#m#m#m7o7ooo.m.m.m.m.m.m.m.moo#o#o*o#m#m7moooo.m.m.m.m.m.m.m.m.mom*o*o7m7m7m#m*m.m.m.m.m.m.m.m.m.m.moo7o7m#m#m#m*o*o*o*o.m.m.m.m.m.m.m.moo7o7m#m#m*o7o7o#o*o.m.m.m.m.m.m.m.moo7o#o#m#m7o7o7o7o*o.m.m.m.m.m.m.m.moooooo#m7o7o7o*o*o*o.m.m.m.m.m.m.m.m.m.m.m*o*o*o*o*o.m.m.m.m.m";
-
-
 pogelrightW2C = ".m.m.m.m.m.m*m*m*m.m*m*m.m.m.m.m.m.m.m.m.m.m.m*m#m#m#m*m#m#m*m.m.m.m.m.m.m.m.m.m*m7m#m#m#m#m#m#m#m*m.m.m.m.m.m.m.m.m*m7m#m#m#m#m7m#m#m*m.m.m.m.mobob.m.m*m7m#m#m#m#m7m#m#m#m*m.m.m.m.m.mob.m*m7m#m#mob#m7m#mob#m*m.m.m.m.m.m.mob.m*m7m#m#m#m7m#m#m#m*m.m.m.m.mob.m.m*m7m#m7m7m7m#m*r7roror.m.m.mob.m.mob*m7m#m#m#m#m*r#r#r7r7ror.m.m.m.m.mob.m*m7m#m#m#m*r#r7r7r7r7ror.m.m.m.m.m.m.m*m7m7m#mor7r7r7r7r7r7ror.m.m.m.m.m.m.m*m7m#m#moror7r7r7r7ror.m.m.m.m.m.m.m*m7o7o#o*r7roror*r*ror.m.m.m.m.m.m.m*m7m#m#m*m.m.m.m.m.m.m.m.m.m.m.m.moo*m7m7m*m*m*m.m.m.m.m.m.m.m.m.m.moo7o7o7m7m7m7m#o*o.m.m.m.m.m.m.m.m.moo7o7m*m7m7m7m#o#o*o.m.m.m.m.m.m.m.m.moo7m*m*m*m7o7o*o.m.m.m.m.m.m.m.m.m.m.m*m*m7m#m*m*m.m.m.m.m.m.m.m.m.m.moooooo*m7m7m*m.m.m.m.m.m.m.m.m.m.m.moooo*o*o7m#m*m*o*o*o*o.m.m.m.m.m.m.moo*o*o*o7m#m#m*o#o7o*o.m.m.m.m.m.m.moo*o*o*ooo*o7o7o7o7o*o.m.m.m.m.m.m.moo*o*o*ooo*o7o7o*o*o*o.m.m.m.m.m.m.mooooooooom*o*o*o*o.m.m.m.m";
 
 
 
 obetrlC = ".m.motototototototot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.m.motogogogogogot.m.m.m.m.m.m.m.m.motogogogogogogotototot.m.m.m.m.m.motogogogogogot*g#g*got.m.m.m.m*m#g#g*m*m*m*m*g*g*g*g*got.m.m*m#g#m#m*m#m#m#m*m*g*g*got.m.m.m*m#g#m*m#m#m#m#m*m*g*g*got.m.m*m#g#mot*m#m#mot#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m*m*g*g*got.m.m.m.mog*g*g#m*m*m*m#m*g*gogot.m.m.mog#g7g7g*g#m#m#m#mogogot.m.m.mog#g7g7g7g7g*gog#m#mogot.m.m.m.mog7g7g7g7g7gog*g#m#mot.m.m.m.m.mog7g7g7gogog7g*g#m#gogog.m.m.m.m.mog7gog7g7g*g#m#g*m*o*oog.m.m.m.m.mogogogog#g#g#m*m*o*g*gog.m.m.m.m.m.m.m*t*m#g#m*t*g*g*oog.m.m.m.m.m.m*t#g#m#m#m*t*o*g*oog.m.m.m.m.m*t7t#g#m#m7t*t*o*o*gog.m.m.m.m.m*t7t#m#m7t*t*t*o*g*oog.m.m.m.m.m.m*m#m#g#g#g#gogog.m.m.m.m.m.m.moo*m#moooo*oor.m.m.m.m.m.m.m.moooo*o*ooo*o*oooor.m.m.m.m.m.m.moo*o*o*o*o*o*oor.m.m.m.m.m.m.m.moooooooooroooroo.m.m.m.m.m.m";
-
 obetrlLeftW1C = ".m.m.motototototototot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.m.motogogogogotot.m.m.m.m.m.m.m.m.motogogogogogogotototot.m.m.m.m.motogogogogogogot#g*g*got.m.m.m*m*m#g*m*m*m*m*m*g*g*g*got.m.m*m#g#m#m*m#m#m#m*m*g*g*g*got.m.m*m#g#m*m#m#m#m#m*m*g*g*got.m.m*m#g#mot*m#m#mot#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m*m*g*g*got.m.m.m.mog*g*g#m*m*m*m#m*g*gogot.m.m.mog#g7g7g*g#m#m#m#mogogot.m.m.mog#g7g7g7g7g*gog#m#mogot.m.m.m.mog7g7g7g7g7gog*g#m#mot.m.m.m.m.mog7g7g7gogog7g*g#m#gogog.m.m.m.m.mog7gog7g7g*g#g#g*m*o*gogog.m.m.m.mogogogog#g#g#m*m*o*g*o*gog.m.m.m.m.m*t*t#m#m#m#g#g*t*g*gog.m.m.m.m*t#t#g#m#m#m#m#g#g*t*oog.m.m.m.m*t#g#g#m#m#m7m#t#g*tog.m.m.m.m.m.m*t*t7m#m#m7m#t#g*tog.m.m.m.m.m.m.m*m#m7m7m7m*t*tog.m.m.m.m.m.moooooooo#m#m#g#g*oor.m.m.m.m.m.moo*o*o*o*o#m#g*o*oor.m.m.m.m.m.moooooo*o*o#m#gororor.m.m.m.m.m.m.m.mooooooooooor.m.m.m.m.m";
-
-
 obetrlLeftW2C = ".m.m.motototototototot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.motogogogogogogot.m.m.m.m.m.m.m.motogogogogogot.m.m.m.m.m.m.m.m.motogogogogogogotototot.m.m.m.m.m.motogogogogogot*g7g*got.m.m.m.m*m#g#g*m*m*m*mog*g*g*gogot.m.m*m#g#m#m*m#m#m#m*m*g*g*got.m.m.m*m#g#m*m#m#m#m#m*m*g*g*got.m.m*m#g#mot*m#m#mot#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m#m*m*g*got.m.m.m*m#g#m#m*m#m#m#m*m*g*g*got.m.m.m.mog*g*g#m*m*m*m#m*g*g*got.m.m.mog#g7g7g*g#m#m#m#mogogot.m.m.mog#g7g7g7g7g*g*g#m#mogot.m.m.m.mog7g7g7g7g7gog*g#m#mot.m.m.m.m.mog7g7g7gogog7m*g#m7mogogog.m.m.m.mog7gog7m7m*g#g#g*m*o*o*gog.m.m.m.mogogogog#g#g#m*t*o*g*o*gog.m.m.m.m.m.m*t#m#m#m#g*t*g*o*oog.m.m.m.m.m.m*t#m#m#t#g#g*g*o*gog.m.m.m.m.m.m#g#m*t#t#g#g*t*g*gog.m.m.m.m.m.m#t*m#m*t*t*t*m*oog.m.m.m.m.m.m.m.m*m7m7m7m#g*mog.m.m.m.m.m.m.m.m.morooor*o#g*m*m.m.m.m.m.m.m.moo*ooo*o*o*o*o#gor.m.m.m.m.m.m.moo*oor*o*o*o*oor.m.m.m.m.m.m.m.mooooooorooorooor.m.m.m.m";
 
 
@@ -533,9 +458,9 @@ bedSheet = "#p#p*t#p*rob*rob";
 var chairBackLeg = ".m.m.m7o*oorororor7o*o*p7o*oor7o*ooo7oorooororoo";
 // var chairBackLegOld   = ".m.m*o7oorop*o*r*o*r*o*p*o*p*p*p";
 var chairBackSpan  = ".m.m.m.m.m.m*roror.m.m.m7o*o*o.m.m.m.m.m.m.m.m.m";
-var chariFrontLeg  = ".m.m.m.m.m.m.m.m.m.m.m.m7o*r*o7o7o*o7o7oor*o*oor";
-var chariFrontspan = ".m.m.m.m.m.m.m.m.m.m.m.mororor.m.m.m*o*o*o.m.m.m";
-var chairSeat      = ".m.m.m.m.m.m.m.m.m.m.m.m*b*bob.m.m.m.m.m.m.m.m.m";
+var chariFrontLeg  = ".m.m.m.m.m.m.m.m.m.m.m.m7o*r*o7ooooo*o*ooo*o*ooo";
+var chariFrontspan = ".m.m.m.m.m.m.m.m.m.m.m.m*r*r*r.m.m.m*o*o*o.m.m.m";
+var chairSeat      = ".m.m.m.m.m.m.m.m.m.m.m.m*b*b*b.m.m.m.m.m.m.m.m.m";
 var chairAspctRt   = 1;
 var chairHghtFctr  = -0.05;
 // var chairHghtFctr  = 0.01;

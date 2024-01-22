@@ -635,8 +635,38 @@ var gameEngineJS = (function () {
       // var b80  = "&#9619;"; // ▓
       // var b100 = "&#9608;"; // █
 
+      // TODO: (maybe) Convert to lookuptable?
+
       // Controls the depth shading
       switch (sWallDirection) {
+        // Sprites and voxels
+        case "V":
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b100;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio2) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b25;
+            else if (pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepthRatio3) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#") fill = b50;
+            else if (pixel === "7") fill = b25;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
+          }
+          break;
+
+        // North/South direction
         case "N":
         case "S":
           if (fDistanceToWall < fDepthRatio1) {
@@ -664,6 +694,7 @@ var gameEngineJS = (function () {
           }
           break;
 
+        // West/East direction
         case "W":
         case "E":
           if (fDistanceToWall < fDepthRatio1) {
@@ -1820,7 +1851,7 @@ var gameEngineJS = (function () {
                         // assign the Sprite Glyph
                         sSpriteGlyph = _rh.renderWall(
                           currentDistance,
-                          "W",
+                          "V",
                           sSamplePixel
                         );
 
@@ -1836,9 +1867,7 @@ var gameEngineJS = (function () {
               } // end vy
               
             }
-            
-
-
+          
           }
           
           else{
@@ -1937,7 +1966,7 @@ var gameEngineJS = (function () {
                     // assign the Sprite Glyph
                     sSpriteGlyph = _rh.renderWall(
                       fDistanceFromPlayer,
-                      "N",
+                      "V",
                       sSamplePixel
                     );
 
@@ -2059,17 +2088,6 @@ var gameEngineJS = (function () {
     _moveHelpers.keylisten();
     _moveHelpers.mouseinit();
     _moveHelpers.touchinit();
-
-    // // TODO: move to in-game menu
-    // document.getElementById("solid").addEventListener("click", function () {
-    //   nRenderMode = 0;
-    // });
-    // document.getElementById("texture").addEventListener("click", function () {
-    //   nRenderMode = 1;
-    // });
-    // document.getElementById("shader").addEventListener("click", function () {
-    //   nRenderMode = 2;
-    // });
 
     // initial gameload
     _loadLevel("levelfile1.map");
