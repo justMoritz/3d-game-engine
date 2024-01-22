@@ -35,7 +35,7 @@ var gameEngineJS = (function () {
   var eDebugOut;
 
   var nScreenWidth = 480;
-  var nScreenHeight = 130;
+  var nScreenHeight = 120;
 
   var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
@@ -1378,6 +1378,7 @@ var gameEngineJS = (function () {
         var nRayLength = 0.0;
 
         // The smaller, the finer, and slower. 
+        // var nGrainControl = 0.15;
         // var nGrainControl = 0.1;
         // var nGrainControl = 0.05;
         var nGrainControl = 0.01;

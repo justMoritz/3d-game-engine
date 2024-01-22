@@ -471,6 +471,13 @@ var chairScale     = 1;
 var tableTop = ".m.m.m.m.m.m*o*o.m.m.m.m.m.m.m.m";
 var tableLeg = ".m.m.m.m.m.m*o*o*o*r*o*r*o*r*o*p";
 
+var stairsA = ".m.m.m.m.m.m.m#b";
+var stairsB = ".m.m.m.m.m.m#b7b";
+var stairsC = ".m.m.m.m.m#b7b7b";
+var stairsD = ".m.m.m.m7b*b*b*b";
+var stairsE = ".m.m.m7b*b*b*b*b";
+var stairsF = ".m.m7b*b*b*b*b*b";
+var stairsG = ".m7b*b*b*b*b*b*b";
 
 
 // Array assignes textures to keys that will
@@ -578,6 +585,59 @@ var allSprites = {
     }
   },
   
+  "stairs":{
+    "texture": chairBackLeg,
+    "height": 8,
+    "width": 1,
+    "aspctRt": 4,
+    "hghtFctr": 1,
+    "scale": 1,
+    "vox": {
+      "stepA1":{ "x": 0, "y": 0  , "texture": stairsA, },
+      "stepA2":{ "x": 0, "y": 0.2  , "texture": stairsA, },
+      "stepB3":{ "x": 0, "y": 0.4, "texture": stairsB, },
+      "stepB4":{ "x": 0, "y": 0.6, "texture": stairsB, },
+      "stepC5":{ "x": 0, "y": 0.8, "texture": stairsC, },
+      "stepC6":{ "x": 0, "y": 1, "texture": stairsC, },
+      "stepD7":{ "x": 0, "y": 1.2, "texture": stairsD, },
+      "stepD8":{ "x": 0, "y": 1.4, "texture": stairsD, },
+      "stepE9":{ "x": 0, "y": 1.6, "texture": stairsE, },
+      "stepE10":{ "x": 0, "y": 1.8, "texture": stairsE, },
+      "stepF11":{ "x": 0, "y": 2,   "texture": stairsF, },
+      "stepF12":{ "x": 0, "y": 2.2,   "texture": stairsF, },
+      "stepG13":{ "x": 0, "y": 2.4, "texture": stairsG, },
+      "stepG14":{ "x": 0, "y": 2.6, "texture": stairsG, },
+      "stepA21":{ "x": 0.3, "y": 0  , "texture": stairsA, },
+      "stepA22":{ "x": 0.3, "y": 0.2  , "texture": stairsA, },
+      "stepB23":{ "x": 0.3, "y": 0.4, "texture": stairsB, },
+      "stepB24":{ "x": 0.3, "y": 0.6, "texture": stairsB, },
+      "stepC25":{ "x": 0.3, "y": 0.8, "texture": stairsC, },
+      "stepC26":{ "x": 0.3, "y": 1, "texture": stairsC, },
+      "stepD27":{ "x": 0.3, "y": 1.2, "texture": stairsD, },
+      "stepD28":{ "x": 0.3, "y": 1.4, "texture": stairsD, },
+      "stepE29":{ "x": 0.3, "y": 1.6, "texture": stairsE, },
+      "stepE210":{ "x": 0.3, "y": 1.8, "texture": stairsE, },
+      "stepF211":{ "x": 0.3, "y": 2,   "texture": stairsF, },
+      "stepF212":{ "x": 0.3, "y": 2.2,   "texture": stairsF, },
+      "stepG213":{ "x": 0.3, "y": 2.4, "texture": stairsG, },
+      "stepG214":{ "x": 0.3, "y": 2.6, "texture": stairsG, },
+      "stepA31":{ "x": 0.6, "y": 0  , "texture": stairsA, },
+      "stepA32":{ "x": 0.6, "y": 0.2  , "texture": stairsA, },
+      "stepB33":{ "x": 0.6, "y": 0.4, "texture": stairsB, },
+      "stepB34":{ "x": 0.6, "y": 0.6, "texture": stairsB, },
+      "stepC35":{ "x": 0.6, "y": 0.8, "texture": stairsC, },
+      "stepC36":{ "x": 0.6, "y": 1, "texture": stairsC, },
+      "stepD37":{ "x": 0.6, "y": 1.2, "texture": stairsD, },
+      "stepD38":{ "x": 0.6, "y": 1.4, "texture": stairsD, },
+      "stepE39":{ "x": 0.6, "y": 1.6, "texture": stairsE, },
+      "stepE310":{ "x": 0.6, "y": 1.8, "texture": stairsE, },
+      "stepF311":{ "x": 0.6, "y": 2,   "texture": stairsF, },
+      "stepF312":{ "x": 0.6, "y": 2.2,   "texture": stairsF, },
+      "stepG313":{ "x": 0.6, "y": 2.4, "texture": stairsG, },
+      "stepG314":{ "x": 0.6, "y": 2.6, "texture": stairsG, },
+
+    }
+  },
 
   "O": {
     "texture": obetrlC,
