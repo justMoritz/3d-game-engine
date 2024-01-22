@@ -463,7 +463,6 @@ var chariFrontspan = ".m.m.m.m.m.m.m.m.m.m.m.m*r*r*r.m.m.m*o*o*o.m.m.m";
 var chairSeat      = ".m.m.m.m.m.m.m.m.m.m.m.m*b*b*b.m.m.m.m.m.m.m.m.m";
 var chairAspctRt   = 1;
 var chairHghtFctr  = -0.05;
-// var chairHghtFctr  = 0.01;
 var chairHeight    = 8;
 var chairWidth     = 2;
 var chairScale     = 1;
@@ -478,33 +477,7 @@ var tableLeg = ".m.m.m.m.m.m*o*o*o*r*o*r*o*r*o*p";
 // correspond with their coordinates on the map
 var allSprites = {
 
-  "test": {
-    "texture": chairBackLeg,
-    "height": 8,
-    "width": 3,
-    "aspctRt": 1,
-    "hghtFctr": -0.05,
-    "scale": 1,
-    "vox": {
-      "chBaLe": {
-        "texture": chairBackLeg,
-        get "width"() { return this.parent.height; },
-        get "width"() { return this.parent.height; },
-        get "aspctRt"() { return this.parent.aspctRt; },
-        get "hghtFctr"() { return this.parent.hghtFctr; },
-        get "scale"() { return this.parent.scale; },
-        get "offsetX"() { return -0.2 },
-        get "offsetY"() { return 0 },
-      },  
-      "chBaLe": {
-        "texture": chairBackLeg,
-        get "width"() { return this.parent.height; }, get "width"() { return this.parent.height; }, get "aspctRt"() { return this.parent.aspctRt; },get "hghtFctr"() { return this.parent.hghtFctr; }, get "scale"() { return this.parent.scale; },
-        get "offsetX"() { return -0.2 },
-        get "offsetY"() { return 0 },
-      },  
-    },
-  },
-
+  // Voxel Objects
   "chair": {
     "texture": chairBackLeg,
     "height": 8,
@@ -518,108 +491,93 @@ var allSprites = {
       "ch1BaSp2":{ "x": 0,    "y": -0.2, "texture": chairBackSpan, },
       "ch1BaSp3":{ "x": 0.1,  "y": -0.2, "texture": chairBackSpan, },
       "ch1BaLe2":{ "x": 0.2,  "y": -0.2, "texture": chairBackLeg, },
-
       "ch1St1":{ "x": -0.2,   "y": -0.1, "texture": chairSeat, },
       "ch1St2":{ "x": -0.1,   "y": -0.1, "texture": chairSeat, },
       "ch1St3":{ "x": 0,      "y": -0.1, "texture": chairSeat, },
       "ch1St4":{ "x": 0.1,    "y": -0.1, "texture": chairSeat, },
       "ch1St5":{ "x": 0.2,    "y": -0.1, "texture": chairSeat, },
-
       "ch1St11":{ "x": -0.2,  "y": 0, "texture": chairSeat, },
       "ch1St12":{ "x": -0.1,  "y": 0, "texture": chairSeat, },
       "ch1St13":{ "x": 0,     "y": 0, "texture": chairSeat, },
       "ch1St14":{ "x": 0.1,   "y": 0, "texture": chairSeat, },
       "ch1St15":{ "x": 0.2,   "y": 0, "texture": chairSeat, },
-
       "ch1St21":{ "x": -0.2,  "y": 0.1, "texture": chairSeat, },
       "ch1St22":{ "x": -0.1,  "y": 0.1, "texture": chairSeat, },
       "ch1St23":{ "x": 0.0,   "y": 0.1, "texture": chairSeat, },
       "ch1St24":{ "x": 0.1,   "y": 0.1, "texture": chairSeat, },
       "ch1St25":{ "x": 0.2,   "y": 0.1, "texture": chairSeat, },
-
       "ch1FrLe1":{ "x": -0.2, "y": 0.2, "texture": chariFrontLeg, },
       "ch1FrSp1":{ "x": -0.1, "y": 0.2, "texture": chariFrontspan, },
       "ch1FrSp2":{ "x": 0,    "y": 0.2, "texture": chariFrontspan, },
       "ch1FrSp3":{ "x": 0.1,  "y": 0.2, "texture": chariFrontspan, },
       "ch1FrLe2":{ "x": 0.2,  "y": 0.2, "texture": chariFrontLeg, },
     }
-  },
-
-  "tblLeg": {
-    "texture": tableLeg,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
   },  
 
-  "tblTop": {
-    "texture": tableTop,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },  
-
-  "chBaLe": {
+  "table": {
     "texture": chairBackLeg,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },  
-  "chBaSp": {
-    "texture": chairBackSpan,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },
-  "chFrLe": {
-    "texture": chariFrontLeg,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },
-  "chFrSp": {
-    "texture": chariFrontspan,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },
-  "chSt": {
-    "texture": chairSeat,
-    "height": chairHeight,
-    "width": chairWidth,
-    "aspctRt": chairAspctRt,
-    "hghtFctr": chairHghtFctr,
-    "scale": chairScale,
-  },
-
-  "T": {
-    "texture": bedPost,
     "height": 8,
     "width": 2,
     "aspctRt": 1,
-    "hghtFctr": 0.1,
+    "hghtFctr": -0.05,
     "scale": 1,
-  },  
-  "S": {
-    "texture": bedSheet,
-    "height": 4,
-    "width": 2,
-    "aspctRt": 1,
-    "hghtFctr": -0.5,
-    "scale": 1,
+    "vox": {
+      "tbl1Leg1":{ "x": - 0.25, "y": - 0.25, "texture": tableLeg, },
+      "tbl1Leg2":{ "x": - 0.25, "y": + 0.25, "texture": tableLeg, },
+      "tbl1Leg3":{ "x": + 0.25, "y": - 0.25, "texture": tableLeg, },
+      "tbl1Leg4":{ "x": + 0.25, "y": + 0.25, "texture": tableLeg, },
+      "tbl1top10":{ "x": + 0.3, "y": - 0.3, "texture": tableTop, },
+      "tbl1top20":{ "x": + 0.3, "y": - 0.2, "texture": tableTop, },
+      "tbl1top30":{ "x": + 0.3, "y": - 0.1, "texture": tableTop, },
+      "tbl1top40":{ "x": + 0.3, "y": + 0, "texture": tableTop, },
+      "tbl1top50":{ "x": + 0.3, "y": + 0.1, "texture": tableTop, },
+      "tbl1top60":{ "x": + 0.3, "y": + 0.2, "texture": tableTop, },
+      "tbl1top70":{ "x": + 0.3, "y": + 0.3, "texture":tableTop, },
+      "tbl1top1":{ "x": + 0.2, "y": - 0.3, "texture": tableTop, },
+      "tbl1top2":{ "x": + 0.2, "y": - 0.2, "texture":tableTop, },
+      "tbl1top3":{ "x": + 0.2, "y": - 0.1, "texture":tableTop, },
+      "tbl1top4":{ "x": + 0.2, "y": + 0, "texture":tableTop, },
+      "tbl1top5":{ "x": + 0.2, "y": + 0.1, "texture":tableTop, },
+      "tbl1top6":{ "x": + 0.2, "y": + 0.2, "texture":tableTop, },
+      "tbl1top7":{ "x": + 0.2, "y": + 0.3, "texture":tableTop, },
+      "tbl1top12":{ "x": + 0.1, "y": - 0.3, "texture": tableTop, },
+      "tbl1top22":{ "x": + 0.1, "y": - 0.2, "texture": tableTop, },
+      "tbl1top32":{ "x": + 0.1, "y": - 0.1, "texture":tableTop, },
+      "tbl1top42":{ "x": + 0.1, "y": + 0, "texture":tableTop, },
+      "tbl1top52":{ "x": + 0.1, "y": + 0.1, "texture": tableTop, },
+      "tbl1top62":{ "x": + 0.1, "y": + 0.2, "texture": tableTop, },
+      "tbl1top72":{ "x": + 0.1, "y": + 0.3, "texture": tableTop, },
+      "tbl1top13":{ "x": + 0, "y": - 0.3, "texture": tableTop, },
+      "tbl1top23":{ "x": + 0, "y": - 0.2, "texture": tableTop, }, 
+      "tbl1top33":{ "x": + 0, "y": - 0.1, "texture": tableTop, },
+      "tbl1top43":{ "x": + 0, "y": + 0, "texture":tableTop, },
+      "tbl1top53":{ "x": + 0, "y": + 0.1, "texture":tableTop, },
+      "tbl1top63":{ "x": + 0, "y": + 0.2, "texture": tableTop, },
+      "tbl1top73":{ "x": + 0, "y": + 0.3, "texture": tableTop, },
+      "tbl1top14":{ "x": - 0.1, "y":  -0.3, "texture":tableTop, },
+      "tbl1top24":{ "x": - 0.1, "y": - 0.2, "texture":tableTop, },
+      "tbl1top34":{ "x": - 0.1, "y": - 0.1, "texture":tableTop, },
+      "tbl1top44":{ "x": - 0.1, "y": + 0, "texture": tableTop, },
+      "tbl1top54":{ "x": - 0.1, "y": + 0.1, "texture": tableTop, },
+      "tbl1top64":{ "x": - 0.1, "y": + 0.2, "texture": tableTop, },
+      "tbl1top74":{ "x": - 0.1, "y": + 0.3, "texture": tableTop, },
+      "tbl1top15":{ "x": - 0.2, "y": - 0.3, "texture": tableTop, },
+      "tbl1top25":{ "x": - 0.2, "y": - 0.2, "texture": tableTop, },
+      "tbl1top35":{ "x": - 0.2, "y": - 0.1, "texture": tableTop, },
+      "tbl1top45":{ "x": - 0.2, "y": + 0, "texture":tableTop, },
+      "tbl1top55":{ "x": - 0.2, "y": + 0.1, "texture": tableTop, },
+      "tbl1top65":{ "x": - 0.2, "y": + 0.2, "texture": tableTop, },
+      "tbl1top75":{ "x": - 0.2, "y": + 0.3, "texture": tableTop, },
+      "tbl1top16":{ "x": - 0.3, "y": - 0.3, "texture": tableTop, },
+      "tbl1top26":{ "x": - 0.3, "y": - 0.2, "texture": tableTop, },
+      "tbl1top36":{ "x": - 0.3, "y": - 0.1, "texture": tableTop, },
+      "tbl1top46":{ "x": - 0.3, "y": + 0, "texture": tableTop, },
+      "tbl1top56":{ "x": - 0.3, "y": + 0.1, "texture": tableTop, },
+      "tbl1top66":{ "x": - 0.3, "y": + 0.2, "texture": tableTop, },
+      "tbl1top76":{ "x": - 0.3, "y": + 0.3, "texture": tableTop, },
+    }
   },
+  
 
   "O": {
     "texture": obetrlC,
