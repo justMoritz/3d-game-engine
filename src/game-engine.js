@@ -58,7 +58,6 @@ var gameEngineJS = (function () {
 
   var fDepthBuffer = [];
   var fDepthBufferO = [];
-  var fDepthBufferV = [];
 
   // defaults
   var fPlayerX = 14.0;
@@ -604,8 +603,6 @@ var gameEngineJS = (function () {
     },
     renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
 
-      // console.log( pixelArray );
-
       var pixel = pixelArray[0];
       var color = pixelArray[1] || 'm';
 
@@ -621,9 +618,9 @@ var gameEngineJS = (function () {
       var b25  = _rh.colorReferenceTable[color][0];
       var b0   = "0";
 
-      var depthRatio1 = 5.5;
-      var depthRatio2 = 3.66;
-      var depthRatio3 = 2.33;
+      var fDepthRatio1 = fDepth / 5.5;
+      var fDepthRatio2 = fDepth /3.66;
+      var fDepthRatio3 = fDepth /2.33;
 
       // Set default fill value
       let fill = b0;
@@ -642,17 +639,19 @@ var gameEngineJS = (function () {
       switch (sWallDirection) {
         case "N":
         case "S":
-          if (fDistanceToWall < fDepth / depthRatio1) {
-            if (pixel === "#")fill = b255;
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b100;
             else if (pixel === "7") fill = b75;
-            else if (pixel === "*" || pixel === "o") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b50;
             else fill = b25;
-          } else if (fDistanceToWall < fDepth / depthRatio2) {
+          } else if (fDistanceToWall < fDepthRatio2) {
             if (pixel === "#") fill = b100;
             else if (pixel === "7") fill = b75;
-            else if (pixel === "*" || pixel === "o") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
             else fill = b25;
-          } else if (fDistanceToWall < fDepth / depthRatio3) {
+          } else if (fDistanceToWall < fDepthRatio3) {
             if (pixel === "#") fill = b75;
             else if (pixel === "7") fill = b50;
             else if (pixel === "*" || pixel === "o") fill = b25;
@@ -667,17 +666,19 @@ var gameEngineJS = (function () {
 
         case "W":
         case "E":
-          if (fDistanceToWall < fDepth / depthRatio1) {
-            if (pixel === "#")fill = b100;
-            else if (pixel === "7") fill = b75;
-            else if (pixel === "*" || pixel === "o") fill = b50;
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if ( pixel === "o") fill = b25;
             else fill = b25;
-          } else if (fDistanceToWall < fDepth / depthRatio2) {
+          } else if (fDistanceToWall < fDepthRatio2) {
             if (pixel === "#") fill = b75;
             else if (pixel === "7") fill = b50;
-            else if (pixel === "*" || pixel === "o") fill = b25;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
             else fill = b0;
-          } else if (fDistanceToWall < fDepth / depthRatio3) {
+          } else if (fDistanceToWall < fDepthRatio3) {
             if (pixel === "#") fill = b50;
             else if (pixel === "7") fill = b50;
             else if (pixel === "*" || pixel === "o") fill = b25;
