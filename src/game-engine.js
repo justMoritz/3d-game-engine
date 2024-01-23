@@ -160,6 +160,7 @@ var gameEngineJS = (function () {
       map = window[sLevelstring].map;
       nMapHeight = window[sLevelstring].nMapHeight;
       nMapWidth = window[sLevelstring].nMapWidth;
+      fDepth = window[sLevelstring].fDepth || fDepth;
 
       // places the player at the map starting point
       fPlayerX = window[sLevelstring].fPlayerX;
@@ -673,7 +674,7 @@ var gameEngineJS = (function () {
             if (pixel === "#")fill = b100;
             else if (pixel === "7") fill = b75;
             else if (pixel === "*" ) fill = b50;
-            else if (pixel === "o") fill = b50;
+            else if (pixel === "o") fill = b25;
             else fill = b25;
           } else if (fDistanceToWall < fDepthRatio2) {
             if (pixel === "#") fill = b100;
@@ -702,11 +703,11 @@ var gameEngineJS = (function () {
             else if (pixel === "7") fill = b50;
             else if (pixel === "*" ) fill = b50;
             else if ( pixel === "o") fill = b25;
-            else fill = b25;
+            else fill = b0;
           } else if (fDistanceToWall < fDepthRatio2) {
             if (pixel === "#") fill = b75;
             else if (pixel === "7") fill = b50;
-            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "*" ) fill = b25;
             else if (pixel === "o") fill = b25;
             else fill = b0;
           } else if (fDistanceToWall < fDepthRatio3) {
@@ -1381,6 +1382,7 @@ var gameEngineJS = (function () {
         // var nGrainControl = 0.15;
         // var nGrainControl = 0.1;
         // var nGrainControl = 0.05;
+        // var nGrainControl = 0.02;
         var nGrainControl = 0.01;
 
         /**
@@ -1580,7 +1582,8 @@ var gameEngineJS = (function () {
         if( sObjectType === "o" ){
           var nObjectHeightModifier = fscreenHeightFactor; // this somehow halves an object in height 
         }else{
-          var nObjectHeightModifier = nScreenHeight / (nScreenHeight/3 - nJumptimer * 0.15 - fLooktimer * 0.15); 
+          // var nObjectHeightModifier = nScreenHeight / (nScreenHeight/3 - nJumptimer * 0.15 - fLooktimer * 0.15); 
+          var nObjectHeightModifier = nScreenHeight  / fscreenHeightFactor; 
         }
         
 
@@ -1858,17 +1861,13 @@ var gameEngineJS = (function () {
 
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
                         fDepthBuffer[nSpriteColumn] = currentDistance;
-                      }else{
-                        // screen[yccord * nScreenWidth + xccord] = "f";
                       }
                     }
                   }
                   
                 } // end vx
               } // end vy
-              
             }
-          
           }
           
           else{
@@ -2091,7 +2090,7 @@ var gameEngineJS = (function () {
     _moveHelpers.touchinit();
 
     // initial gameload
-    _loadLevel("levelfile1.map");
+    _loadLevel("sgg.map");
   };
 
   return {

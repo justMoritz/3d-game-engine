@@ -47,6 +47,7 @@ levelfile1 = {
   fPlayerX: 14.4,
   fPlayerY: 1.5,
   fPlayerA: 2.0,
+  fDepth: 21,
   // fPlayerA: 4.7,
   exitsto: "levelfile2.map",
   color: "white",
