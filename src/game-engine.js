@@ -1487,7 +1487,6 @@ var gameEngineJS = (function () {
             (bHitObject == true && map[nTestY * nMapWidth + nTestX] == ".")
           ) {
             bHitBackObject = true;
-            
           } 
           // END TEST FOR OBJECTS
 
@@ -1577,24 +1576,20 @@ var gameEngineJS = (function () {
         var nObjectFloor =
           fscreenHeightFactor + nScreenHeight / fDistanceToObject;
 
-        // var nObjectHeightModifier = 4 ; // 0 makes the object flat, higher the number, the higher the object :)
 
         if( sObjectType === "o" ){
-          var nObjectHeightModifier = fscreenHeightFactor; // this somehow halves an object in height 
+          var nObjectHeightModifier = nScreenHeight;
         }else{
-          // var nObjectHeightModifier = nScreenHeight / (nScreenHeight/3 - nJumptimer * 0.15 - fLooktimer * 0.15); 
-          var nObjectHeightModifier = nScreenHeight  / fscreenHeightFactor; 
+          var nObjectHeightModifier = 2;
         }
         
-
-        // _debugOutput(nObjectHeightModifier);
-
         // height of entire object, backwall to front wall
         var nFObjectBackwall =
-          fscreenHeightFactor + nScreenHeight / (fDistanceToInverseObject + nObjectHeightModifier); 
+          fscreenHeightFactor + nScreenHeight / (fDistanceToInverseObject * nObjectHeightModifier); 
         // Height of the front of the object only
         var nFObjectFront = 
-          fscreenHeightFactor + nScreenHeight / (fDistanceToObject + nObjectHeightModifier); 
+          fscreenHeightFactor + nScreenHeight / (fDistanceToObject * nObjectHeightModifier ); 
+
 
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
@@ -1666,11 +1661,41 @@ var gameEngineJS = (function () {
 
               // Render Texture with Shading
               if (nRenderMode == 2) {
-                screen[j * nScreenWidth + i] = _rh.renderWall(
-                  fDistanceToWall,
-                  sWallDirection,
-                  _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
-                );
+                
+
+                if( sWalltype == "1" ){
+                  if( sWallDirection == "N" ){
+                    screen[j * nScreenWidth + i] = _rh.renderWall(
+                      fDistanceToWall,
+                      sWallDirection,
+                      _getSamplePixel(textures["C"], fSampleX, fSampleY)
+                    );
+                  }else if( sWallDirection == "W"){
+                    screen[j * nScreenWidth + i] = _rh.renderWall(
+                      fDistanceToWall,
+                      sWallDirection,
+                      _getSamplePixel(textures["$"], fSampleX, fSampleY)
+                    );
+                  }else{
+                    screen[j * nScreenWidth + i] = _rh.renderWall(
+                      fDistanceToWall,
+                      sWallDirection,
+                      _getSamplePixel(textures["T"], fSampleX, fSampleY)
+                    );
+                  }
+                }else{
+                  screen[j * nScreenWidth + i] = _rh.renderWall(
+                    fDistanceToWall,
+                    sWallDirection,
+                    _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
+                  );
+                }
+
+
+                
+
+
+
               }
             }
 
