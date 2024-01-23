@@ -1,33 +1,50 @@
 var map = "";
-map += "......................";
-map += ".#,,#,,#,#,,#o###,,##.";
-map += ".,.....#......#.....,.";
-map += ".,..................,.";
-map += ".#.....1......#.....,.";
-map += ".,.....1,.....#C....#.";
-map += ".,.....#......#C....,.";
-map += ".,.....#......#.oooX,.";
-map += ".#######...1..#######.";
-map += ".,.....#......#.....,.";
-map += ".,..................,.";
-map += ".#.....#......#.....#.";
-map += ".,.....#......#C....,.";
-map += ".,.....#......#.....,.";
-map += ".#######......#.....#.";
-map += ".,.....#......#.....,.";
-map += ".,.....#......#.....,.";
-map += ".#.....#......#######.";
-map += ".,..................,.";
-map += ".,.....#......#.....,.";
-map += ".#.....#......#C....#.";
-map += ".,.....#......#C....,.";
-map += ".,.....#......#.....,.";
-map += ".#,,#,,#,,XX,,###,,##.";
-map += "......................";
+map += ".......................";
+map += ".#,,#,,#,#,,,#o###,,##.";
+map += ".,.....#.......#.....,.";
+map += ".,...................,.";
+map += ".#.....#.......#.....,.";
+map += ".,.....3,......1.....#.";
+map += ".,.....4.......2.....,.";
+map += ".,.....#.......1.oooX,.";
+map += ".######3...$...2######.";
+map += ".,.....4.......#.....,.";
+map += ".,.....#.............,.";
+map += ".#.............#.....#.";
+map += ".,.....#.......1C....,.";
+map += ".,.....3.......2.....,.";
+map += ".,.....4.......#.....#.";
+map += ".#######...$...#.....,.";
+map += ".#.....3.......#######.";
+map += ".,.....4.............,.";
+map += ".,.....#.......#.....,.";
+map += ".#.............1.....#.";
+map += ".,.....#.......2.....,.";
+map += ".,.....#.......#.....,.";
+map += ".#,,#,,######..###,,##.";
+map += "............#.......X..";
+map += "#######################";
+
+
+
+greenbox  = "*g*g*g*g*g#gog*g*gogog*g*g*g*g*g";
+redbox    = "ororororor*r7roror*r*rororororor";
+bluebox   = "*b*b*b*b*b7b7b*b*b7b7b*b*b*b*b*b";
+yellowbox = "7o7o7o7o7o#ooo7o7o#o#o7o7o7o7o7o"; 
+
+
+coatrackR = "*m*m*m*m*m*m*m*m*motobobobobobob*motot*t*t*t*t*t*mot#o#o#o#o#o#o*motot*t*t*t*t*t*motot*t*t*t*t*t*motot*t*t*t*t*t*motot*t*t*t*t*t*motot*t*t*t*t*t*motot*t*t*t*t*t*motot*t*t*t*t*t*mot#g#g#g#g#g#g";
+coatrackL = "*m*m*m*m*m*m*m*mobobobobobobob*m*t*t*t*t*totob*m#o#o#o#o#o#oob*m*t*t*t*t*totob*m*t*t*t*t*totob*m*t*t*t*t*totob*m*t*t*t*t*totob*m*t*t*t*t*totob*m*t*t*t*t*totob*m*t*t*t*t*totob*m#g#g#g#g#g#gob*m";
+
+bbL = "7o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#ooooooooooooooo#oooogogogog*g*g#oooog*g*g*g#m*g#oooog*g#m*g#m#m#oooog*g*g*g*g#m#oooog*g*g*g*g*g#ooooooooooooooo#o7o7o7o7o7o7o7o#o#o#o#o#o#o#o#o#o#o#o#o7o#o#o#o";
+bbR = "7o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#ooooooooooooooo7oogogogogogogoo7o#m*g*g*g*g*goo#o*g#m*g*g#m*goo#o*g#m*g*g*g*goo#o*g*g*g*g*g*goo#ooooooo7m7moooo#o7o7o7o7o7o7o#o#o#o#o#o#o#o#o#o#o#o#o#o#o7o#o#o#o";
+
+concreteWall = "#o#o#o#o#o#o#o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o7o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o";
+concreteWall2 = "7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m";
 
 sgg = {
   nMapHeight: 25,
-  nMapWidth: 22,
+  nMapWidth: 23,
   map: map,
   fPlayerX: 12.0,
   fPlayerY: 4.0,
@@ -64,4 +81,124 @@ sgg = {
       "name": "chair",
     },
   },
+  textures: {
+    "#":{
+      "texture": concreteWall2,
+      "scale": 2,
+      "height": 24,
+      "width": 16,
+    },
+    "1": {
+      "sides": {
+        "N": {
+          "texture": greenbox,
+          "scale": 2,
+          "height": 4,
+          "width": 4,
+        },
+        "E": {
+          "texture": coatrackR, 
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+        "S": {
+          "texture": bluebox,
+          "scale": 4,
+          "height": 4,
+          "width": 4,
+        },
+        "W": {
+          "texture": bbL,
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+      }
+    },
+    "2": {
+      "sides": {
+        "N": {
+          "texture": redbox,
+          "scale": 2,
+          "height": 4,
+          "width": 4,
+        },
+        "E": {
+          "texture": coatrackL, 
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+        "S": {
+          "texture": redbox,
+          "scale": 1,
+          "height": 4,
+          "width": 4,
+        },
+        "W": {
+          "texture": bbR,
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+      },
+    },
+    "3": {
+      "sides": {
+        "N": {
+          "texture": greenbox,
+          "scale": 2,
+          "height": 4,
+          "width": 4,
+        },
+        "E": {
+          "texture": bbL, 
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+        "S": {
+          "texture": bluebox,
+          "scale": 4,
+          "height": 4,
+          "width": 4,
+        },
+        "W": {
+          "texture": coatrackR,
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+      }
+    },
+    "4": {
+      "sides": {
+        "N": {
+          "texture": redbox,
+          "scale": 2,
+          "height": 4,
+          "width": 4,
+        },
+        "E": {
+          "texture": bbR, 
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+        "S": {
+          "texture": redbox,
+          "scale": 1,
+          "height": 4,
+          "width": 4,
+        },
+        "W": {
+          "texture": coatrackL,
+          "scale": 1,
+          "height": 12,
+          "width": 8,
+        },
+      },
+    },
+  }
 };

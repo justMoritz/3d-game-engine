@@ -64,12 +64,12 @@ var gameEngineJS = (function () {
   var fPlayerY = 1.0;
   var fPlayerA = 1.5;
   var nDegrees = 0;
-  var nRenderMode = 2;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
   var map = "";
   var sLevelstring = "";
+  var oLevelTextures = false;
 
   var gameRun;
   var animationTimer = 0;
@@ -156,11 +156,12 @@ var gameEngineJS = (function () {
     var levelLoaded = loadScriptAsync(level, sLevelstring);
 
     levelLoaded.then(function () {
-      // updates the level map and dimensions
+      // updates the level map, dimensions and textures
       map = window[sLevelstring].map;
       nMapHeight = window[sLevelstring].nMapHeight;
       nMapWidth = window[sLevelstring].nMapWidth;
       fDepth = window[sLevelstring].fDepth || fDepth;
+      oLevelTextures = window[sLevelstring].textures || false;
 
       // places the player at the map starting point
       fPlayerX = window[sLevelstring].fPlayerX;
@@ -1352,6 +1353,15 @@ var gameEngineJS = (function () {
         // and then chop it up into equal little bits of the screen width (at the current colum)
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
+        var fAngleDifferences = fPlayerA - fRayAngle;
+        // normalize
+        if ( fAngleDifferences < 0) {
+          fAngleDifferences += PIx2;
+        }
+        if (fAngleDifferences > PIx2) {
+          fAngleDifferences -= PIx2;
+        }
+
         var bBreakLoop = false;
         var bBreakObjectLoop = false;
 
@@ -1371,12 +1381,19 @@ var gameEngineJS = (function () {
         var fEyeX = Math.cos(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.sin(fRayAngle);
 
+        // // NEW
+        // var length = Math.sqrt(fEyeX * fEyeX + fEyeY * fEyeY);
+        // fEyeX /= length;
+        // fEyeY /= length;
+
         var fSampleX = 0.0;
         var fSampleXo = 0.0;
         var sWallDirection = "N";
         var sObjectDirection = "N";
 
         var nRayLength = 0.0;
+
+
 
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
@@ -1391,16 +1408,30 @@ var gameEngineJS = (function () {
         while (!bBreakLoop && nRayLength < fDepth) {
           // increment
           nRayLength += nGrainControl;
+          // nRayLength += nGrainControl * Math.cos(fAngleDifferences);
+          // nRayLength = nRayLength * Math.cos(fAngleDifferences);
 
           if (!bHitObject) {
-            fDistanceToObject += nGrainControl;
+            // fDistanceToObject += nGrainControl;
+            fDistanceToObject = nRayLength;
+            // fDistanceToObject = nRayLength * Math.cos(fAngleDifferences);
+            // fDistanceToObject += nGrainControl * Math.cos(fAngleDifferences);
           }
           if (!bHitBackObject) {
-            fDistanceToInverseObject += nGrainControl;
+            // fDistanceToInverseObject += nGrainControl;
+            fDistanceToInverseObject = nRayLength;
+            // fDistanceToInverseObject = nRayLength * Math.cos(fAngleDifferences);
+            // fDistanceToInverseObject += nGrainControl * Math.cos(fAngleDifferences);
           }
           if (!bHitWall) {
-            fDistanceToWall += nGrainControl;
+            // fDistanceToWall += nGrainControl;
+            fDistanceToWall = nRayLength;
+            // fDistanceToWall = nRayLength * Math.cos(fAngleDifferences);
+            // fDistanceToWall += nGrainControl * Math.cos(fAngleDifferences);
           }
+
+          // fDistanceToWall = fDistanceToWall * Math.cos(fAngleDifferences);
+
 
           // ray position
           var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
@@ -1523,6 +1554,7 @@ var gameEngineJS = (function () {
             var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
             var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
 
+
             // now we have the location of the middle of the cell,
             // and the location of point of collision, work out angle
             var fTestAngle = Math.atan2(
@@ -1554,11 +1586,10 @@ var gameEngineJS = (function () {
 
 
         // at the end of ray casting, we should have the lengths of the rays
-        // set to their last value, representing their distances
-        // based on the distance to wall, determine how much floor and ceiling to show per column,
+        // set to their last value, representing their distances.
+        // Based on the distance to wall, determine how much floor and ceiling to show per column,
         // Adding in the recalc for looking (fLookTimer) and jumping (nJumptimer)
         // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
-        // // var nCeiling = (nScreenHeight / (2 - fLooktimer*0.15)) - nScreenHeight / fDistanceToWall;
         var nCeiling =
           fscreenHeightFactor - nScreenHeight / fDistanceToWall;
         var nFloor =
@@ -1650,53 +1681,39 @@ var gameEngineJS = (function () {
               //   screen[j*nScreenWidth+i] = _getSamplePixel(texture3, fSampleX, fSampleY);
               // }
 
-              // Render Texture Directly
-              if (nRenderMode == 1) {
-                screen[j * nScreenWidth + i] = _getSamplePixel(
-                  textures[sWalltype],
-                  fSampleX,
-                  fSampleY
+              // Render Texture with Shading
+              var sPixelToRender = "0";
+
+              // check if the current WallType is included in the levelFile
+              if( oLevelTextures[sWalltype] !== undefined   ){
+
+                // check if the level-walltype includes sides
+                if( oLevelTextures[sWalltype].sides !== undefined ){
+
+                  sPixelToRender = _rh.renderWall(
+                    fDistanceToWall,
+                    sWallDirection,
+                    // _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
+                    _getSamplePixel(oLevelTextures[sWalltype].sides[sWallDirection], fSampleX, fSampleY)
+                  );
+                }else{
+                  sPixelToRender = _rh.renderWall(
+                    fDistanceToWall,
+                    sWallDirection,
+                    _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
+                  );
+                }
+                
+              }else{
+                sPixelToRender = _rh.renderWall(
+                  fDistanceToWall,
+                  sWallDirection,
+                  _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
                 );
               }
 
-              // Render Texture with Shading
-              if (nRenderMode == 2) {
-                
-
-                if( sWalltype == "1" ){
-                  if( sWallDirection == "N" ){
-                    screen[j * nScreenWidth + i] = _rh.renderWall(
-                      fDistanceToWall,
-                      sWallDirection,
-                      _getSamplePixel(textures["C"], fSampleX, fSampleY)
-                    );
-                  }else if( sWallDirection == "W"){
-                    screen[j * nScreenWidth + i] = _rh.renderWall(
-                      fDistanceToWall,
-                      sWallDirection,
-                      _getSamplePixel(textures["$"], fSampleX, fSampleY)
-                    );
-                  }else{
-                    screen[j * nScreenWidth + i] = _rh.renderWall(
-                      fDistanceToWall,
-                      sWallDirection,
-                      _getSamplePixel(textures["T"], fSampleX, fSampleY)
-                    );
-                  }
-                }else{
-                  screen[j * nScreenWidth + i] = _rh.renderWall(
-                    fDistanceToWall,
-                    sWallDirection,
-                    _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
-                  );
-                }
-
-
-                
-
-
-
-              }
+              // Updates the screen with the pixel
+              screen[j * nScreenWidth + i] = sPixelToRender
             }
 
             // render whatever char is on the map as walltype
