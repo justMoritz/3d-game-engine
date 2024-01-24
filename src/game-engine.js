@@ -37,7 +37,8 @@ var gameEngineJS = (function () {
   var nScreenWidth = 480;
   var nScreenHeight = 120;
 
-  var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
+  // var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
+  var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
 
@@ -1346,6 +1347,12 @@ var gameEngineJS = (function () {
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
       var fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
+
+      // TODO: has some issues with texturing and sprite positioning
+      var bUsePerspectiveCorrection = true
+      if(bUsePerspectiveCorrection)
+        fFOV = 1.4;
+
       // for the length of the screenwidth (one frame)
       for (var i = 0; i < nScreenWidth; i++) {
         // calculates the ray angle into the world space
@@ -1353,7 +1360,7 @@ var gameEngineJS = (function () {
         // and then chop it up into equal little bits of the screen width (at the current colum)
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
-        var fAngleDifferences = fPlayerA - fRayAngle;
+        var fAngleDifferences =  fPlayerA - fRayAngle ;
         // normalize
         if ( fAngleDifferences < 0) {
           fAngleDifferences += PIx2;
@@ -1408,29 +1415,23 @@ var gameEngineJS = (function () {
         while (!bBreakLoop && nRayLength < fDepth) {
           // increment
           nRayLength += nGrainControl;
-          // nRayLength += nGrainControl * Math.cos(fAngleDifferences);
-          // nRayLength = nRayLength * Math.cos(fAngleDifferences);
 
           if (!bHitObject) {
-            // fDistanceToObject += nGrainControl;
             fDistanceToObject = nRayLength;
-            // fDistanceToObject = nRayLength * Math.cos(fAngleDifferences);
-            // fDistanceToObject += nGrainControl * Math.cos(fAngleDifferences);
+            if(bUsePerspectiveCorrection)
+              fDistanceToObject *= Math.cos(fAngleDifferences);
           }
           if (!bHitBackObject) {
-            // fDistanceToInverseObject += nGrainControl;
             fDistanceToInverseObject = nRayLength;
-            // fDistanceToInverseObject = nRayLength * Math.cos(fAngleDifferences);
-            // fDistanceToInverseObject += nGrainControl * Math.cos(fAngleDifferences);
+            if(bUsePerspectiveCorrection)
+              fDistanceToInverseObject  *= Math.cos(fAngleDifferences);
           }
           if (!bHitWall) {
-            // fDistanceToWall += nGrainControl;
             fDistanceToWall = nRayLength;
-            // fDistanceToWall = nRayLength * Math.cos(fAngleDifferences);
-            // fDistanceToWall += nGrainControl * Math.cos(fAngleDifferences);
+            if(bUsePerspectiveCorrection)
+              fDistanceToWall *= Math.cos(fAngleDifferences);
           }
 
-          // fDistanceToWall = fDistanceToWall * Math.cos(fAngleDifferences);
 
 
           // ray position
@@ -1776,6 +1777,9 @@ var gameEngineJS = (function () {
         var fVecY = sprite["y"] - fPlayerY;
         var fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
 
+        if(bUsePerspectiveCorrection)
+          fDistanceFromPlayer *= Math.cos(fAngleDifferences);
+
         // calculate angle between sprite an nd player, to see if in fov
         var fEyeX = Math.cos(fPlayerA);
         var fEyeY = Math.sin(fPlayerA);
@@ -1832,6 +1836,8 @@ var gameEngineJS = (function () {
               }
 
               fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+              if(bUsePerspectiveCorrection)
+                fDistanceFromPlayer *= Math.cos(fAngleDifferences);
               oSpritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
             }
 
