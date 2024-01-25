@@ -307,7 +307,7 @@ var gameEngineJS = (function () {
 
   // lookup-table “for fine-control” or “for perfomance”
   // …(but really because I couldn"t figure out the logic [apparently] )
-  var _skipEveryXrow = function (input) {
+  var _skipEveryXrowOld = function (input) {
     input = Math.round(input);
     switch (Number(input)) {
       case 0:
@@ -391,6 +391,23 @@ var gameEngineJS = (function () {
         return 0;
     }
   };
+
+  // This is a better version, but it's been optimized into a bit of a black box now
+  var _skipEveryXrow = function (input) {
+    input = input | 0; // Equivalent to Math.round(input)
+  
+    if (input === 0 || input > 8 || input < -16) {
+      return 0;
+    }
+  
+    if (input >= 1) {
+      return Math.max(1, (8 / input + 0.5) | 0);
+    }
+  
+    // For negative values
+    return Math.max(2, (8 / (Math.abs(input) + 1) + 0.5) | 0);
+  };
+
 
   /**
    * CURRENTLY NOT USED, BUT MIGHT BE USEFUL FOR UI TYPE ELEMENTS LATER
