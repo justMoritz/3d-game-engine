@@ -83,10 +83,10 @@ sgg = {
   },
   textures: {
     "#":{
-      "texture": concreteWall2,
+      "texture": concreteWall,
       "scale": 2,
-      "height": 24,
-      "width": 16,
+      "height": 12,
+      "width": 8,
     },
     "1": {
       "sides": {

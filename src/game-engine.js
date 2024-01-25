@@ -34,7 +34,7 @@ var gameEngineJS = (function () {
   var cCtx;
   var eDebugOut;
 
-  var nScreenWidth = 480;
+  var nScreenWidth = 420;
   var nScreenHeight = 120;
 
   // var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
@@ -307,7 +307,7 @@ var gameEngineJS = (function () {
 
   // lookup-table “for fine-control” or “for perfomance”
   // …(but really because I couldn"t figure out the logic [apparently] )
-  var _skipEveryXrowOld = function (input) {
+  var _skipEveryXrow = function (input) {
     input = Math.round(input);
     switch (Number(input)) {
       case 0:
@@ -393,7 +393,7 @@ var gameEngineJS = (function () {
   };
 
   // This is a better version, but it's been optimized into a bit of a black box now
-  var _skipEveryXrow = function (input) {
+  var _skipEveryXrowBB = function (input) {
     input = input | 0; // Equivalent to Math.round(input)
   
     if (input === 0 || input > 8 || input < -16) {
@@ -939,6 +939,8 @@ var gameEngineJS = (function () {
       // if the looktimer is negative (looking down), increase the speed exponentially
       if (fLooktimer < 0) {
         fYMoveBy = fYMoveBy * Math.pow(1.2, -fLooktimer);
+      }else{
+        fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
       }
     
       // Update the looktimer
