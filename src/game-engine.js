@@ -921,7 +921,6 @@ var gameEngineJS = (function () {
     
       // if the looktimer is negative (looking down), increase the speed exponentially
       if (fLooktimer < 0) {
-        // Adjust the exponential factor as needed (e.g., 2 for quadratic increase)
         fYMoveBy = fYMoveBy * Math.pow(1.2, -fLooktimer);
       }
     
@@ -932,7 +931,6 @@ var gameEngineJS = (function () {
       if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
         fLooktimer += fYMoveBy;
       }
-      _debugOutput(fLooktimer)
     },
     
 
