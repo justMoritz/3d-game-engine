@@ -918,19 +918,23 @@ var gameEngineJS = (function () {
     yMoveUpdate: function (fMoveInput, fMoveFactor) {
       // look up/down (with bounds)
       var fYMoveBy = fMoveInput * fMoveFactor;
-
-      // if the looktimer is negative (looking down), increase the speed
+    
+      // if the looktimer is negative (looking down), increase the speed exponentially
       if (fLooktimer < 0) {
-        fYMoveBy = fYMoveBy * 4;
+        // Adjust the exponential factor as needed (e.g., 2 for quadratic increase)
+        fYMoveBy = fYMoveBy * Math.pow(1.2, -fLooktimer);
       }
-
-      // the reason for the increased speed is that looking “down” becomes exponentially less,
-      // so we are artificially increasing the down-factor. it's a hack, but it works okay!
+    
+      // Update the looktimer
       fLooktimer -= fYMoveBy;
+    
+      // Check and adjust boundaries
       if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
         fLooktimer += fYMoveBy;
       }
+      _debugOutput(fLooktimer)
     },
+    
 
     mouseLook: function () {
       var fMouseLookFactor = 0.002;
@@ -1369,7 +1373,6 @@ var gameEngineJS = (function () {
         if( angleCorrection == 1 ){
           angleCorrection = 0;
         }
-        _debugOutput(angleCorrection)
         fAngleDifferences *= 1- angleCorrection/4;
 
         // normalize
