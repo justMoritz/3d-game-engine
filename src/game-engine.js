@@ -421,7 +421,7 @@ var gameEngineJS = (function () {
     var eTarget = eTarget || eScreen;
     var sOutput = [];
 
-    // this is the maximum of variation created by the lookup timer, aka the final lookmodifier value
+    // this is the maximum of variation created by the lookup timer, aka the final look-modifier value
     var neverMoreThan = Math.round(
       nScreenHeight / _skipEveryXrow(fLooktimer) - 1
     );
@@ -436,7 +436,7 @@ var gameEngineJS = (function () {
       fLookModifier = neverMoreThan;
     }
 
-    // interate each row at a time
+    // iterate each row at a time
     for (var row = 0; row < nScreenHeight; row++) {
       // increment the fLookModifier every time it needs to grow (grows per row)
       if (_everyAofB(row, _skipEveryXrow(fLooktimer))) {
@@ -924,7 +924,7 @@ var gameEngineJS = (function () {
         fYMoveBy = fYMoveBy * 4;
       }
 
-      // the reason for the increased speed is that looking “down” becomes expotentially less,
+      // the reason for the increased speed is that looking “down” becomes exponentially less,
       // so we are artificially increasing the down-factor. it's a hack, but it works okay!
       fLooktimer -= fYMoveBy;
       if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
