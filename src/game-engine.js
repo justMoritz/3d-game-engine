@@ -1369,7 +1369,8 @@ var gameEngineJS = (function () {
         if( angleCorrection == 1 ){
           angleCorrection = 0;
         }
-        fAngleDifferences *= angleCorrection;
+        _debugOutput(angleCorrection)
+        fAngleDifferences *= 1- angleCorrection/4;
 
         // normalize
         if ( fAngleDifferences < 0) {
