@@ -56,6 +56,7 @@ var gameEngineJS = (function () {
 
   var nJumptimer = 0;
   var fLooktimer = 0;
+  var fAngleDifferences;
 
   var fDepthBuffer = [];
   var fDepthBufferO = [];
@@ -502,14 +503,14 @@ var gameEngineJS = (function () {
     // Create an ImageData object with the pixel data
     var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
         
-    // Convert values to shades of grey
+    // Convert values to shades of colors
     for (var i = 0; i < pixels.length; i++) {
       var pixelValue = pixels[i];
       var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
-      imageData.data[i * 4] = color[0]; // Red channel
-      imageData.data[i * 4 + 1] = color[1]; // Green channel
-      imageData.data[i * 4 + 2] = color[2]; // Blue channel
-      imageData.data[i * 4 + 3] = 255; // Alpha channel (fully opaque)
+      imageData.data[i * 4] = color[0]; // Red 
+      imageData.data[i * 4 + 1] = color[1]; // Green 
+      imageData.data[i * 4 + 2] = color[2]; // Blue 
+      imageData.data[i * 4 + 3] = 255; // Alpha 
     }
     // Use putImageData to draw the pixels onto the canvas
     cCtx.putImageData(imageData, 0, 0);
@@ -1349,7 +1350,8 @@ var gameEngineJS = (function () {
 
 
       // TODO: has some issues with texturing and sprite positioning
-      var bUsePerspectiveCorrection = true
+      // fisheye / Fish Eye correction 
+      var bUsePerspectiveCorrection = true;
       if(bUsePerspectiveCorrection)
         fFOV = 1.4;
 
@@ -1359,8 +1361,16 @@ var gameEngineJS = (function () {
         // take the current player angle, subtract half the field of view
         // and then chop it up into equal little bits of the screen width (at the current colum)
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
+        fAngleDifferences =  fPlayerA - fRayAngle ;
 
-        var fAngleDifferences =  fPlayerA - fRayAngle ;
+        // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
+        // This corrects for this perspective
+        var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
+        if( angleCorrection == 1 ){
+          angleCorrection = 0;
+        }
+        fAngleDifferences *= angleCorrection;
+
         // normalize
         if ( fAngleDifferences < 0) {
           fAngleDifferences += PIx2;
@@ -1483,8 +1493,13 @@ var gameEngineJS = (function () {
 
               // using the distance to the wall and the player angle (Eye Vectors)
               // to determine the collusion point
-              var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject;
-              var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject;
+              if(bUsePerspectiveCorrection){
+                var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject / Math.cos(fAngleDifferences);
+                var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject / Math.cos(fAngleDifferences);
+              }else{
+                var fTestPointXo = fPlayerX + fEyeX * fDistanceToObject
+                var fTestPointYo = fPlayerY + fEyeY * fDistanceToObject
+              }
 
               // now we have the location of the middle of the cell,
               // and the location of point of collision, work out angle
@@ -1552,8 +1567,13 @@ var gameEngineJS = (function () {
 
             // using the distance to the wall and the player angle (Eye Vectors)
             // to determine the collusion point
-            var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
-            var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
+            if(bUsePerspectiveCorrection){
+              var fTestPointX = fPlayerX + fEyeX * fDistanceToWall / Math.cos(fAngleDifferences);
+              var fTestPointY = fPlayerY + fEyeY * fDistanceToWall / Math.cos(fAngleDifferences);
+            }else{
+              var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
+              var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
+            }
 
 
             // now we have the location of the middle of the cell,
