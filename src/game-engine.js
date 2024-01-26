@@ -1426,10 +1426,10 @@ var gameEngineJS = (function () {
 
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
-        // var nGrainControl = 0.1;
+        var nGrainControl = 0.1;
         // var nGrainControl = 0.05;
         // var nGrainControl = 0.02;
-        var nGrainControl = 0.01;
+        // var nGrainControl = 0.01;
 
         /**
          * Ray Casting Loop
@@ -1620,6 +1620,36 @@ var gameEngineJS = (function () {
         // the spot where the wall was hit
         fDepthBuffer[i] = fDistanceToWall;
         fDepthBufferO[i] = fDistanceToObject;
+        
+
+
+
+        // render background!
+        var fVerticalOffset = nScreenHeight / 2; // Adjust as needed
+        for (var h = 0; h < nScreenHeight; h++) {
+
+          var fBgX = i / nScreenWidth;
+          // make the background double the size of the screen
+
+          var fBgY = (h + fVerticalOffset) / nScreenHeight;
+
+          // Calculate horizontal offset based on player angle
+          var angleOffset = fPlayerA * (1 / (1 * PI___));
+          fBgX += angleOffset * 2;
+
+          if (fLooktimer < 0) { 
+            fBgY -= fLooktimer / 50;
+          }else{
+            fBgY -= fLooktimer / 10;
+          }
+
+          screen[h * nScreenWidth + i] = _rh.renderWall(
+            0,
+            "V",
+            _getSamplePixel(textures['bg'], fBgX, fBgY)
+          );
+        }
+
 
         // draw the columns one screenheight-pixel at a time
         for (var j = 0; j < nScreenHeight; j++) {
@@ -1636,16 +1666,16 @@ var gameEngineJS = (function () {
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
                 );
               } else {
-                screen[j * nScreenWidth + i] = "0";
+                // screen[j * nScreenWidth + i] = "0";
               }
             }
 
             // draw ceiling/sky
             else {
               if (sWalltype == ",") {
-                screen[j * nScreenWidth + i] = "1";
+                // screen[j * nScreenWidth + i] = "1";
               } else {
-                screen[j * nScreenWidth + i] = "0";
+                // screen[j * nScreenWidth + i] = "0";
               }
             }
           }
