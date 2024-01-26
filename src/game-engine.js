@@ -1468,6 +1468,7 @@ var gameEngineJS = (function () {
           // ray position
           var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
           var nTestY = ~~(fPlayerY + fEyeY * nRayLength);
+          
 
           // test if ray hits out of bounds
           if (
@@ -1603,6 +1604,8 @@ var gameEngineJS = (function () {
               fTestPointY - fBlockMidY,
               fTestPointX - fBlockMidX
             );
+
+
             // rotate by pi over 4
 
             if (fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25) {
