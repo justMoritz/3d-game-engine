@@ -238,6 +238,8 @@ var gameEngineJS = (function () {
     var currentColor;
     var currentPixel;
 
+    // return ["#", "b"]; // TODO: Remove — Debugger, check if sampler is the issue (doesn't look like it)
+
     if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
       return "+";
     } else {
@@ -252,9 +254,6 @@ var gameEngineJS = (function () {
   
       return [currentPixel, currentColor];
     }
-
-
-    
   };
 
 
@@ -1370,7 +1369,6 @@ var gameEngineJS = (function () {
       var fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 
-      // TODO: has some issues with texturing and sprite positioning
       // fisheye / Fish Eye correction 
       var bUsePerspectiveCorrection = true;
       if(bUsePerspectiveCorrection)
@@ -1419,19 +1417,12 @@ var gameEngineJS = (function () {
         var fEyeX = Math.cos(fRayAngle); // I think this determines the line the testing travels along
         var fEyeY = Math.sin(fRayAngle);
 
-        // // NEW
-        // var length = Math.sqrt(fEyeX * fEyeX + fEyeY * fEyeY);
-        // fEyeX /= length;
-        // fEyeY /= length;
-
         var fSampleX = 0.0;
         var fSampleXo = 0.0;
         var sWallDirection = "N";
         var sObjectDirection = "N";
 
         var nRayLength = 0.0;
-
-
 
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
@@ -1463,19 +1454,13 @@ var gameEngineJS = (function () {
               fDistanceToWall *= Math.cos(fAngleDifferences);
           }
 
-
-
           // ray position
           var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
           var nTestY = ~~(fPlayerY + fEyeY * nRayLength);
           
-
           // test if ray hits out of bounds
           if (
-            nTestX < 0 ||
-            nTestX >= nMapWidth ||
-            nTestY < 0 ||
-            nTestY >= nMapHeight
+            nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight
           ) {
             bHitWall = true; // didn"t actually, just no wall there
             fDistanceToWall = fDepth;
@@ -1492,22 +1477,6 @@ var gameEngineJS = (function () {
             sObjectType = map[nTestY * nMapWidth + nTestX];
 
             if( !bStopObjectSampling ){
-
-              var vectorPairListO = [];
-              for (var txO = 0; txO < 2; txO++) {
-                for (var tyO = 0; tyO < 2; tyO++) {
-                  var vyO = +nTestY + tyO - fPlayerY;
-                  var vxO = +nTestX + txO - fPlayerX;
-                  var dO = Math.sqrt(vxO * vxO + vyO * vyO);
-
-                  var dotO = (fEyeX * vxO) / d + (fEyeY * vyO) / dO;
-                  vectorPairListO.push([dO, dotO]);
-                }
-              }
-
-              vectorPairListO.sort((a, b) => {
-                return a[0] - b[0];
-              });
 
               // 1u wide cell into quarters
               var fObjMidX = nTestX + 0.5;
@@ -1552,7 +1521,6 @@ var gameEngineJS = (function () {
 
 
           } else if (
-            (bHitObject == true && map[nTestY * nMapWidth + nTestX] == ".") ||
             (bHitObject == true && map[nTestY * nMapWidth + nTestX] == ".")
           ) {
             bHitBackObject = true;
@@ -1565,23 +1533,6 @@ var gameEngineJS = (function () {
             bBreakLoop = true;
 
             sWalltype = map[nTestY * nMapWidth + nTestX];
-
-            var vectorPairList = [];
-            for (var tx = 0; tx < 2; tx++) {
-              for (var ty = 0; ty < 2; ty++) {
-                var vy = +nTestY + ty - fPlayerY;
-                var vx = +nTestX + tx - fPlayerX;
-                var d = Math.sqrt(vx * vx + vy * vy);
-
-                var dot = (fEyeX * vx) / d + (fEyeY * vy) / d;
-                vectorPairList.push([d, dot]);
-              }
-            }
-
-            vectorPairList.sort((a, b) => {
-              return a[0] - b[0];
-            });
-
 
             // 1u wide cell into quarters
             var fBlockMidX = nTestX + 0.5;
@@ -1607,7 +1558,6 @@ var gameEngineJS = (function () {
 
 
             // rotate by pi over 4
-
             if (fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25) {
               fSampleX = fTestPointY - +nTestY;
               sWallDirection = "W";
