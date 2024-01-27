@@ -1,29 +1,33 @@
 var map = "";
-map += ".......................";
-map += ".#,,#,,#,#,,,#o###,,##.";
-map += ".,.....#.......#.....,.";
-map += ".,...................,.";
-map += ".#.............#.....,.";
-map += ".,.....3,......1.....#.";
-map += ".,.............2.....,.";
-map += ".,.....#.......1.oooX,.";
-map += ".######....$...2######.";
-map += ".,.....4.......#.....,.";
-map += ".,...................,.";
-map += ".#.............#.....#.";
-map += ".,.....#.......1C....,.";
-map += ".,.....3.......2.....,.";
-map += ".,.....4.......#.....#.";
-map += ".#######...$...#.....,.";
-map += ".#.....3.......#######.";
-map += ".,.....4.............,.";
-map += ".,.....#.......#.....,.";
-map += ".#.............1.....#.";
-map += ".,.....#.......2.....,.";
-map += ".,.....#.......#.....,.";
-map += ".#,,#,,######..###,,##.";
-map += "............#.......X..";
-map += "#######################";
+map += "CCCCCCCCCCCCCCCCCCCCCCCCC";
+map += "C.......................C";
+map += "C.......................C";
+map += "........................C";
+map += "........................C";
+map += ".#,,#,,#,#,,,#,#,,#,,#..C";
+map += ".,.....#.......#.....,..C";
+map += ".,...................,..C";
+map += ".#.....#.......#.....,..C";
+map += ".,.....3,......1.....#..C";
+map += ".,.....4.......2.....,..C";
+map += ".,.....#.......1$ooo##..C";
+map += ".######3...$...2######..C";
+map += ".,.....4.......#.....,..C";
+map += ".,.....#.............,..C";
+map += ".#.............#.....#..C";
+map += ".,.....#.......1C....,..C";
+map += ".,.....3.......2.....,..C";
+map += ".,.....4.......#.....#..C";
+map += ".#######...$...#.....,..C";
+map += ".#.....3.......#######..C";
+map += ".,.....4........X....,..C";
+map += ".,.....#.......#.....,..C";
+map += ".#.............1.....#..C";
+map += ".,.....#.......2.....,..C";
+map += ".,.....#.......#.....,..C";
+map += ".#,,#,,######..###,,##..C";
+map += "............#...........C";
+map += "#########################";
 
 
 
@@ -42,17 +46,21 @@ bbR = "7o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#ooooooooooooooo7oogogogogogogoo7o#m*g*g*g*
 concreteWall = "#o#o#o#o#o#o#o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o#o7o#o7m#o#o#o#o#o#o#o#o#o#o#o#o#o#o";
 concreteWall2 = "7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m#o7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m7m";
 
+var background = "ob#m#m#m#m#mobobobobobobobobobobobobobobobobobobobobobobobobobobobobobobobobob*bobobobobobobobobobobobobobobobob*bobob*bobobobobobobobob*bobobobobob*b*b*b*b*b7b#mob*b*b*b*b*b*b*b*b*b*b*bob*b*b*b*b*b*b*b*b*b*b*b*b7b*b*b*b7b#m#m#m#m*b#m*b*b7b*b*b*b*b*b*b*b*b*b*b*b#m*b*b*b*b*b*b*b*b*b*b*b#m#m#m#m#m#m*b7b*b*b7b*b7b*b7b*b*b7b7b#m#m#m#m7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b#m#m7b7b7b#m#m#m#m#m#m#m7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b#m#m#m#m#m7b7b7b7b7b7b7b7b7b#b#b#b7b#m#m#m7b7b7b7b*g*gog7b7b7b7b7b7b7b7b7b#b#b#b#b#b#b#b#b#b#b#b#b*g*g*gogog#b#b*g*gogogog#b#b#b#b#b#b#b#b#b#b#b#bogog#b#b#m#m#b*g*g*gogogog#b*g*gogogogog#b#b#b#b*gogog#b#b#b*g*g*gogogogog#b#b*g*gogogogog*g*gogogogogogog#m#b*g*gogogog*g*g*g*gogogogogogog*g*gogogogogogogogogogogogogog#b*g*gogogogog*g*gogogogogogogogogogogogogogogogogog*gogogogogog*g*gogogog*g*gogogogogogog*gogogogogogogog*gogogog*g*gogogogogogogogogogog*g*gogogogogog*g*gog*o*o*o*o*o*g*g*o*o*o*o*oogog*g*gogogogogogogogogog*o*o*o*o*o*o*o*o*o*o*o*o*g*g*o*o*o*o*o*o*o*o*g*o*o*o*o*o*o*o*o";
+
+
 sgg = {
-  nMapHeight: 25,
-  nMapWidth: 23,
+  nMapHeight: 29,
+  nMapWidth: 25,
   map: map,
   fPlayerX: 12.0,
-  fPlayerY: 4.2,
+  fPlayerY: 8.2,
   fPlayerA: 3.8,
   fDepth: 25,
   exitsto: "levelfile1.map",
   color: "white",
   background: "black",
+  ceiling: "2",
   sprites: {
     "1": {
       "x": 14.0,
@@ -62,32 +70,44 @@ sgg = {
     },
     "baby": {
       "x": 12.0,
-      "y": 3.5,
+      "y": 7.5,
       "r": 2.0,
       "name": "baby",
     },
+    "b1": {
+      "x": 12.0,
+      "y": 3.5,
+      "r": 2.0,
+      "name": "bush",
+    },
     "ch1": {
       "x": 3,
-      "y": 3,
+      "y": 7,
       "name": "chair",
     },
     "ch2": {
       "x": 3.8,
-      "y": 3,
+      "y": 7,
       "name": "chair",
     },
     "ch3": {
       "x": 3,
-      "y": 5,
+      "y": 9,
       "name": "chair",
     },
     "ch4": {
       "x": 3.7,
-      "y": 4.8,
+      "y": 8.8,
       "name": "chair",
     },
   },
   textures: {
+    "bg": {
+      "height": 16,
+      "width": 32,
+      "texture": background,
+      "scale": 4,
+    },
     "#":{
       "texture": concreteWall,
       "scale": 2,
