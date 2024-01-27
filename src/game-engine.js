@@ -1426,10 +1426,10 @@ var gameEngineJS = (function () {
 
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
-        var nGrainControl = 0.1;
+        // var nGrainControl = 0.1;
         // var nGrainControl = 0.05;
         // var nGrainControl = 0.02;
-        // var nGrainControl = 0.01;
+        var nGrainControl = 0.01;
 
         /**
          * Ray Casting Loop
@@ -1622,10 +1622,8 @@ var gameEngineJS = (function () {
         fDepthBufferO[i] = fDistanceToObject;
         
 
-
-
         // render background!
-        var fVerticalOffset = nScreenHeight / 2; // Adjust as needed
+        var fVerticalOffset = nScreenHeight / 2;
         for (var h = 0; h < nScreenHeight; h++) {
 
           var fBgX = i / nScreenWidth;
@@ -1638,14 +1636,16 @@ var gameEngineJS = (function () {
           fBgX += angleOffset * 2;
 
           if (fLooktimer < 0) { 
-            fBgY -= fLooktimer / 50;
+            // down
+            fBgY -= fLooktimer / 100;
           }else{
-            fBgY -= fLooktimer / 10;
+            // up
+            fBgY -= fLooktimer / 20;
           }
 
           screen[h * nScreenWidth + i] = _rh.renderWall(
             0,
-            "V",
+            "N",
             _getSamplePixel(textures['bg'], fBgX, fBgY)
           );
         }
@@ -1671,13 +1671,13 @@ var gameEngineJS = (function () {
             }
 
             // draw ceiling/sky
-            else {
-              if (sWalltype == ",") {
-                // screen[j * nScreenWidth + i] = "1";
-              } else {
-                // screen[j * nScreenWidth + i] = "0";
-              }
-            }
+            // else {
+            //   if (sWalltype == ",") {
+            //     screen[j * nScreenWidth + i] = "1";
+            //   } else {
+            //     screen[j * nScreenWidth + i] = "0";
+            //   }
+            // }
           }
 
           // solid block
@@ -1737,8 +1737,11 @@ var gameEngineJS = (function () {
                 );
               }
 
-              // Updates the screen with the pixel
-              screen[j * nScreenWidth + i] = sPixelToRender
+              // Does not draw out of bounds pixels
+              if( fDistanceToWall < fDepth ){
+                // Updates the screen with the pixel
+                screen[j * nScreenWidth + i] = sPixelToRender
+              }
             }
 
             // render whatever char is on the map as walltype
