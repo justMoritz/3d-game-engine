@@ -1952,6 +1952,15 @@ var gameEngineJS = (function () {
 
                         screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
                         fDepthBuffer[nSpriteColumn] = currentDistance;
+
+                        var currentScreenPixel = [yccord * nScreenWidth + xccord]
+                        // is there an object that needs to overlay the current sprite pixel?
+                        if( objectScreenBuffer[currentScreenPixel] ){
+                          // and that object is supposed to be before a sprite at that pixel
+                          if( fDepthBufferO[nSpriteColumn] < fDepthBuffer[nSpriteColumn] ){
+                            screen[currentScreenPixel] = objectScreenBuffer[currentScreenPixel];  
+                          }
+                        }
                       }
                     }
                   }
@@ -2066,6 +2075,15 @@ var gameEngineJS = (function () {
                     var xccord = nSpriteColumn;
                     screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
                     fDepthBuffer[nSpriteColumn] = fDistanceFromPlayer;
+
+                    var currentScreenPixel = [yccord * nScreenWidth + xccord];
+                    // is there an object that needs to overlay the current sprite pixel?
+                    if( objectScreenBuffer[currentScreenPixel] ){
+                      // and that object is supposed to be before a sprite at that pixel
+                      if( fDepthBufferO[nSpriteColumn] < fDepthBuffer[nSpriteColumn] ){
+                        screen[currentScreenPixel] = objectScreenBuffer[currentScreenPixel];  
+                      }
+                    }
                   }
                 }
               }
@@ -2080,19 +2098,19 @@ var gameEngineJS = (function () {
       }
 
       // // Draw objects (over sprites, if needed)
-      for (var oi = 0; oi < nScreenWidth; oi++) {
-        for (var oy = 0; oy < nScreenHeight; oy++) {
-          var currentPixel = [oy * nScreenWidth + oi];
-          // if there is an object to be drawn
+      // for (var oi = 0; oi < nScreenWidth; oi++) {
+      //   for (var oy = 0; oy < nScreenHeight; oy++) {
+      //     var currentPixel = [oy * nScreenWidth + oi];
+      //     // if there is an object to be drawn
           
-          if( objectScreenBuffer[currentPixel] ){
-            // and that object is supposed to be before a sprite at that pixel
-            if( fDepthBufferO[oi] < fDepthBuffer[oi] ){
-              screen[currentPixel] = objectScreenBuffer[currentPixel];  
-            }
-          }
-        }
-      }
+      //     if( objectScreenBuffer[currentPixel] ){
+      //       // and that object is supposed to be before a sprite at that pixel
+      //       if( fDepthBufferO[oi] < fDepthBuffer[oi] ){
+      //         screen[currentPixel] = objectScreenBuffer[currentPixel];  
+      //       }
+      //     }
+      //   }
+      // }
 
       _fDrawFrame(screen);
     }
