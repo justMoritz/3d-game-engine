@@ -81,12 +81,16 @@
     textarea {
       width: 100%;
       min-width: 400px;
-      height: 200px;
+      height: 50px;
     }
 
     input {
       /* margin-top: 1rem; */
       width: 50px;
+    }
+
+    #pngimport {
+      width: 200px;
     }
 
     h1,
@@ -164,17 +168,30 @@
   </div>
 
   <div class="import-export">
-    <!-- <button onclick="exportPixels()">Export Pixels</button> -->
-
+    <hr />
     <textarea id="exportTextArea" data-not-readonly></textarea>
     <small>To import pixels, paste an existing texture array into this field. Make sure you set the correct height and
       width.</small>
     <button onclick="importPixels()">Import Texture</button>
     <br />
     <button onclick="importOSPixels()">Import Monochrome (legacy)</button>
+    <br />
+    <hr />
+    <label for="pngimport">
+      <div>Import 128 color PNG</div>
+      <input type="file" id="pngimport" accept="image/png">
+    </label>
   </div>
 
   <script>
+    const targetPalette = [
+      "#000000", "#424242", "#858585", "#c8c8c8", "#ffffff",
+      "#201888", "#2038e8", "#5890f8", "#c0d0f8", "#880070",
+      "#b800b8", "#f078f8", "#f8b8f8", "#a00000", "#d82842",
+      "#f87060", "#f8b8b0", "#724007", "#887000", "#c7b41c",
+      "#dccf70", "#005000", "#00a800", "#48d848", "#a8f8b8",
+      "#183858", "#008088", "#00e8d9", "#98f8f0"
+    ];
     const texelLookupTable = {
       "#000000": ['.', 'm'], // Black
 
@@ -412,6 +429,124 @@
         }
       }
     }
+
+
+
+    // Function to find the closest color in the palette
+    function findClosestColor(rgb) {
+      let minDistance = Infinity;
+      let closestColor = targetPalette[0];
+
+      for (let i = 0; i < targetPalette.length; i++) {
+        const paletteColor = targetPalette[i];
+        const paletteRgb = hexToRgb(paletteColor);
+        const distance = calculateDistance(rgb, paletteRgb);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestColor = paletteColor;
+        }
+      }
+      return closestColor;
+    }
+
+    // Function to convert hex color to RGB object
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.substring(1), 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    }
+
+
+    // Function to calculate Euclidean distance between two colors
+    function calculateDistance(rgb1, rgb2) {
+      const rDiff = rgb1.r - rgb2.r;
+      const gDiff = rgb1.g - rgb2.g;
+      const bDiff = rgb1.b - rgb2.b;
+      return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+    }
+
+    // Modify the image with color quantization
+    function modifyImageWithColorQuantization(img) {
+      const canvasCopy = document.createElement("canvas");
+      const context = canvasCopy.getContext("2d");
+      canvasCopy.width = img.width;
+      canvasCopy.height = img.height;
+      context.drawImage(img, 0, 0);
+
+      const imageData = context.getImageData(0, 0, img.width, img.height);
+      const pixels = imageData.data;
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
+        const a = pixels[i + 3];
+
+        // Check if the pixel is transparent
+        if (a === 0) {
+          // Set transparent pixels to black
+          pixels[i] = 0; // R
+          pixels[i + 1] = 0; // G
+          pixels[i + 2] = 0; // B
+        } else {
+          const rgb = { r, g, b };
+          const closestColor = findClosestColor(rgb);
+          const closestRgb = hexToRgb(closestColor);
+
+          pixels[i] = closestRgb.r;
+          pixels[i + 1] = closestRgb.g;
+          pixels[i + 2] = closestRgb.b;
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+      return canvasCopy.toDataURL();
+    }
+
+
+
+    document.getElementById("pngimport").addEventListener("change", function (e) {
+      const fileInput = e.target;
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        // Read the content of the file as an image
+        reader.onload = function (event) {
+          const img = new Image();
+          img.onload = function () {
+            // Resize the canvas to match the dimensions of the image
+            canvas.width = img.width;
+            canvas.height = img.height;
+            cCanvas.width = img.width;
+            cCanvas.height = img.height;
+
+            document.querySelector(".canvas-sizer").style.width = img.width * 10 + 'px';
+            document.querySelector(".canvas-sizer").style.height = img.height * 10 + 'px';
+
+            // Modify the image with color quantization
+            const modifiedImageUrl = modifyImageWithColorQuantization(img);
+
+            // Draw the modified image onto the canvas
+            const modifiedImg = new Image();
+            modifiedImg.onload = function () {
+              ctx.drawImage(modifiedImg, 0, 0);
+              // Update the pixel export
+              exportPixels();
+            };
+            modifiedImg.src = modifiedImageUrl;
+          };
+          img.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      }
+    });
+
 
   </script>
 </body>
