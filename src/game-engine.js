@@ -967,6 +967,10 @@ var gameEngineJS = (function () {
       }else{
         fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
       }
+
+      // if(bOnObject){
+      //   fYMoveBy /= 4;
+      // }
     
       // Update the looktimer
       fLooktimer -= fYMoveBy;
@@ -1159,9 +1163,16 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
+            bOnObject = true;
+          }else{
+            _moveHelpers.checkExit();
+            fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+            fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          }
+        }else{
+          bOnObject = false;
+          bFalling = true;
         }
       }
 
@@ -1171,9 +1182,16 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
+            bOnObject = true;
+          }else{
+            _moveHelpers.checkExit();
+            fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+            fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          }
+        }else{
+          bOnObject = false;
+          bFalling = true;
         }
       }
 
@@ -1185,10 +1203,8 @@ var gameEngineJS = (function () {
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
           if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
             bOnObject = true;
-            // allow jump
           }else{
             _moveHelpers.checkExit();
-            // bOnObject = false;
             fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
             fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
           }
@@ -1204,9 +1220,16 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
+            bOnObject = true;
+          }else{
+            _moveHelpers.checkExit();
+            fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+            fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          }
+        }else{
+          bOnObject = false;
+          bFalling = true;
         }
       }
     },
@@ -1370,7 +1393,7 @@ var gameEngineJS = (function () {
         fPlayerA -= PIx2;
       }
 
-      // allows jumping for only a certain amount of time
+      // allows for jumping a certain amount of time
       if (bJumping) {
         nJumptimer++;
       }
@@ -1379,17 +1402,25 @@ var gameEngineJS = (function () {
         bJumping = false;
         nJumptimer = 6;
       }
+      
 
       // falling back down after jump
       if (bFalling && nJumptimer > 1) {
         nJumptimer--;
+      }else{
+        bFalling = false;
       }
+
+      // stop falling
       if (nJumptimer < 1) {
         bFalling = false;
       }
 
+      // Ability to climb over `,`-type objects
       if(bOnObject){
-        nJumptimer = 6;
+        if( nJumptimer < 5 ){
+          nJumptimer++;
+        }
         bFalling = false;
         bJumping = false;
       }
@@ -1468,8 +1499,8 @@ var gameEngineJS = (function () {
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
         // var nGrainControl = 0.1;
-        var nGrainControl = 0.05;
-        // var nGrainControl = 0.02;
+        // var nGrainControl = 0.05;
+        var nGrainControl = 0.02;
         // var nGrainControl = 0.01;
 
         /**
@@ -1477,6 +1508,9 @@ var gameEngineJS = (function () {
          */
         while (!bBreakLoop && nRayLength < fDepth) {
         
+          // increment
+          nRayLength += nGrainControl;
+          
           if (!bHitObject) {
             fDistanceToObject = nRayLength;
             if(bUsePerspectiveCorrection)
@@ -1492,10 +1526,7 @@ var gameEngineJS = (function () {
             if(bUsePerspectiveCorrection)
               fDistanceToWall *= Math.cos(fAngleDifferences);
           }
-
-          // increment
-          nRayLength += nGrainControl;
-
+          
           // ray position
           var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
           var nTestY = ~~(fPlayerY + fEyeY * nRayLength);
@@ -1504,7 +1535,7 @@ var gameEngineJS = (function () {
           if (
             nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight
           ) {
-            bHitWall = true; // didn"t actually, just no wall there
+            bHitWall = true; // didn't actually, just no wall there
             fDistanceToWall = fDepth;
             bBreakLoop = true;
           }
@@ -1561,7 +1592,6 @@ var gameEngineJS = (function () {
             }
             bStopObjectSampling = true;
 
-
           } else if (
             bHitObject == true && 
             (map[nTestY * nMapWidth + nTestX] == "." || map[nTestY * nMapWidth + nTestX] == "G")
@@ -1591,14 +1621,12 @@ var gameEngineJS = (function () {
               var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
             }
 
-
             // now we have the location of the middle of the cell,
             // and the location of point of collision, work out angle
             var fTestAngle = Math.atan2(
               fTestPointY - fBlockMidY,
               fTestPointX - fBlockMidX
             );
-
 
             // rotate by pi over 4
             if (fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25) {
@@ -1761,14 +1789,14 @@ var gameEngineJS = (function () {
                 // check if the level-walltype includes sides
                 if( oLevelTextures[sWalltype].sides !== undefined ){
 
-                  sPixelToRender = _rh.renderWallDebug(
+                  sPixelToRender = _rh.renderWall(
                     fDistanceToWall,
                     sWallDirection,
                     // _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
                     _getSamplePixel(oLevelTextures[sWalltype].sides[sWallDirection], fSampleX, fSampleY)
                   );
                 }else{
-                  sPixelToRender = _rh.renderWallDebug(
+                  sPixelToRender = _rh.renderWall(
                     fDistanceToWall,
                     sWallDirection,
                     _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
@@ -1777,7 +1805,7 @@ var gameEngineJS = (function () {
               }
               // Standard Textures
               else{
-                sPixelToRender = _rh.renderWallDebug(
+                sPixelToRender = _rh.renderWall(
                   fDistanceToWall,
                   sWallDirection,
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
