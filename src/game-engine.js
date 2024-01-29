@@ -50,6 +50,7 @@ var gameEngineJS = (function () {
   var bMoveBackward;
   var bJumping;
   var bFalling;
+  var bOnObject;
   var bRunning;
   var bPaused;
   var bPlayerMayMoveForward = true;
@@ -749,6 +750,29 @@ var gameEngineJS = (function () {
 
       return fill;
     },
+    renderWallDebug: function (fDistanceToWall, sWallDirection, pixelArray) {
+
+      // Set default fill value
+      let fill = "a";
+
+
+      // Controls the depth shading
+      switch (sWallDirection) {
+        // Sprites and voxels
+        case "V":
+        case "N":
+        case "S":
+          fill = 'f';
+          break;
+        case "W":
+        case "E":
+          fill = 'm';
+          break;
+      }
+
+
+      return fill;
+    },
 
     // shading and sectionals for gate
     renderGate: function (j, fDistanceToWall, nDoorFrameHeight) {
@@ -1159,9 +1183,18 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
+            bOnObject = true;
+            // allow jump
+          }else{
+            _moveHelpers.checkExit();
+            // bOnObject = false;
+            fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+            fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          }
+        }else{
+          bOnObject = false;
+          bFalling = true;
         }
       }
 
@@ -1348,11 +1381,17 @@ var gameEngineJS = (function () {
       }
 
       // falling back down after jump
-      if (bFalling) {
+      if (bFalling && nJumptimer > 1) {
         nJumptimer--;
       }
       if (nJumptimer < 1) {
         bFalling = false;
+      }
+
+      if(bOnObject){
+        nJumptimer = 6;
+        bFalling = false;
+        bJumping = false;
       }
 
       /**
@@ -1429,17 +1468,15 @@ var gameEngineJS = (function () {
         // The smaller, the finer, and slower. 
         // var nGrainControl = 0.15;
         // var nGrainControl = 0.1;
-        // var nGrainControl = 0.05;
+        var nGrainControl = 0.05;
         // var nGrainControl = 0.02;
-        var nGrainControl = 0.01;
+        // var nGrainControl = 0.01;
 
         /**
          * Ray Casting Loop
          */
         while (!bBreakLoop && nRayLength < fDepth) {
-          // increment
-          nRayLength += nGrainControl;
-
+        
           if (!bHitObject) {
             fDistanceToObject = nRayLength;
             if(bUsePerspectiveCorrection)
@@ -1450,11 +1487,14 @@ var gameEngineJS = (function () {
             if(bUsePerspectiveCorrection)
               fDistanceToInverseObject  *= Math.cos(fAngleDifferences);
           }
-          if (!bHitWall) {
+          if (!bHitWall) {  
             fDistanceToWall = nRayLength;
             if(bUsePerspectiveCorrection)
               fDistanceToWall *= Math.cos(fAngleDifferences);
           }
+
+          // increment
+          nRayLength += nGrainControl;
 
           // ray position
           var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
@@ -1721,14 +1761,14 @@ var gameEngineJS = (function () {
                 // check if the level-walltype includes sides
                 if( oLevelTextures[sWalltype].sides !== undefined ){
 
-                  sPixelToRender = _rh.renderWall(
+                  sPixelToRender = _rh.renderWallDebug(
                     fDistanceToWall,
                     sWallDirection,
                     // _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
                     _getSamplePixel(oLevelTextures[sWalltype].sides[sWallDirection], fSampleX, fSampleY)
                   );
                 }else{
-                  sPixelToRender = _rh.renderWall(
+                  sPixelToRender = _rh.renderWallDebug(
                     fDistanceToWall,
                     sWallDirection,
                     _getSamplePixel(oLevelTextures[sWalltype], fSampleX, fSampleY)
@@ -1737,7 +1777,7 @@ var gameEngineJS = (function () {
               }
               // Standard Textures
               else{
-                sPixelToRender = _rh.renderWall(
+                sPixelToRender = _rh.renderWallDebug(
                   fDistanceToWall,
                   sWallDirection,
                   _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
