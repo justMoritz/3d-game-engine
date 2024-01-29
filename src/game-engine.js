@@ -1444,9 +1444,11 @@ var gameEngineJS = (function () {
       // fisheye / Fish Eye correction 
       var bUsePerspectiveCorrection = true;
       if(bUsePerspectiveCorrection)
-        fFOV = 1.4;
+        fFOV = PI___ / 2
+        // fFOV = 1.4;
 
       // for the length of the screenwidth (one frame)
+      // One screen-width-pixel at a time, cast a ray
       for (var i = 0; i < nScreenWidth; i++) {
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
@@ -1471,7 +1473,6 @@ var gameEngineJS = (function () {
         }
 
         var bBreakLoop = false;
-        var bBreakObjectLoop = false;
 
         var fDistanceToWall = 0;
         var fDistanceToObject = 0;
@@ -1494,42 +1495,52 @@ var gameEngineJS = (function () {
         var sWallDirection = "N";
         var sObjectDirection = "N";
 
-        var nRayLength = 0.0;
+        var fRayLength = 0.0;
 
         // The smaller, the finer, and slower. 
-        // var nGrainControl = 0.15;
-        // var nGrainControl = 0.1;
-        // var nGrainControl = 0.05;
-        var nGrainControl = 0.02;
-        // var nGrainControl = 0.01;
+        // var fGrainControl = 0.15;
+        // var fGrainControl = 0.1;
+        // var fGrainControl = 0.05;
+        // var fGrainControl = 0.02;
+        var fGrainControl = 0.01;
 
         /**
          * Ray Casting Loop
          */
-        while (!bBreakLoop && nRayLength < fDepth) {
+        while (!bBreakLoop && fRayLength < fDepth) {
         
           // increment
-          nRayLength += nGrainControl;
+          fRayLength += fGrainControl;
           
           if (!bHitObject) {
-            fDistanceToObject = nRayLength;
+            fDistanceToObject = fRayLength;
             if(bUsePerspectiveCorrection)
               fDistanceToObject *= Math.cos(fAngleDifferences);
           }
           if (!bHitBackObject) {
-            fDistanceToInverseObject = nRayLength;
+            fDistanceToInverseObject = fRayLength;
             if(bUsePerspectiveCorrection)
               fDistanceToInverseObject  *= Math.cos(fAngleDifferences);
           }
           if (!bHitWall) {  
-            fDistanceToWall = nRayLength;
+            fDistanceToWall = fRayLength;
             if(bUsePerspectiveCorrection)
               fDistanceToWall *= Math.cos(fAngleDifferences);
           }
           
           // ray position
-          var nTestX = ~~(fPlayerX + fEyeX * nRayLength);
-          var nTestY = ~~(fPlayerY + fEyeY * nRayLength);
+          var nTestX = ~~(fPlayerX + fEyeX * fRayLength);
+          var nTestY = ~~(fPlayerY + fEyeY * fRayLength);
+
+          // console.log(i);
+          // if(i = 218){
+          //   console.log( `Ray Length: ${fRayLength}` ); // often comes out to undefined?? // DEBUG
+          //   console.log( `  Array-offset ${nTestY * nMapWidth + nTestX}` );
+          //   console.log( `  Glyph: ${map[nTestY * nMapWidth + nTestX]}` ); // often comes out to undefined?? // DEBUG
+          //   // it looks like the problem is the angle. The way the angle is calculated, it “misses” blocks close at their edge. 
+          //   // I think it's either a matter of rounding up or down, not yet sure which, and some sort of logic associated with it
+          //   // Maybe remember if we hit a block already, check to the left and right of that block as well? Something like that
+          // }
           
           // test if ray hits out of bounds
           if (
@@ -1649,6 +1660,16 @@ var gameEngineJS = (function () {
           // END TEST FOR WALLS
 
         } /** End Ray Casting Loop **/
+
+
+
+        
+        // if(fDistanceToWall == "9"){
+        //   console.log(i);
+        // }
+        // (in test.map, 218 and 219 hit the bounds, i.e. never a block)
+        // console.log(`${fDistanceToWall} (Distance)`);
+        // console.log(`    At angle ${ fRayAngle }, X: ${fEyeX}, Y: ${fEyeY}`);
 
 
         // at the end of ray casting, we should have the lengths of the rays
@@ -2267,7 +2288,7 @@ var gameEngineJS = (function () {
     _moveHelpers.touchinit();
 
     // initial gameload
-    _loadLevel("sgg.map");
+    _loadLevel("test.map");
   };
 
   return {
