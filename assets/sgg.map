@@ -108,6 +108,12 @@ sgg = {
       "texture": background,
       "scale": 4,
     },
+    "o":{
+      "texture": concreteWall,
+      "scale": 2,
+      "height": 12,
+      "width": 8,
+    },
     "#":{
       "texture": concreteWall,
       "scale": 2,
