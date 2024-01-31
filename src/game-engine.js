@@ -1519,17 +1519,8 @@ var gameEngineJS = (function () {
             }
             
             // ray position
-            // var nTestX = ~~(fPlayerX + fEyeX * fRayLength);
-            // var nTestY = ~~(fPlayerY + fEyeY * fRayLength);
-
-            // Define a small offset value
-            var offset = 0.001; // Adjust this value as needed
-            // Calculate the ray's position with the offset
-            var rayPosX = fPlayerX + fEyeX * fRayLength + offset;
-            var rayPosY = fPlayerY + fEyeY * fRayLength + offset;
-            // Round the ray's position to the nearest integer
-            var nTestX = ~~(rayPosX);
-            var nTestY = ~~(rayPosY);
+            var nTestX = ~~(fPlayerX + fEyeX * fRayLength);
+            var nTestY = ~~(fPlayerY + fEyeY * fRayLength);
 
             
             // test if ray hits out of bounds
@@ -1663,8 +1654,18 @@ var gameEngineJS = (function () {
             fscreenHeightFactor + nScreenHeight / fDistanceToWall;
   
           // similar for towers and gates
+
+          
+            
+          
+          var nTowerHeightModifier = 1.5 // doubles the wall height
+          if( sWalltype === "Y"){
+            var nTowerHeightModifier = 2 // 1_1/2x the wall height
+          }
           var nTower =
-            fscreenHeightFactor - nScreenHeight / (fDistanceToWall - 2);
+            fscreenHeightFactor - nScreenHeight / (fDistanceToWall - fDistanceToWall / nTowerHeightModifier);
+  
+
           var nDoorFrameHeight =
             fscreenHeightFactor - nScreenHeight / (fDistanceToWall + 2);
   
@@ -1742,18 +1743,21 @@ var gameEngineJS = (function () {
             // sky
             if (j < nCeiling) {
               // case of tower block (the bit that reaches into the ceiling)
-              if (sWalltype == "T") {
+              if (sWalltype == "T" || sWalltype == "Y") {
                 if (j > nTower) {
-                  var fSampleY = (j - nCeiling + 6) / (nFloor - nCeiling + 6);
-  
+
+                  if(sWalltype == "T"){
+                    var fSampleY = (j - nTower) / (nFloor - nTower) * 2; // (for a nTowerHeightModifier) of 1.5
+                  }
+                  else if(sWalltype == "Y") {
+                    var fSampleY = (j - nTower) / (nFloor - nTower) * 1.5; // (for a nTowerHeightModifier) of 2
+                  }
                   screen[j * nScreenWidth + i] = _rh.renderWall(
                     fDistanceToWall,
                     sWallDirection,
                     _getSamplePixel(textures[sWalltype], fSampleX, fSampleY)
                   );
-                } else {
-                  // screen[j * nScreenWidth + i] = "0";
-                }
+                } 
               }
   
               // draw ceiling/sky
@@ -1790,7 +1794,7 @@ var gameEngineJS = (function () {
                 );
   
                 // Does not draw out of bounds pixels
-                if( fDistanceToWall < fDepth ){
+                if( fDistanceToWall < fDepth + 2 ){
                   // Updates the screen with the pixel
                   screen[j * nScreenWidth + i] = sPixelToRender
                 }

@@ -1,6 +1,6 @@
 var map = "";
 map += "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-map += "C.......................CC.......................C";
+map += "C..........TTY$o.......CC........................C";
 map += "C.......................CC.......................C";
 map += "........................C........................C";
 map += "........................C........................C";
@@ -53,9 +53,9 @@ sgg = {
   nMapHeight: 29,
   nMapWidth: 50,
   map: map,
-  fPlayerX: 9.6,
+  fPlayerX: 11.6,
   fPlayerY: 7.0,
-  fPlayerA: 2.2,
+  fPlayerA: 4.2,
   fDepth: 25,
   exitsto: "levelfile1.map",
   color: "white",
