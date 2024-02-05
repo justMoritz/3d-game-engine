@@ -108,8 +108,10 @@ sgg = {
       "scale": 2,
       "height": 12,
       "width": 8,
+      "hasceiling": true,
     },
     "1": {
+      "hasceiling": true,
       "sides": {
         "N": {
           "texture": greenbox,

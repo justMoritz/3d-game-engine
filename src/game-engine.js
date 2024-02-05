@@ -1684,9 +1684,16 @@ var gameEngineJS = (function () {
           fDepthBufferO[i] = fDistanceToObject;
 
           // checks if the current wall is supposed to have a ceiling or not
-          var bColumnHasCeiling = false;
+          var bWallHasCeiling = false;
           if( textures[sWalltype].hasceiling ){
-            bColumnHasCeiling = true;
+            bWallHasCeiling = true;
+          }
+
+          var bOjectHasCeiling = false;
+          if( sObjectType && sObjectType != "0"){
+            if( textures[sObjectType].hasceiling ){
+              bOjectHasCeiling = true;
+            }
           }
   
   
@@ -1724,8 +1731,7 @@ var gameEngineJS = (function () {
             if( sCeiling ){
               if ( 
                 fDistanceToWall < fDepth  && 
-                // (sWalltype !== "C" && sWalltype !== "Y") 
-                bColumnHasCeiling
+                bWallHasCeiling
                 ) 
               {
                 screen[j * nScreenWidth + i] = sCeiling;
@@ -1820,7 +1826,7 @@ var gameEngineJS = (function () {
             // IF the level has a ceiling, renders the ceiling color for all lower blocks
             if( sCeiling ){
               if ( (sObjectType === "o" || sObjectType === ",") ) {
-                if (textures[sObjectType].hasceiling && y < nInverseObjectCeiling) {
+                if ( bOjectHasCeiling && y < nInverseObjectCeiling) {
                   screen[y * nScreenWidth + i] = sCeiling;
                 }
               }
