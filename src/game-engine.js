@@ -74,7 +74,6 @@ var gameEngineJS = (function () {
     var nMapWidth = 16;
     var map = "";
     var sLevelstring = "";
-    var oLevelTextures = false;
     var sCeiling = false;
   
     var gameRun;
@@ -167,8 +166,21 @@ var gameEngineJS = (function () {
         nMapHeight = window[sLevelstring].nMapHeight;
         nMapWidth = window[sLevelstring].nMapWidth;
         fDepth = window[sLevelstring].fDepth || fDepth;
-        oLevelTextures = window[sLevelstring].textures || false;
-        // TODO: check if level textures exist, then override the ones in the textures
+
+
+        // merges potential level-side textures into the global textures object
+        var oLevelTextures = window[sLevelstring].textures || false;
+        for (let key in oLevelTextures) {
+          if (window[sLevelstring].textures.hasOwnProperty(key)) {
+            if (!textures.hasOwnProperty(key)) {
+              // If the key is not present in obj1, add it
+              textures[key] = oLevelTextures[key];
+            } else {
+              // If the key is present in obj1, override it
+              textures[key] = oLevelTextures[key];
+            }
+          }
+        }
 
 
         sCeiling = window[sLevelstring].ceiling || false;
@@ -204,7 +216,7 @@ var gameEngineJS = (function () {
     /**
      * Function will get the pixel to be sampled from the sprite
      *
-     * @param  {object/string} texname -      EITHER: 
+     * @param  {object/string} texture -      EITHER: 
      *                                          A complete texture object to be sampled, 
      *                                        OR: 
      *                                          the name of the texture key in either the global
@@ -214,28 +226,19 @@ var gameEngineJS = (function () {
      * @param  {string} walldir (optional) -  Direction of cell for different textures per object
      * @return {string}
      */
-    var _getSamplePixel = function (texname, x, y, walldir) {
+    var _getSamplePixel = function (texture, x, y, walldir, debug) {
 
-      // TODO: Basically restore old functionality: Look up the string here in the `textures` object
-      
       // Init
-      var texture;
       var walldir = walldir || false;
 
-      if(typeof texname == 'string'){
-        texture = textures[texname];
-
-        // check if an override for the standard textname exists in the level file
-        if( oLevelTextures[texname] !== undefined   ){
-          if( walldir && oLevelTextures[texname].sides !== undefined ){
-            texture = oLevelTextures[texname].sides[walldir]
-          }else{
-            texture = oLevelTextures[texname];
-          }  
-        }
+      if(debug){
+        // console.log(textures)
+        // console.log(texture.sides)
       }
-      else{
-        texture = texname;
+    
+      // check if an override for the standard textname exists in the level file
+      if( walldir && texture.sides !== undefined ){
+        texture = texture.sides[walldir]
       }
 
       // defaults
@@ -768,25 +771,6 @@ var gameEngineJS = (function () {
             }
             break;
         
-        }
-        return fill;
-      },
-  
-      // shading and sectionals for gate
-      renderGate: function (j, fDistanceToWall, nDoorFrameHeight) {
-        var fill = "0";
-        if (j < nDoorFrameHeight) {
-          if (fDistanceToWall < fDepth / 4) {
-            fill = "1";
-          } else {
-            fill = "0";
-          }
-        } else {
-          if (fDistanceToWall < fDepth / 4) {
-            fill = "1";
-          } else {
-            fill = "0";
-          }
         }
         return fill;
       },
@@ -1661,10 +1645,6 @@ var gameEngineJS = (function () {
             fscreenHeightFactor + nScreenHeight / fDistanceToWall;
   
           // similar for towers and gates
-
-          
-            
-          
           var nTowerHeightModifier = 1.5 // doubles the wall height
           if( sWalltype === "Y"){
             var nTowerHeightModifier = 2 // 1_1/2x the wall height
@@ -1702,6 +1682,12 @@ var gameEngineJS = (function () {
           // the spot where the wall was hit
           fDepthBuffer[i] = fDistanceToWall;
           fDepthBufferO[i] = fDistanceToObject;
+
+          // checks if the current wall is supposed to have a ceiling or not
+          var bColumnHasCeiling = false;
+          if( textures[sWalltype].hasceiling ){
+            bColumnHasCeiling = true;
+          }
   
   
           // render background!
@@ -1721,17 +1707,12 @@ var gameEngineJS = (function () {
             }else{
               fBgY -= fLooktimer / 20; // up
             }
-  
-            var sBgTexture = textures['bg'];
-            
-            if( oLevelTextures["bg"]){
-              sBgTexture = oLevelTextures["bg"];
-            }
+
             
             screen[h * nScreenWidth + i] = _rh.renderWall(
               0,
               "N",
-              _getSamplePixel(sBgTexture, fBgX, fBgY)
+              _getSamplePixel(textures['bg'], fBgX, fBgY)
             );
           }
   
@@ -1741,7 +1722,12 @@ var gameEngineJS = (function () {
   
             // IF the level has a ceiling, renders the ceiling color for blocks (with exception)
             if( sCeiling ){
-              if ( fDistanceToWall < fDepth-1 && (sWalltype !== "C" && sWalltype !== "Y") ) {
+              if ( 
+                fDistanceToWall < fDepth  && 
+                // (sWalltype !== "C" && sWalltype !== "Y") 
+                bColumnHasCeiling
+                ) 
+              {
                 screen[j * nScreenWidth + i] = sCeiling;
               }
             }
@@ -1779,26 +1765,28 @@ var gameEngineJS = (function () {
   
             // solid block
             else if (j > nCeiling && j <= nFloor) {
-              // Door Walltype
-              if (sWalltype == "X") {
-                screen[j * nScreenWidth + i] = _rh.renderGate(
-                  j,
-                  fDistanceToWall,
-                  nDoorFrameHeight
-                );
-              }
-  
+            
               // Solid Walltype
-              else if (sWalltype != "." && sWalltype != "G" || sWalltype == "T") {
+              if (sWalltype != "." && sWalltype != "G" || sWalltype == "T") {
 
                 var sPixelToRender = "0";
                 var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-  
-                sPixelToRender = _rh.renderWall(
-                  fDistanceToWall,
-                  sWallDirection,
-                  _getSamplePixel(sWalltype, fSampleX, fSampleY, sWallDirection)
-                );
+
+                if( sWalltype == "1"){
+                  sPixelToRender = _rh.renderWall(
+                    fDistanceToWall,
+                    sWallDirection,
+                    _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, sWallDirection, true)
+                  );
+                }else{
+                  sPixelToRender = _rh.renderWall(
+                    fDistanceToWall,
+                    sWallDirection,
+                    _getSamplePixel(textures[sWalltype], fSampleX, fSampleY, sWallDirection)
+                  );
+                }
+
+                
   
                 // Does not draw out of bounds pixels
                 if( fDistanceToWall < fDepth + 2 ){
@@ -1831,8 +1819,10 @@ var gameEngineJS = (function () {
   
             // IF the level has a ceiling, renders the ceiling color for all lower blocks
             if( sCeiling ){
-              if ( sObjectType == "," && y < nInverseObjectCeiling ) {
-                screen[y * nScreenWidth + i] = sCeiling;
+              if ( (sObjectType === "o" || sObjectType === ",") ) {
+                if (textures[sObjectType].hasceiling && y < nInverseObjectCeiling) {
+                  screen[y * nScreenWidth + i] = sCeiling;
+                }
               }
             }
   
@@ -1850,7 +1840,7 @@ var gameEngineJS = (function () {
                     screen[y * nScreenWidth + i] = _rh.renderWall(
                       fDistanceToObject,
                       sObjectDirection,
-                      _getSamplePixel(sObjectType, fSampleXo, fSampleYo)
+                      _getSamplePixel(textures[sObjectType], fSampleXo, fSampleYo)
                     );
                   }
                   // We tentatively render object onto the background,
@@ -2152,21 +2142,7 @@ var gameEngineJS = (function () {
             // clearInterval(gameRun);
           }
         }
-  
-        // // Draw objects (over sprites, if needed)
-        // for (var oi = 0; oi < nScreenWidth; oi++) {
-        //   for (var oy = 0; oy < nScreenHeight; oy++) {
-        //     var currentPixel = [oy * nScreenWidth + oi];
-        //     // if there is an object to be drawn
-            
-        //     if( objectScreenBuffer[currentPixel] ){
-        //       // and that object is supposed to be before a sprite at that pixel
-        //       if( fDepthBufferO[oi] < fDepthBuffer[oi] ){
-        //         screen[currentPixel] = objectScreenBuffer[currentPixel];  
-        //       }
-        //     }
-        //   }
-        // }
+
   
         _fDrawFrame(screen);
       }

@@ -2,7 +2,7 @@ var map = "";
 map += "#############WWooooo#";
 map += "#..........U........#";
 map += "#...C......U........#";
-map += "#...W......U........#";
+map += "#...W......1........#";
 map += "#...W...............#";
 map += "#...W...............#";
 map += "#...C.....oo....o...#";
@@ -36,6 +36,10 @@ map += "######XXoooo#X#.....#";
 // map += "#....T.T....T.T.....#";
 // map += "######X#....#X#.....#";
 
+greenbox  = "*g*g*g*g*g#gog*g*gogog*g*g*g*g*g";
+redbox    = "ororororor*r7roror*r*rororororor";
+bluebox   = "*b*b*b*b*b7b7b*b*b7b7b*b*b*b*b*b";
+yellowbox = "7o7o7o7o7o#ooo7o7o#o#o7o7o7o7o7o"; 
 
 // cxxxc
 // cxxxc
@@ -52,6 +56,36 @@ levelfile1 = {
   exitsto: "levelfile2.map",
   color: "white",
   background: "black",
+  textures: {
+    "1": {
+      "sides": {
+        "N": {
+          "texture": bluebox,
+          "scale": 2,
+          "height": 4,
+          "width": 4,
+        },
+        "E": {
+          "texture": greenbox, 
+          "scale": 1,
+          "height": 4,
+          "width": 4,
+        },
+        "S": {
+          "texture": bluebox,
+          "scale": 4,
+          "height": 4,
+          "width": 4,
+        },
+        "W": {
+          "texture": greenbox,
+          "scale": 1,
+          "height": 4,
+          "width": 4,
+        },
+      }
+    },
+  },
   sprites: {
     "Pogel":{
       "x": 12,

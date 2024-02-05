@@ -138,6 +138,7 @@ sgg = {
       }
     },
     "2": {
+      "hasceiling": true,
       "sides": {
         "N": {
           "texture": redbox,
@@ -166,6 +167,7 @@ sgg = {
       },
     },
     "3": {
+      "hasceiling": true,
       "sides": {
         "N": {
           "texture": greenbox,
@@ -194,6 +196,7 @@ sgg = {
       }
     },
     "4": {
+      "hasceiling": true,
       "sides": {
         "N": {
           "texture": bluebox,
