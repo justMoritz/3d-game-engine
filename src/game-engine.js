@@ -7,13 +7,15 @@
  *  - replace parseFloat with bitwise + operator
  *    https://stackoverflow.com/questions/38702724/math-floor-vs-math-trunc-javascript
  *
- *  - TODO: Inline more function calls in high-frequency loops
- *  - TODO: Limit Object Access in high-frequency loops
+ *  - MAYBE: Inline more function calls in high-frequency loops
+ *  - MAYBE: Limit Object Access in high-frequency loops
  * 
  * 
  * TODO: Performance DROPS SIGNIFICANTLY when one is close to a color-sprite!! 
  *         Possibly too many lookups?
  */
+
+// TODO: I'm dumb... level-side texture-overrides need to happen at level load, not texture lookup X/
 
 var gameEngineJS = (function () {
     // constants
@@ -166,6 +168,9 @@ var gameEngineJS = (function () {
         nMapWidth = window[sLevelstring].nMapWidth;
         fDepth = window[sLevelstring].fDepth || fDepth;
         oLevelTextures = window[sLevelstring].textures || false;
+        // TODO: check if level textures exist, then override the ones in the textures
+
+
         sCeiling = window[sLevelstring].ceiling || false;
   
         // places the player at the map starting point
@@ -210,6 +215,8 @@ var gameEngineJS = (function () {
      * @return {string}
      */
     var _getSamplePixel = function (texname, x, y, walldir) {
+
+      // TODO: Basically restore old functionality: Look up the string here in the `textures` object
       
       // Init
       var texture;
@@ -1734,7 +1741,7 @@ var gameEngineJS = (function () {
   
             // IF the level has a ceiling, renders the ceiling color for blocks (with exception)
             if( sCeiling ){
-              if ( fDistanceToWall < fDepth-1 && sWalltype !== "C") {
+              if ( fDistanceToWall < fDepth-1 && (sWalltype !== "C" && sWalltype !== "Y") ) {
                 screen[j * nScreenWidth + i] = sCeiling;
               }
             }
@@ -2043,7 +2050,7 @@ var gameEngineJS = (function () {
                   var sAnimationFrame = false;
   
                   // animation-cycle available, determine the current cycle
-                  // TODO: randomize cycle position
+                  // MAYBE: randomize cycle position
                   if (sprite["move"] && "walkframes" in currentSpriteObject) {
                     if (animationTimer < 5) {
                       sAnimationFrame = "W1";

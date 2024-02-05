@@ -1236,7 +1236,8 @@ var gameEngineJS = (function () {
 
 
           // Define a small offset value
-          var offset = 0.001; // Adjust this value as needed
+          // var offset = 0.001; // Adjust this value as needed
+          var offset = -0.001; // Adjust this value as needed
           // Calculate the ray's position with the offset
           var rayPosX = fPlayerX + fEyeX * fRayLength + offset;
           var rayPosY = fPlayerY + fEyeY * fRayLength + offset;
@@ -1255,9 +1256,9 @@ var gameEngineJS = (function () {
 
           // use these as text coordinates
           // STANDARD
-          // var useThisAsCurrentCell = currentCell;
-          // nTestX = testXn;
-          // nTestY = testYn;
+          var useThisAsCurrentCell = currentCell;
+          nTestX = testXn;
+          nTestY = testYn;
 
           // // ROUNDED
           // var useThisAsCurrentCell = currentCellR;
@@ -1276,9 +1277,9 @@ var gameEngineJS = (function () {
           // nTestY = ~~testYf;
 
           // CHATTY
-          var useThisAsCurrentCell = currentCellC;
-          nTestX = testXc;
-          nTestY = testYc;
+          // var useThisAsCurrentCell = currentCellC;
+          // nTestX = testXc;
+          // nTestY = testYc;
 
           
           // TODO: DEBUG
