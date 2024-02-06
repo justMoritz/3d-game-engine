@@ -1872,9 +1872,6 @@ var gameEngineJS = (function () {
           var fVecY = sprite["y"] - fPlayerY;
           var fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
   
-          // if(bUsePerspectiveCorrection)
-          //   fDistanceFromPlayer *= Math.cos(fAngleDifferences);
-  
           // calculate angle between sprite and player, to see if in fov
           var fEyeX = Math.cos(fPlayerA);
           var fEyeY = Math.sin(fPlayerA);
@@ -1931,8 +1928,6 @@ var gameEngineJS = (function () {
                 }
   
                 fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
-                // if(bUsePerspectiveCorrection)
-                //   fDistanceFromPlayer *= Math.cos(fAngleDifferences);
                 oSpritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
               }
   
