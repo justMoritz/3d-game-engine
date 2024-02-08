@@ -54,40 +54,27 @@ var gameEngineJS = (function () {
   var bStrafeRight;
   var bMoveForward;
   var bMoveBackward;
-  var bJumping;
-  var bFalling;
-  var bOnObject;
   var bRunning;
   var bPaused;
   var bPlayerMayMoveForward = true;
 
   var nJumptimer = 0;
   var fLooktimer = 0;
-  var fAngleDifferences;
 
   var fDepthBuffer = [];
-  var fDepthBufferO = [];
 
   // defaults
   var fPlayerX = 14.0;
   var fPlayerY = 1.0;
   var fPlayerA = 1.5;
-  var nDegrees = 0;
 
   var nMapHeight = 16;
   var nMapWidth = 16;
   var map = "";
   var sLevelstring = "";
-  var oLevelTextures = false;
-  var sCeiling = false;
 
   var gameRun;
-  var animationTimer = 0;
 
-  // █
-  // ▓
-  // ▒
-  // ░
 
   var _randomIntFromInterval = function (min, max) {
     // min and max included
@@ -193,77 +180,8 @@ var gameEngineJS = (function () {
 
     main();
 
-    // // pauses, then starts the game loop
-    // _testScreenSizeAndStartTheGame();
-    // window.addEventListener("resize", function () {
-    //   clearInterval(gameRun);
-    //   _testScreenSizeAndStartTheGame();
-    // });
   };
 
-  /**
-   * Function will get the pixel to be sampled from the sprite
-   *
-   * @param  {array} texture -     The texture to be sampled
-   * @param  {float} x -           The x coordinate of the sample (how much across)
-   * @param  {float} y -           The y coordinate of the sample
-   * @param  {float} scaleFactor - scales the texture.
-   *                               Example: 2 will render twice the resolution
-   *                               (texture tiled 4x across one block)
-   * @return {string}
-   */
-  var _getSamplePixel = function (texture, x, y) {
-    var scaleFactor = texture["scale"] || defaultTexScale;
-    var texWidth = texture["width"] || defaultTexWidth;
-    var texHeight = texture["height"] || defaultTexHeight;
-
-    // TODO: Let's make this the default, and have the texture pass fault for legacy implementations
-    var noColor = texture["noColor"] || false;
-    
-    // console.log(noColor);
-
-    var texpixels = texture["texture"];
-
-    if (texture["texture"] == "DIRECTIONAL") {
-        // Different Texture based on viewport
-        if (nDegrees > 0 && nDegrees < 180) {
-            texpixels = texture["S"];
-        } else {
-            texpixels = texture["N"];
-        }
-    }
-
-    scaleFactor = scaleFactor || 2;
-    
-    x = (scaleFactor * x) % 1;
-    y = (scaleFactor * y) % 1;
-
-    var sampleX = ~~(texWidth * x);
-    var sampleY = ~~(texHeight * y);
-
-    var samplePosition = texWidth * sampleY + sampleX;
-    var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
-
-    var currentColor;
-    var currentPixel;
-
-    // return ["#", "b"]; // TODO: Remove — Debugger, check if sampler is the issue (doesn't look like it)
-
-    if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-      return "+";
-    } else {
-      
-      if( noColor ){
-        currentPixel = texpixels[samplePosition];
-        currentColor = 'm';
-      }else{
-        currentPixel = texpixels[samplePosition2];
-        currentColor = texpixels[samplePosition2+1];
-      }
-  
-      return [currentPixel, currentColor];
-    }
-  };
 
 
   /**
@@ -417,110 +335,8 @@ var gameEngineJS = (function () {
   };
 
 
-  /**
-   * CURRENTLY NOT USED, BUT MIGHT BE USEFUL FOR UI TYPE ELEMENTS LATER
-   * Determines with Pixels to use, sInput
-   * @param  {string} oInput    Main Pixel
-   * @param  {string} sOverlay  Overlay Pixel
-   * @param  {int} nIndex       Index
-   * @return {[string]}         Final Pixel
-   */
-  var _printCompositPixel = function (sInput, sOverlay, nIndex) {
-    var sOutput = "";
-    // if sOverlay !0, appends it to the output instead
-    if (sOverlay && sOverlay[nIndex] != 0) {
-      sOutput += sOverlay[nIndex];
-    } else {
-      sOutput += sInput[nIndex];
-    }
-    return sOutput;
-  };
-
-  /**
-   * Creates a new array of pixels taking looking up and down into account
-   * It returns an array to be rendered later.
-   * the aim is to remove the first and last 30 pixels of very row,
-   * to obscure the skewing
-   */
-  var _fPrepareFrame = function (oInput, eTarget) {
-    var eTarget = eTarget || eScreen;
-    var sOutput = [];
-
-    // this is the maximum of variation created by the lookup timer, aka the final look-modifier value
-    var neverMoreThan = Math.round(
-      nScreenHeight / _skipEveryXrow(fLooktimer) - 1
-    );
-
-    // used to skew the image
-    var globalPrintIndex = 0;
-    var fLookModifier = 0;
-
-    // if looking up, the starting point is the max number of pixesl to indent,
-    // which will be decremented, otherwise it remains 0, which will be incremented
-    if (fLooktimer > 0 && isFinite(neverMoreThan)) {
-      fLookModifier = neverMoreThan;
-    }
-
-    // iterate each row at a time
-    for (var row = 0; row < nScreenHeight; row++) {
-      // increment the fLookModifier every time it needs to grow (grows per row)
-      if (_everyAofB(row, _skipEveryXrow(fLooktimer))) {
-        if (fLooktimer > 0) {
-          // looking up
-          fLookModifier--;
-        } else {
-          fLookModifier++;
-        }
-      }
-
-      // print filler pixels
-      for (var i = 0; i < fLookModifier; i++) {
-        sOutput.push(".");
-      }
-
-      var toBeRemoved = 2 * fLookModifier;
-      var removeFrom = [];
-
-      //  make a new array that contains the indices of the elements to print
-      // (removes X amount of elements from array)
-      var items = [];
-      for (var i = 0; i <= nScreenWidth; i++) {
-        items.push(i);
-      }
-
-      // list to be removed from each row:
-      // [1,2,3,4,5,6,7,8]
-      // [1,2, ,4,5, ,7,8]
-      //   [1,2,4,5,7,8]
-      removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
-
-      // loops through each rows of pixels
-      for (var rpix = 0; rpix < nScreenWidth; rpix++) {
-        // print only if the pixel is in the list of pixels to print
-        if (removeFrom.includes(rpix)) {
-          // don"t print
-        } else {
-          // print
-          sOutput.push( oInput[globalPrintIndex] );
-          // sOutput.push(_printCompositPixel(oInput, oOverlay, globalPrintIndex));
-        }
-
-        globalPrintIndex++;
-      } // end for(rpix
-
-      // print filler pixels
-      for (var i = 0; i < fLookModifier; i++) {
-        sOutput.push(".");
-      }
-    } // end for(row
-
-    return sOutput;
-  };
-
-  var _drawToCanvas = function ( pixels, removePixels ) {
+  var _drawToCanvas = function ( pixels ) {
     // Assuming your canvas has a width and height
-    // canvas.width = nScreenWidth - removePixels/2;
-    // _debugOutput( eCanvas.width );
 
     eCanvas.width = nScreenWidth;
     eCanvas.height = nScreenHeight;
@@ -541,9 +357,8 @@ var gameEngineJS = (function () {
     cCtx.putImageData(imageData, 0, 0);
   }
 
-
   var _fDrawFrame = function (screen, target) {
-    var frame = _fPrepareFrame(screen);
+    var frame = screen
     var target = target || eScreen;
 
     var sOutput = "";
@@ -551,52 +366,27 @@ var gameEngineJS = (function () {
 
     // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
     var printIndex = 0;
-    var removePixels = nScreenHeight / 2;
 
-    
     for (var row = 0; row < nScreenHeight; row++) {
       for (var pix = 0; pix < nScreenWidth; pix++) {
         // H-blank based on screen-width
         if (printIndex % nScreenWidth == 0) {
           sOutput += "<br>";
         }
-
-        if (pix < removePixels) {
-          sOutput += "";
-          sCanvasOutput += "4";
-        } else if (pix > nScreenWidth - removePixels) {
-          sOutput += "";
-          sCanvasOutput += "4";
-        } else {
-          sOutput += frame[printIndex];
-          sCanvasOutput += frame[printIndex];
-        }
-
+        sOutput += frame[printIndex];
+        sCanvasOutput += frame[printIndex];
         printIndex++;
       }
     }
     target.innerHTML = sOutput;
-    _drawToCanvas( sCanvasOutput, removePixels );
+    _drawToCanvas( sCanvasOutput );
   };
 
 
 
   // various shaders for walls, ceilings, objects
   // _renderHelpers
-  //
-  // each texture has 4 values: 3 hues plus black
-  // each value can be rendered with 5 shades (4 plus black)
   var _rh = {
-    // The 4 color values for these start at this point in the array  
-    colorReferenceTable:{
-      m: ['1', '2', '3', '4'],
-      b: ['a', 'b', 'c', 'd'],
-      p: ['e', 'f', 'g', 'h'],
-      r: ['i', 'j', 'k', 'l'],
-      o: ['m', 'n', 'o', 'p'],
-      g: ['q', 'r', 's', 't'],
-      t: ['u', 'v', 'w', 'x'],
-    },
     // the color values
     pixelLookupTable: {
       0: [0, 0, 0], // Black
@@ -629,150 +419,6 @@ var gameEngineJS = (function () {
       w: [0, 232, 217],
       x: [152, 248, 240],
       // Add more entries as needed
-    },
-    renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
-
-      var pixel = pixelArray[0];
-      var color = pixelArray[1] || 'm';
-
-      // console.log( color )
-
-      // There are 4 lightness values in each color
-      // This assigns the appropriate color value to the current pixel
-
-      var b255 = "4";
-      var b100 = _rh.colorReferenceTable[color][3];
-      var b75  = _rh.colorReferenceTable[color][2];
-      var b50  = _rh.colorReferenceTable[color][1];
-      var b25  = _rh.colorReferenceTable[color][0];
-      var b0   = "0";
-
-      var fDepthRatio1 = fDepth / 5.5;
-      var fDepthRatio2 = fDepth /3.66;
-      var fDepthRatio3 = fDepth /2.33;
-
-      // Set default fill value
-      let fill = b0;
-
-      
-      // "&#9109;"; // ⎕
-      
-      // var b0   = ".";
-      // var b20  = "&#9617;"; // ░
-      // var b40  = "&#9618;"; // ▒
-      // var b60  = "&#9618;"; // ▒
-      // var b80  = "&#9619;"; // ▓
-      // var b100 = "&#9608;"; // █
-
-      // TODO: (maybe) Convert to lookuptable?
-
-      // Controls the depth shading
-      switch (sWallDirection) {
-        // Sprites and voxels
-        case "V":
-          if (fDistanceToWall < fDepthRatio1) {
-            if (pixel === "#")fill = b100;
-            else if (pixel === "7") fill = b75;
-            else if (pixel === "*" ) fill = b50;
-            else if (pixel === "o") fill = b25;
-            else fill = b25;
-          } else if (fDistanceToWall < fDepthRatio2) {
-            if (pixel === "#") fill = b75;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" ) fill = b25;
-            else if (pixel === "o") fill = b25;
-            else fill = b0;
-          } else if (fDistanceToWall < fDepthRatio3) {
-            if (pixel === "#") fill = b75;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b25;
-          } else if (fDistanceToWall < fDepth) {
-            if (pixel === "#") fill = b50;
-            else if (pixel === "7") fill = b25;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b0;
-          }
-          break;
-
-        // North/South direction
-        case "N":
-        case "S":
-          if (fDistanceToWall < fDepthRatio1) {
-            if (pixel === "#")fill = b100;
-            else if (pixel === "7") fill = b75;
-            else if (pixel === "*" ) fill = b50;
-            else if (pixel === "o") fill = b25;
-            else fill = b25;
-          } else if (fDistanceToWall < fDepthRatio2) {
-            if (pixel === "#") fill = b100;
-            else if (pixel === "7") fill = b75;
-            else if (pixel === "*" ) fill = b50;
-            else if (pixel === "o") fill = b25;
-            else fill = b25;
-          } else if (fDistanceToWall < fDepthRatio3) {
-            if (pixel === "#") fill = b75;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b25;
-          } else if (fDistanceToWall < fDepth) {
-            if (pixel === "#") fill = b50;
-            else if (pixel === "7") fill = b25;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b0;
-          }
-          break;
-
-        // West/East direction
-        case "W":
-        case "E":
-          if (fDistanceToWall < fDepthRatio1) {
-            if (pixel === "#")fill = b75;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" ) fill = b50;
-            else if ( pixel === "o") fill = b25;
-            else fill = b0;
-          } else if (fDistanceToWall < fDepthRatio2) {
-            if (pixel === "#") fill = b75;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" ) fill = b25;
-            else if (pixel === "o") fill = b25;
-            else fill = b0;
-          } else if (fDistanceToWall < fDepthRatio3) {
-            if (pixel === "#") fill = b50;
-            else if (pixel === "7") fill = b50;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b0;
-          } else if (fDistanceToWall < fDepth) {
-            if (pixel === "#") fill = b25;
-            else if (pixel === "7") fill = b25;
-            else if (pixel === "*" || pixel === "o") fill = b25;
-            else fill = b0;
-          }
-          break;
-      
-      }
-
-
-      return fill;
-    },
-    renderWallDebug: function (fDistanceToWall, sWallDirection, pixelArray) {
-      // Set default fill value
-      let fill = "a";
-      // Controls the depth shading
-      switch (sWallDirection) {
-        // Sprites and voxels
-        case "V":
-        case "N":
-        case "S":
-          fill = 'f';
-          break;
-        case "W":
-        case "E":
-          fill = 'm';
-          break;
-      }
-      return fill;
     },
   };
 
@@ -884,10 +530,6 @@ var gameEngineJS = (function () {
         fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
       }
 
-      // if(bOnObject){
-      //   fYMoveBy /= 4;
-      // }
-    
       // Update the looktimer
       fLooktimer -= fYMoveBy;
     
@@ -916,12 +558,6 @@ var gameEngineJS = (function () {
           0.05
         );
       };
-    },
-
-    // mouse
-    mouseinit: function () {
-      touchinputlook.onclick = _moveHelpers.mouseLook;
-      touchinputmove.onclick = _moveHelpers.mouseLook;
     },
 
     // holds and tracks touch-inputs
@@ -966,97 +602,6 @@ var gameEngineJS = (function () {
       return oDifference;
     },
 
-    // initialize the touch listeners for walk and move areas
-    touchinit: function () {
-      // look (left hand of screen)
-      eTouchLook.addEventListener("touchmove", function (e) {
-        // fetches differences from input
-        var oDifferences = _moveHelpers.touchCalculate(
-          _moveHelpers.oTouch.look,
-          e
-        );
-
-        // makes sure no crazy
-        if (oDifferences.x < 10 && oDifferences.x > -10) {
-          _moveHelpers.oTouch.look.bFirstTouch = false;
-        }
-
-        if (!_moveHelpers.oTouch.look.bFirstTouch) {
-          // left and right
-          fPlayerA += oDifferences.x * 0.005;
-
-          // up and down
-          _moveHelpers.yMoveUpdate(oDifferences.y, 0.1);
-        }
-      });
-
-      // reset look
-      eTouchLook.addEventListener("touchend", function () {
-        _moveHelpers.oTouch.look.x = 0;
-        _moveHelpers.oTouch.look.y = 0;
-        _moveHelpers.oTouch.look.bFirstTouch = true;
-      });
-
-      // move (right hand of screen)
-      eTouchMove.addEventListener("touchmove", function (e) {
-        var oDifferences = _moveHelpers.touchCalculate(
-          _moveHelpers.oTouch.move,
-          e
-        );
-
-        // makes sure no crazy
-        if (oDifferences.x < 10 && oDifferences.x > -10) {
-          _moveHelpers.oTouch.move.bFirstTouch = false;
-        }
-
-        // first touch will be a huge difference, that"s why we only move after the first touch
-        if (!_moveHelpers.oTouch.move.bFirstTouch) {
-          // walk
-          fPlayerX -=
-            (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-          fPlayerY +=
-            (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-
-          // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-            _moveHelpers.checkExit();
-            fPlayerX +=
-              (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-            fPlayerY -=
-              (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-          }
-
-          // strafe
-          fPlayerX +=
-            (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-          fPlayerY +=
-            (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-
-          // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-            _moveHelpers.checkExit();
-            fPlayerX -=
-              (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-            fPlayerY -=
-              (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-          }
-        }
-      });
-
-      // reset move
-      eTouchMove.addEventListener("touchend", function () {
-        _moveHelpers.oTouch.move.x = 0;
-        _moveHelpers.oTouch.move.y = 0;
-        _moveHelpers.oTouch.move.bFirstTouch = true;
-      });
-    },
-
-    checkExit: function () {
-      // if we hit an exit
-      if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "X") {
-        _loadLevel(window[sLevelstring].exitsto);
-      }
-    },
 
     // called once per frame, handles movement computation
     move: function () {
@@ -1079,13 +624,8 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
-            bOnObject = true;
-          }else{
-            _moveHelpers.checkExit();
-            fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-            fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          }
+          fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
         }else{
           bOnObject = false;
           bFalling = true;
@@ -1098,13 +638,8 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
-            bOnObject = true;
-          }else{
-            _moveHelpers.checkExit();
-            fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-            fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          }
+          fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
         }else{
           bOnObject = false;
           bFalling = true;
@@ -1117,13 +652,8 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
-            bOnObject = true;
-          }else{
-            _moveHelpers.checkExit();
-            fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-            fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          }
+          fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
         }else{
           bOnObject = false;
           bFalling = true;
@@ -1136,13 +666,8 @@ var gameEngineJS = (function () {
 
         // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
         if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "," && (bJumping || bFalling || bOnObject) ) {
-            bOnObject = true;
-          }else{
-            _moveHelpers.checkExit();
-            fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-            fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          }
+          fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
         }else{
           bOnObject = false;
           bFalling = true;
@@ -1197,16 +722,12 @@ var gameEngineJS = (function () {
         var fEyeX = Math.cos(fRayAngle); // = -0.4774170385358938
         var fEyeY = Math.sin(fRayAngle); // = 0.8786768298502111
 
-        var fSampleX = 0.0;
         var sWallDirection = "N";
 
         var fRayLength = 0.0;
 
         // The smaller, the finer, and slower. 
         var fGrainControl = 0.01;
-
-        var prevColumnChar = ".";
-        var nextColumnChar = ".";
 
         /**
          * Ray Casting Loop
@@ -1225,78 +746,14 @@ var gameEngineJS = (function () {
           var testXn = ~~(fPlayerX + fEyeX * fRayLength); //  2.7 + (-0.4774170385358938) * 1.2400000000000009 = 2.108002872215491  ~~ is 2
           var testYn = ~~(fPlayerY + fEyeY * fRayLength); //  2.8 + (0.8786768298502111) * 1.2400000000000009  = 3.889559269014263  ~~ is 3
 
-          var testXr = Math.round(fPlayerX + fEyeX * fRayLength); //  2.7 + (-0.4774170385358938) * 1.2400000000000009 = 2.108002872215491  ,rounded is 2
-          var testYr = Math.round(fPlayerY + fEyeY * fRayLength); //  2.8 + (0.8786768298502111) * 1.2400000000000009  = 3.889559269014263  ,rounded is 4
-
-          var testXd = Math.floor(fPlayerX + fEyeX * fRayLength); 
-          var testYd = Math.floor(fPlayerY + fEyeY * fRayLength); 
-
-          var testXf = fPlayerX + fEyeX * fRayLength; //  2.7 + (-0.4774170385358938) * 1.2400000000000009 = 2.108002872215491
-          var testYf = fPlayerY + fEyeY * fRayLength; //  2.8 + (0.8786768298502111) * 1.2400000000000009  = 3.889559269014263
-
-
-          // Define a small offset value
-          // var offset = 0.001; // Adjust this value as needed
-          var offset = -0.001; // Adjust this value as needed
-          // Calculate the ray's position with the offset
-          var rayPosX = fPlayerX + fEyeX * fRayLength + offset;
-          var rayPosY = fPlayerY + fEyeY * fRayLength + offset;
-          // Round the ray's position to the nearest integer
-          var testXc = ~~(rayPosX);
-          var testYc = ~~(rayPosY);
-
-
           // Coordinates of all neighboring cells
-          var currentCell  = testYn  * nMapWidth + testXn ; // 3 * 7 + 2 = 23
-          var currentCellR = testYr * nMapWidth + testXr; // 4 * 7 + 2 = 30
-          var currentCellD = testYd * nMapWidth + testXd; 
-          var currentCellF = testYf  * nMapWidth + testXf ; // 3.889559269014263 * 7 + 2.108002872215491 = 29.33491775531533
-          var currentCellC = testYc  * nMapWidth + testXc ; 
-          
-
+          var currentCell  = testYn  * nMapWidth + testXn ;
           // use these as text coordinates
           // STANDARD
           var useThisAsCurrentCell = currentCell;
-          nTestX = testXn;
-          nTestY = testYn;
+          nTestX = ~~(fPlayerX + fEyeX * fRayLength);
+          nTestY = ~~(fPlayerY + fEyeY * fRayLength);
 
-          // // ROUNDED
-          // var useThisAsCurrentCell = currentCellR;
-          // nTestX = testXr;
-          // nTestY = testYr;
-
-
-          // // ROUNDED DOWN
-          // var useThisAsCurrentCell = currentCellD;
-          // nTestX = testXd;
-          // nTestY = testYd;
-
-          // FLOATING POINT CALC
-          // var useThisAsCurrentCell = ~~currentCellF;
-          // nTestX = ~~testXf;
-          // nTestY = ~~testYf;
-
-          // CHATTY
-          // var useThisAsCurrentCell = currentCellC;
-          // nTestX = testXc;
-          // nTestY = testYc;
-
-          
-          // TODO: DEBUG
-          // console.log(i);
-          // if(i = 239){
-          //   console.log( `Ray Length: ${fRayLength}` ); // often comes out to undefined?? // DEBUG
-          //   console.log( `  Array-offset ${nTestY * nMapWidth + nTestX}` );
-          //   console.log( `  Glyph: ${map[nTestY * nMapWidth + nTestX]}` ); // often comes out to undefined?? // DEBUG
-          //   // it looks like the problem is the angle. The way the angle is calculated, it “misses” blocks close at their edge. 
-          //   // I think it's either a matter of rounding up or down, not yet sure which, and some sort of logic associated with it
-          //   // Maybe remember if we hit a block already, check to the left and right of that block as well? Something like that
-          // }
-
-          // Fails at line 239 with the following output:
-          // Ray Length: 1.2400000000000009
-          // game-engine-debug.js?v=0.2.0:1223   Array-offset 31
-          // game-engine-debug.js?v=0.2.0:1224   Glyph: C
           
           // test if ray hits out of bounds
           if (
@@ -1336,17 +793,21 @@ var gameEngineJS = (function () {
               fSampleX = fTestPointY - +nTestY;
               sWallDirection = "W";
             }
-            if (fTestAngle >= PIx0_25 && fTestAngle < PIx0_75) {
+            else if (fTestAngle >= PIx0_25 && fTestAngle < PIx0_75) {
               fSampleX = fTestPointX - +nTestX;
               sWallDirection = "N";
             }
-            if (fTestAngle < -PIx0_25 && fTestAngle >= -PIx0_75) {
+            else if (fTestAngle < -PIx0_25 && fTestAngle >= -PIx0_75) {
               fSampleX = fTestPointX - +nTestX;
               sWallDirection = "S";
             }
-            if (fTestAngle >= PIx0_75 || fTestAngle < -PIx0_75) {
+            else if (fTestAngle >= PIx0_75 || fTestAngle < -PIx0_75) {
               fSampleX = fTestPointY - +nTestY;
               sWallDirection = "E";
+            }
+
+            if(i > 60 && i < 70){
+              console.log(`${sWallDirection}  ${i} : Angle: ${fTestAngle}`);
             }
           } 
           // END TEST FOR WALLS
@@ -1354,22 +815,6 @@ var gameEngineJS = (function () {
         
         } /** End Ray Casting Loop **/
 
-
-        // TODO: DEBUG   for debugging
-        // This determines in test.map, where we miss a wall
-        // if(fDistanceToWall == "9"){
-        //   console.log(i);
-        // }
-        // (in test.map, screen-line 240 bounds, i.e. never a block)
-        // console.log(`${fDistanceToWall} (Distance)`);
-        // console.log(`    At angle ${ fRayAngle }, X: ${fEyeX}, Y: ${fEyeY}`);
-
-
-        // at the end of ray casting, we should have the lengths of the rays
-        // set to their last value, representing their distances.
-        // Based on the distance to wall, determine how much floor and ceiling to show per column,
-        // Adding in the recalc for looking (fLookTimer) and jumping (nJumptimer)
-        // // var nCeiling = (nScreenHeight / 2) - nScreenHeight / fDistanceToWall;
         var nCeiling =
           fscreenHeightFactor - nScreenHeight / fDistanceToWall;
         var nFloor =
@@ -1392,20 +837,26 @@ var gameEngineJS = (function () {
 
             // Solid Walltype
             if (sWalltype != ".") {
-              var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
 
               // Render Texture with Shading
               var sPixelToRender = "0";
 
               // Standard Textures
               if (sWalltype == "#") {
-                
-                if(sWallDirection == "N" || sWallDirection == "S"){
+                if(sWallDirection == "N"){
                   sPixelToRender = "a"
-                }else{
+                }
+                else if(sWallDirection == "S"){
                   sPixelToRender = "b"
                 }
-              }else{
+                else if(sWallDirection == "E"){
+                  sPixelToRender = "p"
+                }
+                else{
+                  sPixelToRender = "q"
+                }
+              }
+              else{
                 sPixelToRender = "h"
               }
 
@@ -1417,8 +868,6 @@ var gameEngineJS = (function () {
                 screen[j * nScreenWidth + i] = "o"
               }
             }
-
-            // render whatever char is on the map as walltype
             else {
               screen[j * nScreenWidth + i] = "0";
             }
@@ -1515,8 +964,6 @@ var gameEngineJS = (function () {
     eTouchMove = document.getElementById("touchinputmove");
 
     _moveHelpers.keylisten();
-    _moveHelpers.mouseinit();
-    _moveHelpers.touchinit();
 
     // initial gameload
     _loadLevel("test.map");
