@@ -1,25 +1,31 @@
 /**
- * Some Performance enhancers:
- *  - cache π, and various calculations involving π
- *    https://stackoverflow.com/questions/8885323/speed-of-the-math-object-in-javascript
- *
- *  - replace parseInt, Math.floor with bitwise NOT operator ~~
- *  - replace parseFloat with bitwise + operator
- *    https://stackoverflow.com/questions/38702724/math-floor-vs-math-trunc-javascript
- *
- *  - TODO: Inline more function calls in high-frequency loops
- *  - TODO: Limit Object Access in high-frequency loops
- * 
- * 
- * TODO: Performance DROPS SIGNIFICANTLY when one is close to a color-sprite!! 
- *         Possibly too many lookups?
+ * FOR TESTING ONLY
  */
 
+var map = "";
+map += ".......";
+map += "...##..";
+map += "...C...";
+map += "...#...";
+map += "..#C...";
+map += ".......";
+map += ".......";
+
+testmap = {
+  nMapHeight: 7,
+  nMapWidth: 7,
+  map: map,
+  fPlayerX: 2.7,
+  fPlayerY: 2.8,
+  fPlayerA: 1.2,
+  fDepth: 9,
+};
+
+var epsilon = 0.0001;
 function approximatelyEqual(a, b, epsilon) {
   return Math.abs(a - b) < epsilon;
 }
 
-var epsilon = 0.0001;
 
 var gameEngineJS = (function () {
   // constants
@@ -43,7 +49,6 @@ var gameEngineJS = (function () {
   var nScreenWidth = 420;
   var nScreenHeight = 120;
 
-  // var fFOV = PI___ / 1.4; // (PI___ / 4.0 originally)
   var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
   var fDepth = 16.0; // viewport depth
   var nLookLimit = 8;
@@ -70,8 +75,6 @@ var gameEngineJS = (function () {
 
   var nMapHeight = 16;
   var nMapWidth = 16;
-  var map = "";
-  var sLevelstring = "";
 
   var gameRun;
 
@@ -81,257 +84,30 @@ var gameEngineJS = (function () {
     return ~~(Math.random() * (max - min + 1) + min);
   };
 
-  // generates only pogels that can be placed
-  var _generateRandomCoordinates = function () {
-    var x = +_randomIntFromInterval(0, nMapWidth) + 0;
-    var y = +_randomIntFromInterval(0, nMapHeight) - 0;
-
-    while (map[~~y * nMapWidth + ~~x] != ".") {
-      x = +_randomIntFromInterval(0, nMapWidth) + 1;
-      y = +_randomIntFromInterval(0, nMapHeight) - 1;
-    }
-
-    var oCoordinates = {
-      x: x,
-      y: y,
-    };
-
-    return oCoordinates;
-  };
-
-  // generate random Sprites
-  var _generateRandomSprites = function (nNumberOfSprites) {
-    nNumberOfSprites =
-      nNumberOfSprites || Math.round((nMapWidth * nMapWidth) / 15);
-    // generates random Pogels or Obetrls! :oooo
-    var oRandomLevelSprites = {};
-    for (var m = 0; m < nNumberOfSprites; m++) {
-      var randAngle = _randomIntFromInterval(0, PIx2);
-      var nSpriteRand = _randomIntFromInterval(0, 3);
-      var randomCoordinates = _generateRandomCoordinates();
-      var oRandomSprite = {
-        x: randomCoordinates.x,
-        y: randomCoordinates.y,
-        r: randAngle,
-        name: nSpriteRand === 1 ? "O" : "P",
-        move: true,
-        speed: _randomIntFromInterval(0, 5) * 0.01,
-        stuckcounter: 0,
-      };
-      oRandomLevelSprites[m] = oRandomSprite;
-    }
-    return oRandomLevelSprites;
-  };
 
   /**
    * Loads
-   * @param  {[string]} level The Level file
-   * @return {[type]}       [description]
    */
-  var _loadLevel = function (level) {
+  var _loadLevel = function () {
     clearInterval(gameRun);
 
-    sLevelstring = level.replace(".map", ""); // sets global string
+    // updates the level map, dimensions and textures
+    nMapHeight = testmap.nMapHeight;
+    nMapWidth = testmap.nMapWidth;
+    fDepth = testmap.fDepth || fDepth;
 
-    var loadScriptAsync = function (uri, sLevelstring) {
-      return new Promise(function (resolve, reject) {
-        var tag = document.createElement("script");
-        tag.src = "assets/" + uri;
-        tag.id = sLevelstring;
-        tag.async = true;
-
-        tag.onload = function () {
-          resolve();
-        };
-
-        document.getElementById("map").src = "assets/" + level;
-        var firstScriptTag = document.getElementsByTagName("script")[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      });
-    };
-
-    var levelLoaded = loadScriptAsync(level, sLevelstring);
-
-    levelLoaded.then(function () {
-      // updates the level map, dimensions and textures
-      map = window[sLevelstring].map;
-      nMapHeight = window[sLevelstring].nMapHeight;
-      nMapWidth = window[sLevelstring].nMapWidth;
-      fDepth = window[sLevelstring].fDepth || fDepth;
-      oLevelTextures = window[sLevelstring].textures || false;
-      sCeiling = window[sLevelstring].ceiling || false;
-
-      // places the player at the map starting point
-      fPlayerX = window[sLevelstring].fPlayerX;
-      fPlayerY = window[sLevelstring].fPlayerY;
-      fPlayerA = window[sLevelstring].fPlayerA;
-
-      // load sprites
-      oLevelSprites = window[sLevelstring].sprites;
-
-      if (oLevelSprites == "autogen") {
-        oLevelSprites = _generateRandomSprites();
-      }
-
-      document.querySelector("body").style.color = window[sLevelstring].color;
-      document.querySelector("body").style.background =
-        window[sLevelstring].background;
-    });
+    // places the player at the map starting point
+    fPlayerX = testmap.fPlayerX;
+    fPlayerY = testmap.fPlayerY;
+    fPlayerA = testmap.fPlayerA;
 
     main();
-
   };
 
-
-
-  /**
-   * Retrieve a fixed number of elements from an array, evenly distributed but
-   * always including the first and last elements.
-   *
-   * source https://stackoverflow.com/questions/32439437/retrieve-an-evenly-distributed-number-of-elements-from-an-array
-   * wow!!!!
-   *
-   * @param   {Array} items - The array to operate on.
-   * @param   {number} n -    The number of elements to extract.
-   * @returns {Array}
-   */
-  // helper function
-  function _toConsumableArray(arr) {
-    return (
-      _arrayWithoutHoles(arr) ||
-      _iterableToArray(arr) ||
-      _unsupportedIterableToArray(arr) ||
-      _nonIterableSpread()
-    );
-  }
-  function _evenlyPickItemsFromArray(allItems, neededCount) {
-    if (neededCount >= allItems.length) {
-      return _toConsumableArray(allItems);
-    }
-
-    var result = [];
-    var totalItems = allItems.length;
-    var interval = totalItems / neededCount;
-
-    for (var i = 0; i < neededCount; i++) {
-      var evenIndex = ~~(i * interval + interval / 2);
-      result.push(allItems[evenIndex]);
-    }
-
-    return result;
-  }
 
   // leaving the console for errors, logging seems to kill performance
   var _debugOutput = function (input) {
     eDebugOut.innerHTML = input;
-  };
-
-  // returns true every a-th interation of b
-  var _everyAofB = function (a, b) {
-    return a && a % b === 0;
-  };
-
-  // lookup-table “for fine-control” or “for perfomance”
-  // …(but really because I couldn"t figure out the logic [apparently] )
-  var _skipEveryXrow = function (input) {
-    input = Math.round(input);
-    switch (Number(input)) {
-      case 0:
-        return 0;
-        break;
-      case 1:
-        return 8;
-        break;
-      case 2:
-        return 6;
-        break;
-      case 3:
-        return 4;
-        break;
-      case 4:
-        return 3;
-        break;
-      case 5:
-        return 2;
-        break;
-      case 6:
-        return 2;
-        break;
-      case 7:
-        return 2;
-        break;
-      case 8:
-        return 1;
-        break;
-
-      case -1:
-        return 8;
-        break;
-      case -2:
-        return 8;
-        break;
-      case -3:
-        return 7;
-        break;
-      case -4:
-        return 7;
-        break;
-      case -5:
-        return 6;
-        break;
-      case -6:
-        return 6;
-        break;
-      case -7:
-        return 5;
-        break;
-      case -8:
-        return 5;
-        break;
-      case -9:
-        return 4;
-        break;
-      case -10:
-        return 4;
-        break;
-      case -11:
-        return 3;
-        break;
-      case -12:
-        return 3;
-        break;
-      case -13:
-        return 3;
-        break;
-      case -14:
-        return 3;
-        break;
-      case -15:
-        return 3;
-        break;
-      case -16:
-        return 2;
-        break;
-
-      default:
-        return 0;
-    }
-  };
-
-  // This is a better version, but it's been optimized into a bit of a black box now
-  var _skipEveryXrowBB = function (input) {
-    input = input | 0; // Equivalent to Math.round(input)
-  
-    if (input === 0 || input > 8 || input < -16) {
-      return 0;
-    }
-  
-    if (input >= 1) {
-      return Math.max(1, (8 / input + 0.5) | 0);
-    }
-  
-    // For negative values
-    return Math.max(2, (8 / (Math.abs(input) + 1) + 0.5) | 0);
   };
 
 
@@ -683,9 +459,6 @@ var gameEngineJS = (function () {
     gameRun = setInterval(gameLoop, 33);
     function gameLoop() {
 
-      /**
-       * Player-movement related
-       */
       _moveHelpers.move();
 
       // normalize player angle
@@ -807,7 +580,10 @@ var gameEngineJS = (function () {
             }
 
             if(i > 60 && i < 70){
-              console.log(`${sWallDirection}  ${i} : Angle: ${fTestAngle}`);
+              console.log(`${sWallDirection}  ${i} : Angle: ${fTestAngle} Block: ${sWallDirection}/${sWalltype}`);
+            }
+            if(i == 70){
+              console.log('---')
             }
           } 
           // END TEST FOR WALLS
@@ -878,79 +654,10 @@ var gameEngineJS = (function () {
             screen[j * nScreenWidth + i] = "f";
           }
         } // end draw column loop
-  
+
       } // end column loop
 
       _fDrawFrame(screen);
-    }
-  };
-
-  // for every row make a nScreenWidth amount of pixels
-  var _createTestScreen = function () {
-    var sOutput = "";
-    for (var i = 0; i < nScreenHeight; i++) {
-      for (var j = 0; j < nScreenWidth; j++) {
-        sOutput += "0";
-      }
-      sOutput += "<br>";
-    }
-    eScreen.innerHTML = sOutput;
-  };
-
-  var _getWidth = function () {
-    if (self.innerWidth) {
-      return self.innerWidth;
-    }
-    if (document.documentElement && document.documentElement.clientWidth) {
-      return document.documentElement.clientWidth;
-    }
-    if (document.body) {
-      return document.body.clientWidth;
-    }
-  };
-
-  var _getHeight = function () {
-    return Math.max(
-      document.documentElement.clientHeight || 0,
-      window.innerHeight || 0
-    );
-  };
-
-  var nTrymax = 512;
-  var _testScreenSizeAndStartTheGame = function () {
-    // render a static test screen
-    _createTestScreen();
-
-    var widthOfDisplay = eScreen.offsetWidth;
-    var widthOfViewport = _getWidth();
-    var heightOfViewPort = _getHeight();
-    var viewPortAspect = heightOfViewPort / widthOfViewport;
-
-    // check if the amount of pixels to be rendered fit, if not, repeat
-    if (widthOfDisplay > widthOfViewport + 120) {
-      nScreenWidth = nScreenWidth - 1;
-      // nScreenHeight = nScreenWidth * 0.22
-
-      // try no more than nTrymax times (in case of some error)
-      if (nTrymax > 0) {
-        nTrymax--;
-        _testScreenSizeAndStartTheGame();
-      } else {
-        _debugOutput("Trymax exceeded");
-      }
-    }
-    // if it does, set aspect-ratio-based height
-    // and start the game
-    else {
-      var fAdjustedAspectRatio = viewPortAspect / 2.82;
-      // _debugOutput(fAdjustedAspectRatio);
-
-      if (fAdjustedAspectRatio < 0.266) {
-        fAdjustedAspectRatio = 0.266;
-      }
-
-      nScreenHeight = nScreenWidth * fAdjustedAspectRatio;
-      main();
     }
   };
 
@@ -966,7 +673,7 @@ var gameEngineJS = (function () {
     _moveHelpers.keylisten();
 
     // initial gameload
-    _loadLevel("test.map");
+    _loadLevel();
   };
 
   return {

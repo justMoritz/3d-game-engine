@@ -1,18 +1,11 @@
 var map = "";
 map += ".......";
 map += "...##..";
-map += "...#..#";
-map += "...#..#";
-map += "..#C..#";
-map += "......#";
-map += "#######";
-
-// map = '........................#.....#C.................';
-
-
-/*
-........................#.....#C.................
-*/
+map += "...C...";
+map += "...#...";
+map += "..#C...";
+map += ".......";
+map += ".......";
 
 test = {
   nMapHeight: 7,
@@ -22,16 +15,4 @@ test = {
   fPlayerY: 2.8,
   fPlayerA: 1.2,
   fDepth: 9,
-  exitsto: "levelfile1.map",
-  color: "white",
-  background: "black",
-  ceiling: false,
-  sprites: {
-    "baby": {
-      "x": 2.0,
-      "y": 2.5,
-      "r": 2.0,
-      "name": "baby",
-    },
-  },
 };
