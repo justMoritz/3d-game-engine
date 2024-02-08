@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>3D ASCII DEBUG</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+
+  <script id="gameEngine" type="text/javascript" src="src/game-engine-debug-2.js?v=0.2.0"></script>
+
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: 'Consolas', Courier, monospace;
+      font-weight: bold;
+      font-size: 8px;
+      line-height: 1.15em;
+      overflow: hidden;
+      text-align: center;
+      touch-action: none;
+    }
+
+    #game {
+      position: relative;
+    }
+
+    #display {
+      display: inline-block;
+      pointer-events: none;
+    }
+
+    #seconddisplay {
+      position: absolute;
+      transform: scale(2, 4);
+      transform-origin: left;
+      /* width: 80%; */
+      /* height: auto; */
+      left: 0;
+      top: 20%;
+      color: lightgreen;
+      image-rendering: pixelated;
+      /* image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: -o-crisp-edges;
+      image-rendering: crisp-edges;
+      -ms-interpolation-mode: nearest-neighbor; */
+    }
+
+    #touchinputmove,
+    #touchinputlook {
+      height: 100%;
+      position: absolute;
+      top: 0;
+      width: 50%;
+      touch-action: pan-left, pan-right, pan-up, pan-down;
+    }
+
+    #touchinputmove {
+      left: 0;
+    }
+
+    #touchinputlook {
+      right: 0;
+    }
+
+    .nomouse {
+      cursor: none;
+    }
+
+    #debug {
+      clear: both;
+    }
+
+    @media(max-width: 768px) {
+      body {
+        font-size: 3px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="debug" style="font-size: 2em; line-height: 2em;"></div>
+  <div id="game">
+    <div id="display"></div>
+    <canvas id="seconddisplay"></canvas>
+    <div id="touchinputlook"></div>
+    <div id="touchinputmove"></div>
+  </div>
+
+  <br>
+  Click game screen to use mouse
+
+
+
+  <!-- <h2>Render Mode</h2> -->
+  <!-- <button id="solid">Solid</button>
+    <button id="texture">Texture</button>
+    <button id="shader">Shaded Texture</button> -->
+
+  <br><br>
+  <a href="https://github.com/justMoritz/3d-game-engine" target="_blank" style="color: white;">GitHub repo</a>
+  <br>
+  2020-2021 by Moritz Zimmer
+
+  <script>
+    gameEngineJS.init();
+  </script>
+</body>
+
+</html>
