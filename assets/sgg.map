@@ -55,7 +55,7 @@ sgg = {
   map: map,
   fPlayerX: 11.6,
   fPlayerY: 7.0,
-  fPlayerA: 4.2,
+  fPlayerA: 2.2,
   fDepth: 25,
   exitsto: "levelfile1.map",
   color: "white",

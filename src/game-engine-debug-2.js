@@ -471,7 +471,6 @@ var gameEngineJS = (function () {
 
       // holds the frames we"re going to send to the renderer
       var screen = [];
-      var precision = 64;
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
@@ -479,52 +478,178 @@ var gameEngineJS = (function () {
 
       // for the length of the screenwidth (one frame)
       // One screen-width-pixel at a time, cast a ray
-
-      let rayAngle = fPlayerA - fFOV/2;
-
       for (var i = 0; i < nScreenWidth; i++) {
+        // calculates the ray angle into the world space
+        // take the current player angle, subtract half the field of view
+        // and then chop it up into equal little bits of the screen width (at the current colum)
+        var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV; // = 2.068509080159083
+        var bBreakLoop = false;
+        var fDistanceToWall = 0;
+        var bHitWall = false;
+        var sWalltype = "#";
 
+        var fEyeX = Math.cos(fRayAngle); // = -0.4774170385358938
+        var fEyeY = Math.sin(fRayAngle); // = 0.8786768298502111
 
-        // Ray data
-        let ray = {
-          x: fPlayerX,
-          y: fPlayerY
-        }
+        var sWallDirection = "N";
 
-        // Ray path incrementers
-        let rayCos = Math.cos(rayAngle) / precision;
-        let raySin = Math.sin(rayAngle) / precision;
+        var fRayLength = 0.0;
 
-        let wall = ',';
-        while(wall == ',') {
-            ray.x += rayCos;
-            ray.y += raySin;
-            // wall = map[Math.floor(ray.y)][Math.floor(ray.x)];
-            wall = map[Math.floor(ray.y)  * nMapWidth + Math.floor(ray.x)];   
-        }
-        console.log(wall);
+        // The smaller, the finer, and slower. 
+        var fGrainControl = 0.01;
 
-        // Pythagoras theorem
-        let distance = Math.sqrt(Math.pow(fPlayerX - ray.x, 2) + Math.pow(fPlayerY - ray.y, 2));
+        /**
+         * Ray Casting Loop
+         */
+        while (!bBreakLoop && fRayLength < fDepth) {
 
-        // Fish eye fix
-        // distance = distance * Math.cos(degreeToRadians(rayAngle - data.player.angle));
-
-        // Wall height
-        let wallHeight = Math.floor(nScreenHeight/2 / distance);
-
-        // // Increment
-        // rayAngle += data.rayCasting.incrementAngle;
-
-
-        // TODO: Rayvasting per screen-width column (i)
-
-        sWalltype = wall;
-
+          // Adjust grain control based on ray angle
+          var fAdjustedGrainControl = fGrainControl;
+          if (fTestAngle % (Math.PI / 2) !== 0) {
+              // Increase resolution around corners
+              fAdjustedGrainControl /= 10;
+          }
+          // Increment
+          fRayLength += fAdjustedGrainControl;
         
+          if (!bHitWall) {  
+            fDistanceToWall = fRayLength;
+          }
+          
+          // ray position
+          var testXn = ~~(fPlayerX + fEyeX * fRayLength); //  2.7 + (-0.4774170385358938) * 1.2400000000000009 = 2.108002872215491  ~~ is 2
+          var testYn = ~~(fPlayerY + fEyeY * fRayLength); //  2.8 + (0.8786768298502111) * 1.2400000000000009  = 3.889559269014263  ~~ is 3
+
+          // Coordinates of all neighboring cells
+          var currentCell  = testYn  * nMapWidth + testXn ;
+          // use these as text coordinates
+          // STANDARD
+          var useThisAsCurrentCell = currentCell;
+          nTestX = ~~(fPlayerX + fEyeX * fRayLength);
+          nTestY = ~~(fPlayerY + fEyeY * fRayLength);
+
+          
+          // test if ray hits out of bounds
+          if (
+            nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight
+          ) {
+            bHitWall = true; // didn't actually, just no wall there
+            fDistanceToWall = fDepth;
+            bBreakLoop = true;
+            
+          }
+          // TEST FOR WALLS
+          else if (map[useThisAsCurrentCell] != ".") {
+            bHitWall = true;
+            bBreakLoop = true;
+
+            sWalltype = map[useThisAsCurrentCell];
+
+            // 1u wide cell into quarters
+            var fBlockMidX = nTestX + 0.5;
+            var fBlockMidY = nTestY + 0.5;
+
+            // using the distance to the wall and the player angle (Eye Vectors)
+            // to determine the collusion point
+            var fTestPointX = fPlayerX + fEyeX * fDistanceToWall;
+            var fTestPointY = fPlayerY + fEyeY * fDistanceToWall;
+
+            // now we have the location of the middle of the cell,
+            // and the location of point of collision, work out angle
+            var fTestAngle = Math.atan2(
+              fTestPointY - fBlockMidY,
+              fTestPointX - fBlockMidX
+            );
+            
+
+            
+            if(false){
+              // 2.348837936488321
+              if(fTestAngle >= -0.7853981633974483 && fTestAngle < 0.7853981633974483){
+                // W
+              }
+              else if (fTestAngle >= 0.7853981633974483 && fTestAngle < 2.356194490192345) {
+                // N
+              }
+              else if (fTestAngle < -0.7853981633974483 && fTestAngle >= -2.356194490192345) {
+                // S
+              }
+              else if (fTestAngle >= 2.356194490192345 || fTestAngle < -2.356194490192345) {
+                // E
+              }
+            }
+
+            function mre(input){
+              return Math.floor((input + Number.EPSILON) * 1000) / 1000
+            }
+            function mrt(input){
+              return parseInt(input*1000)
+            }
+
+            fTestAngle = mre(fTestAngle)
+            if(fTestAngle == 2.35 || fTestAngle == 2.34){
+              fTestAngle = 2.36;
+            }
+            else if( fTestAngle == -2.35 || fTestAngle == -2.36 ){
+              fTestAngle = -2.34
+            }
+            else if( fTestAngle == 0.78 || fTestAngle == 0.77 ){
+              fTestAngle = 0.79
+            }
+            else if( fTestAngle == -0.78 || fTestAngle == -0.77 ){
+              fTestAngle = -0.79
+            }
+
+            if(fTestAngle >=  -0.785 && fTestAngle <  0.785){
+            // if(fTestAngle >=  -785 && fTestAngle <  785){
+              sWallDirection = "W";
+            }
+            else if (fTestAngle >= 0.785 && fTestAngle < 2.356) {
+            // else if (fTestAngle >= 786 && fTestAngle < 2355) {
+              sWallDirection = "N";
+            }
+            else if (fTestAngle <  -0.785 && fTestAngle >= -2.356) {
+            // else if (fTestAngle <  -786 && fTestAngle >= -2356) {
+              sWallDirection = "S";
+            }
+            else if (fTestAngle >= 2.35 || fTestAngle < -2.35) {
+            // else if (fTestAngle >= 2355 || fTestAngle < -2355) {
+              sWallDirection = "E";
+            }
+
+            // rotate by pi over 4
+            // if (fTestAngle >= -PIx0_25 && fTestAngle < PIx0_25) {
+            //   fSampleX = fTestPointY - +nTestY;
+            //   sWallDirection = "W";
+            // }
+            // else if (fTestAngle >= PIx0_25 && fTestAngle < PIx0_75) {
+            //   fSampleX = fTestPointX - +nTestX;
+            //   sWallDirection = "N";
+            // }
+            // else if (fTestAngle < -PIx0_25 && fTestAngle >= -PIx0_75) {
+            //   fSampleX = fTestPointX - +nTestX;
+            //   sWallDirection = "S";
+            // }
+            // else if (fTestAngle >= PIx0_75 || fTestAngle < -PIx0_75) {
+            //   fSampleX = fTestPointY - +nTestY;
+            //   sWallDirection = "E";
+            // }
 
 
-        fDistanceToWall = distance;
+
+
+
+
+            if(i > 50 && i < 60){
+              console.log(`${sWallDirection}  ${i} : Angle: ${fTestAngle} Block: ${sWallDirection}/${sWalltype}`);
+            }
+            if(i == 60){
+              console.log('---')
+            }
+          } 
+          // END TEST FOR WALLS
+        
+        } /** End Ray Casting Loop **/
 
         var nCeiling =
           fscreenHeightFactor - nScreenHeight / fDistanceToWall;
