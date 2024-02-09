@@ -1483,8 +1483,8 @@ var gameEngineJS = (function () {
           // var fGrainControl = 0.15;
           // var fGrainControl = 0.1;
           // var fGrainControl = 0.05;
-          var fGrainControl = 0.02;
-          // var fGrainControl = 0.01;
+          // var fGrainControl = 0.02;
+          var fGrainControl = 0.01;
   
           /**
            * Ray Casting Loop

@@ -476,6 +476,17 @@ var gameEngineJS = (function () {
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
       var fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
+
+
+
+      // The smaller, the finer, and slower. 
+      var fGrainControl = 0.001;
+
+
+
+
+
+
       // for the length of the screenwidth (one frame)
       // One screen-width-pixel at a time, cast a ray
       for (var i = 0; i < nScreenWidth; i++) {
@@ -495,22 +506,26 @@ var gameEngineJS = (function () {
 
         var fRayLength = 0.0;
 
-        // The smaller, the finer, and slower. 
-        var fGrainControl = 0.01;
+        
 
         /**
          * Ray Casting Loop
          */
         while (!bBreakLoop && fRayLength < fDepth) {
 
-          // Adjust grain control based on ray angle
-          var fAdjustedGrainControl = fGrainControl;
-          if (fTestAngle % (Math.PI / 2) !== 0) {
-              // Increase resolution around corners
-              fAdjustedGrainControl /= 10;
-          }
-          // Increment
-          fRayLength += fAdjustedGrainControl;
+          // // Adjust grain control based on ray angle
+          // var fAdjustedGrainControl = fGrainControl;
+          // // TODO: THis is not the right condition. Instead what I think we want to do is go back to the old “find boundary of a cell” 
+          // // and then increase the resolution based on whether we are close to the boundary or not. This should be doable!
+          // if (fTestAngle % (Math.PI / 2) !== 0) {
+          //     // Increase resolution around corners
+          //     fAdjustedGrainControl /= 10;
+          // }
+          // // Increment
+          // fRayLength += fAdjustedGrainControl;
+
+
+          fRayLength += fGrainControl;
         
           if (!bHitWall) {  
             fDistanceToWall = fRayLength;
@@ -560,6 +575,36 @@ var gameEngineJS = (function () {
               fTestPointY - fBlockMidY,
               fTestPointX - fBlockMidX
             );
+
+
+            // // This was a great idea, but it's way too slow
+            // // The idea was to increase the resolution of the ray as we get close to the boundary of a cell,
+            // // and decrease it again as we get further away. However, it slows performance down way too much :(
+            // // test found boundries of the wall
+            // var fBound = 0.02;
+            // var isBoundary = false;
+            // var vectorPairList = [];
+            // for (var tx = 0; tx < 2; tx++) {
+            //   for (var ty = 0; ty < 2; ty++) {
+            //     var vy = +(nTestY) + ty - fPlayerY;
+            //     var vx = +(nTestX) + tx - fPlayerX;
+            //     var d = Math.sqrt(vx*vx + vy*vy);
+
+            //     var dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+            //     vectorPairList.push([d, dot]);
+            //   }
+            // }
+            // vectorPairList.sort((a, b) => {
+            //   return a[0] - b[0];
+            // })
+            // if (Math.acos(vectorPairList[0][1]) < fBound || Math.acos(vectorPairList[1][1]) < fBound) {
+            //   isBoundary = true;
+            //   fGrainControl = 0.0001;
+            // }
+            // else{
+            //   fGrainControl = 0.05;
+            //   isBoundary = false;
+            // }
             
 
             
@@ -695,6 +740,10 @@ var gameEngineJS = (function () {
               else{
                 sPixelToRender = "h"
               }
+
+              // if(isBoundary){
+              //   sPixelToRender = "0";
+              // }
 
               // Does not draw out of bounds pixels
               if( fDistanceToWall < fDepth ){
