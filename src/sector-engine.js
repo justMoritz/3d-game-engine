@@ -538,25 +538,19 @@ var gameEngineJS = (function () {
 
 
 
-
+      
 
       // for the length of the screenwidth (one frame)
       // One screen-width-pixel at a time, cast a ray
       for (var i = 0; i < nScreenWidth; i++) {
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
-        // and then chop it up into equal little bits of the screen width (at the current colum)
-        // var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV; // = 2.068509080159083
+
         var fDistanceToWall = 0;
         var sWalltype = "#";
-
-        // var fEyeX = Math.cos(fRayAngle);
-        // var fEyeY = Math.sin(fRayAngle);
-
         var sWallDirection = "N";
 
-
-
+              
         // Calculate the direction of the current ray
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
         var fEyeX = Math.cos(fRayAngle);
@@ -565,20 +559,19 @@ var gameEngineJS = (function () {
         var endX = fPlayerX + fEyeX * rayLength;
         var endY = fPlayerY + fEyeY * rayLength;
 
+
+        // TODO: For each sector ... that's a bit more logic. Coming soon.
+
+        
         // for each wall in a sector
-        for(var w = 0; w < testsector.length; w++){
+        for( var w = 0; w < testsector.length; w++ ){
           // Calculate if the lines of the current eye-vector and the testline variable above intersect,
           // If so, at which point, and then use the distance between that point and the player position (fPlayerX and fPlayerY)
           // to set the fDistanceToWall variable :) 
 
           var currentWall = testsector[w];
           
-          // preliminary wall shading:
-          if(w % 2 == 0){
-            sWallDirection = "S";
-          }else{
-            sWallDirection = "E";
-          }
+          
 
           // Check for intersection with the testline
           var intersection = intersectionPoint(
@@ -588,13 +581,18 @@ var gameEngineJS = (function () {
             { x: currentWall[1][0], y: currentWall[1][1] }
           );
 
-          
           // If there is an intersection, update fDistanceToWall
           if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
             fDistanceToWall = Math.sqrt(
               Math.pow(fPlayerX - intersection.x, 2) +
               Math.pow(fPlayerY - intersection.y, 2)
             );
+            // preliminary wall shading:
+            if(w % 2 == 0){
+              sWallDirection = "S";
+            }else{
+              sWallDirection = "E";
+            }
           }
           
 
@@ -670,7 +668,7 @@ var gameEngineJS = (function () {
             }
           } // end draw column loop
 
-        }
+        } // end iterate over all walls
 
       } // end column loop
 
