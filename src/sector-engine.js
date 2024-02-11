@@ -580,11 +580,7 @@ var gameEngineJS = (function () {
         if (bStrafeLeft) {
 
           var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
-          var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
-
-          // // the vector along which we are moving
-          // var fWallTestX = fPlayerX + Math.sin(fPlayerA) * fDepth;
-          // var fWallTestY = fPlayerY - Math.cos(fPlayerA) * fDepth;          
+          var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;    
 
           if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
@@ -715,10 +711,10 @@ var gameEngineJS = (function () {
           Math.pow(fPlayerY - intersection.y, 2)
         );
         
-        // console.log(fTestDistanceToWall);
+        console.log(fTestDistanceToWall);
 
         // close enough to be considered hitting the wall
-        if(fTestDistanceToWall < 0.1){
+        if(fTestDistanceToWall < 0.5){
 
           // if this wall we are hitting is considered a portal
           if(currentWall[2] != false){
