@@ -738,7 +738,15 @@ var gameEngineJS = (function () {
   }
 
 
-
+  /**
+   * 
+   * @param {string} startingSector 
+   * @param {*} i 
+   * @param {*} fDistanceToWall 
+   * @param {*} sWalltype 
+   * @param {*} sWallDirection 
+   * @returns 
+   */
   function checkSectors( startingSector, i , fDistanceToWall, sWalltype, sWallDirection){
     
     var currentSector = startingSector;
@@ -755,13 +763,16 @@ var gameEngineJS = (function () {
       visitedSectors[currentSector] = true;
 
 
+      var sectorWalls = window[currentSector]; // the actual sector object from the level file
+      console.log(currentSector)
+
       // for each wall in a sector
-      for( var w = 0; w < currentSector.length; w++ ){
+      for( var w = 0; w < sectorWalls.length; w++ ){
         // Calculate if the lines of the current eye-vector and the testline variable above intersect,
         // If so, at which point, and then use the distance between that point and the player position (fPlayerX and fPlayerY)
         // to set the fDistanceToWall variable :) 
 
-        var currentWall = currentSector[w];
+        var currentWall = sectorWalls[w];
       
         // Check for intersection of current view vector with the wall-vector we are testing
         var intersection = intersectionPoint(
@@ -792,7 +803,7 @@ var gameEngineJS = (function () {
           // don't draw that wall
           if(currentWall[2] != false){
             sWallDirection = "W";
-            nextSector = window[currentWall[2]];
+            nextSector = currentWall[2];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
@@ -965,7 +976,7 @@ var gameEngineJS = (function () {
         
 
         // checks the current sector, and potentially updates the sector the player might be in
-        checkSectors(window[sPlayerSector], i, fDistanceToWall, sWalltype, sWallDirection);
+        checkSectors(sPlayerSector, i, fDistanceToWall, sWalltype, sWallDirection);
 
 
       } // end column loop
