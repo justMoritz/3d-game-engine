@@ -711,8 +711,6 @@ var gameEngineJS = (function () {
           Math.pow(fPlayerY - intersection.y, 2)
         );
         
-        console.log(fTestDistanceToWall);
-
         // close enough to be considered hitting the wall
         if(fTestDistanceToWall < 0.5){
 
