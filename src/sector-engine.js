@@ -11,15 +11,19 @@ map += ".......";
 map += ".......";
 map += ".......";
 
+// 2 2 1 // 1
+// A: 3.4 X:6 Y:2.7 // 2
+// A: 3.4 X:7.7 Y:3.9 // 3
+
 testmap = {
   nMapHeight: 7,
   nMapWidth: 7,
   map: map,
-  fPlayerX: 2,
-  fPlayerY: 2,
-  fPlayerA: 1,
+  fPlayerX: 7.7,
+  fPlayerY: 3.9,
+  fPlayerA: 3.4,
   fDepth: 9,
-  startingSector: 'sector1',
+  startingSector: 'sector3',
 };
 
 
@@ -64,9 +68,6 @@ sector1 = [
     false
   ],
 ]
-
-// s1_wall_0 needs to be a portal to
-// s2_wall_0
 
 sector2 = [
   // s2 wall 0
@@ -654,6 +655,10 @@ var gameEngineJS = (function () {
             else if(sWallDirection == "E"){
               sPixelToRender = "p"
             }
+            // does not draw a wall, if there is a portal
+            else if(sWallDirection == "X"){
+              return
+            }
             else{
               sPixelToRender = "q"
             }
@@ -762,9 +767,10 @@ var gameEngineJS = (function () {
       // Mark the current sector as visited
       visitedSectors[currentSector] = true;
 
-
       var sectorWalls = window[currentSector]; // the actual sector object from the level file
-      console.log(currentSector)
+
+      if(i == 300)
+        console.log(`Current Sector ${currentSector}`)
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -802,33 +808,30 @@ var gameEngineJS = (function () {
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // don't draw that wall
           if(currentWall[2] != false){
-            sWallDirection = "W";
+            sWallDirection = "X";
             nextSector = currentWall[2];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
               sectorQueue.push(nextSector);
+              if(i == 300)
+                console.log(`Next Sector ${nextSector}`);
             }
 
-            // 
           }
         }
         
-        var nCeiling =
-          fscreenHeightFactor - nScreenHeight / fDistanceToWall;
-        var nFloor =
-          fscreenHeightFactor + nScreenHeight / fDistanceToWall;
-
-
-        // save the spot where the wall was hit
+        var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
+        var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
         fDepthBuffer[i] = fDistanceToWall;
         drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor)
 
       } // end iterate over all walls
 
     }
-    return nextSector;
-
+    if(i == 300)
+      console.log('---');
+    // return nextSector;
   };
 
 
