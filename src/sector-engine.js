@@ -19,6 +19,7 @@ testmap = {
   fPlayerY: 2,
   fPlayerA: 1,
   fDepth: 9,
+  startingSector: 'sector1',
 };
 
 
@@ -31,33 +32,106 @@ testline = [
 ]
 
 
-testsector = [
-  // line0
+sector1 = [
+  // s1 wall 0
   [
-    [4,2],
-    [5,4]
+    [4,2], // point 1
+    [5,4], // point 2
+    'sector2'
   ],     
-  // line1
+  // s1 wall 1
   [
     [5,4],
-    [2,5]
+    [2,5],
+    false
   ],     
-  // line2
+  // s1 wall 2
   [
     [2, 5],
-    [0.5, 4]
+    [0.5, 4],
+    false
   ],     
-  // line3
+  // s1 wall 3
   [
     [0.5, 4],
-    [0.2, 0.2]
+    [0.2, 0.2],
+    false
   ],     
-  // line4
+  // s1 wall 4
   [
     [0.2, 0.2],
-    [4, 2]
+    [4, 2],
+    false
   ],
 ]
+
+// s1_wall_0 needs to be a portal to
+// s2_wall_0
+
+sector2 = [
+  // s2 wall 0
+  [
+    [4,2], // point 1
+    [5,4], // point 2
+    'sector1'
+  ],     
+  // s2 wall 1
+  [
+    [4,2],
+    [6,1],
+    false
+  ],     
+  // s2 wall 2
+  [
+    [6, 1],
+    [7, 2.1],
+    false
+  ],     
+  // s2 wall 3
+  [
+    [7, 2.1],
+    [5, 4],
+    'sector3',
+  ],     
+]
+
+sector3 = [
+  // s3 wall 0
+  [
+    [7, 2.1], // point 1
+    [5, 4], // point 2
+    'sector2',
+  ],     
+  // s3 wall 1
+  [
+    [7,2.1],
+    [8,4],
+    false
+  ],     
+  // s3 wall 2
+  [
+    [8, 4],
+    [6, 6],
+    false
+  ],     
+  // s3 wall 3
+  [
+    [6, 6],
+    [4.5, 5],
+    false
+  ],     
+  // s3 wall 4
+  [
+    [4.5, 5],
+    [5, 4],
+    false
+  ],     
+]
+
+
+
+
+
 
 
 
@@ -105,6 +179,7 @@ var gameEngineJS = (function () {
     nMapHeight = testmap.nMapHeight;
     nMapWidth = testmap.nMapWidth;
     fDepth = testmap.fDepth || fDepth;
+    sPlayerSector = testmap.startingSector || startingSector;
 
     // places the player at the map starting point
     fPlayerX = testmap.fPlayerX;
@@ -204,259 +279,569 @@ var gameEngineJS = (function () {
       // Add more entries as needed
     },
   };
-  // keyboard and mouse
-  var _moveHelpers = {
-    // keystroke listening engine
-    keylisten: function () {
-      window.onkeydown = function (e) {
-        // _debugOutput(e.which);
+    // keyboard and mouse
+    var _moveHelpers = {
+      // keystroke listening engine
+      keylisten: function () {
+        window.onkeydown = function (e) {
+          // _debugOutput(e.which);
+  
+          if (e.which == 80) {
+            // p
+            if (bPaused) {
+              _testScreenSizeAndStartTheGame();
+              bPaused = false;
+            } else {
+              clearInterval(gameRun);
+              bPaused = true;
+            }
+          }
+          if (e.which == 16) {
+            // shift
+            bRunning = true;
+          }
+          if (e.which == 32) {
+            // space
+            bJumping = true;
+          }
+          if (e.which == 65) {
+            // a
+            bStrafeLeft = true;
+          }
+          if (e.which == 68) {
+            // d
+            bStrafeRight = true;
+          }
+          if (e.which == 81 || e.which == 37) {
+            // q or left
+            bTurnLeft = true;
+          }
+          if (e.which == 69 || e.which == 39) {
+            // e or right
+            bTurnRight = true;
+          }
+          if (e.which == 87 || e.which == 38) {
+            // w or up
+            bMoveForward = true;
+          }
+          if (e.which == 83 || e.which == 40) {
+            // s or down
+            bMoveBackward = true;
+          }
+        };
+  
+        window.onkeyup = function (e) {
+          if (e.which == 16) {
+            // shift
+            bRunning = false;
+          }
+          if (e.which == 32) {
+            // space
+            bJumping = false;
+            bFalling = true;
+          }
+          if (e.which == 65) {
+            // a
+            bStrafeLeft = false;
+          }
+          if (e.which == 68) {
+            // d
+            bStrafeRight = false;
+          }
+          if (e.which == 81 || e.which == 37) {
+            // q or left
+            bTurnLeft = false;
+          }
+          if (e.which == 69 || e.which == 39) {
+            // e or right
+            bTurnRight = false;
+          }
+          if (e.which == 87 || e.which == 38) {
+            // w or up
+            bMoveForward = false;
+          }
+          if (e.which == 83 || e.which == 40) {
+            // s or down
+            bMoveBackward = false;
+          }
+        };
+      },
+  
+      //
+      //
+      /**
+       * Y-Movement
+       * @param  {float}  fMoveInput   the movement from touch or mouse-input
+       * @param  {float}  fMoveFactor  factor by which to multiply the recieved input
+       *
+       * Ultimately modifies the `fLooktimer` variable, which is global :)
+       */
+      yMoveUpdate: function (fMoveInput, fMoveFactor) {
+        // look up/down (with bounds)
+        var fYMoveBy = fMoveInput * fMoveFactor;
+      
+        // if the looktimer is negative (looking down), increase the speed exponentially
+        if (fLooktimer < 0) {
+          fYMoveBy = fYMoveBy * Math.pow(1.2, -fLooktimer);
+        }else{
+          fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
+        }
+  
+        // if(bOnObject){
+        //   fYMoveBy /= 4;
+        // }
+      
+        // Update the looktimer
+        fLooktimer -= fYMoveBy;
+      
+        // Check and adjust boundaries
+        if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
+          fLooktimer += fYMoveBy;
+        }
+      },
+      
+  
+      mouseLook: function () {
+        var fMouseLookFactor = 0.002;
+  
+        document.body.requestPointerLock();
+        document.onmousemove = function (e) {
+          // look left/right
+          fPlayerA +=
+            e.movementX * fMouseLookFactor ||
+            e.mozMovementX * fMouseLookFactor ||
+            e.webkitMovementX * fMouseLookFactor ||
+            0;
+  
+          // look up and down
+          _moveHelpers.yMoveUpdate(
+            e.movementY || e.mozMovementY || e.webkitMovementY || 0,
+            0.05
+          );
+        };
+      },
+  
+      // mouse
+      mouseinit: function () {
+        touchinputlook.onclick = _moveHelpers.mouseLook;
+        touchinputmove.onclick = _moveHelpers.mouseLook;
+      },
+  
+      // holds and tracks touch-inputs
+      oTouch: {
+        move: {
+          x: 0,
+          y: 0,
+          bFirstTouch: true,
+        },
+        look: {
+          x: 0,
+          y: 0,
+          bFirstTouch: true,
+        },
+      },
+  
+      /**
+       * Calculates the difference between touch events fired
+       * @param  {object} prev  information about the state
+       * @param  {event}  e     the event
+       * @return {object}       x and y coordinates
+       */
+      touchCalculate: function (prev, e) {
+        var oDifference = {};
+  
+        // fetch and compare touch-points
+        // always [0] because no multitouch
+        var fInputX = e.changedTouches[0].clientX;
+        var fInputY = e.changedTouches[0].clientY;
+  
+        var differenceX = fInputX - prev.x;
+        var differenceY = fInputY - prev.y;
+  
+        prev.x = fInputX;
+        prev.y = fInputY;
+  
+        oDifference = {
+          x: differenceX,
+          y: differenceY,
+        };
+  
+        return oDifference;
+      },
+  
+      // initialize the touch listeners for walk and move areas
+      touchinit: function () {
+        // look (left hand of screen)
+        eTouchLook.addEventListener("touchmove", function (e) {
+          // fetches differences from input
+          var oDifferences = _moveHelpers.touchCalculate(
+            _moveHelpers.oTouch.look,
+            e
+          );
+  
+          // makes sure no crazy
+          if (oDifferences.x < 10 && oDifferences.x > -10) {
+            _moveHelpers.oTouch.look.bFirstTouch = false;
+          }
+  
+          if (!_moveHelpers.oTouch.look.bFirstTouch) {
+            // left and right
+            fPlayerA += oDifferences.x * 0.005;
+  
+            // up and down
+            _moveHelpers.yMoveUpdate(oDifferences.y, 0.1);
+          }
+        });
+  
+        // reset look
+        eTouchLook.addEventListener("touchend", function () {
+          _moveHelpers.oTouch.look.x = 0;
+          _moveHelpers.oTouch.look.y = 0;
+          _moveHelpers.oTouch.look.bFirstTouch = true;
+        });
+  
+        // move (right hand of screen)
+        eTouchMove.addEventListener("touchmove", function (e) {
+          var oDifferences = _moveHelpers.touchCalculate(
+            _moveHelpers.oTouch.move,
+            e
+          );
+  
+          // makes sure no crazy
+          if (oDifferences.x < 10 && oDifferences.x > -10) {
+            _moveHelpers.oTouch.move.bFirstTouch = false;
+          }
+  
+          // first touch will be a huge difference, that"s why we only move after the first touch
+          if (!_moveHelpers.oTouch.move.bFirstTouch) {
+            // walk
+            fPlayerX -=
+              (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+            fPlayerY +=
+              (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+  
+            // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
+            if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
+              _moveHelpers.checkExit();
+              fPlayerX +=
+                (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+              fPlayerY -=
+                (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+            }
+  
+            // strafe
+            fPlayerX +=
+              (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+            fPlayerY +=
+              (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+  
+            // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
+            if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
+              _moveHelpers.checkExit();
+              fPlayerX -=
+                (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+              fPlayerY -=
+                (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+            }
+          }
+        });
+  
+        // reset move
+        eTouchMove.addEventListener("touchend", function () {
+          _moveHelpers.oTouch.move.x = 0;
+          _moveHelpers.oTouch.move.y = 0;
+          _moveHelpers.oTouch.move.bFirstTouch = true;
+        });
+      },
+  
+      checkExit: function () {
+        // if we hit an exit
+        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "X") {
+          _loadLevel(window[sLevelstring].exitsto);
+        }
+      },
+  
+      // called once per frame, handles movement computation
+      move: function () {
+        
+        if (bTurnLeft) {
+          fPlayerA -= 0.05;
+        }
+  
+        if (bTurnRight) {
+          fPlayerA += 0.05;
+        }
+  
+        var fMoveFactor = 0.1;
+        if (bRunning) {
+          fMoveFactor = 0.2;
+        }
+  
+        if (bStrafeLeft) {
 
-        if (e.which == 80) {
-          // p
-          if (bPaused) {
-            _testScreenSizeAndStartTheGame();
-            bPaused = false;
-          } else {
-            clearInterval(gameRun);
-            bPaused = true;
+          var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+
+          // // the vector along which we are moving
+          // var fWallTestX = fPlayerX + Math.sin(fPlayerA) * fDepth;
+          // var fWallTestY = fPlayerY - Math.cos(fPlayerA) * fDepth;          
+
+          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
+            // don't let the player move
+          }else{
+            // move as normal
+            fPlayerX = fNewPlayerX;
+            fPlayerY = fNewPlayerY;
           }
         }
-        if (e.which == 16) {
-          // shift
-          bRunning = true;
-        }
-        if (e.which == 32) {
-          // space
-          bJumping = true;
-        }
-        if (e.which == 65) {
-          // a
-          bStrafeLeft = true;
-        }
-        if (e.which == 68) {
-          // d
-          bStrafeRight = true;
-        }
-        if (e.which == 81 || e.which == 37) {
-          // q or left
-          bTurnLeft = true;
-        }
-        if (e.which == 69 || e.which == 39) {
-          // e or right
-          bTurnRight = true;
-        }
-        if (e.which == 87 || e.which == 38) {
-          // w or up
-          bMoveForward = true;
-        }
-        if (e.which == 83 || e.which == 40) {
-          // s or down
-          bMoveBackward = true;
-        }
-      };
+  
+        if (bStrafeRight) {
 
-      window.onkeyup = function (e) {
-        if (e.which == 16) {
-          // shift
-          bRunning = false;
-        }
-        if (e.which == 32) {
-          // space
-          bJumping = false;
-          bFalling = true;
-        }
-        if (e.which == 65) {
-          // a
-          bStrafeLeft = false;
-        }
-        if (e.which == 68) {
-          // d
-          bStrafeRight = false;
-        }
-        if (e.which == 81 || e.which == 37) {
-          // q or left
-          bTurnLeft = false;
-        }
-        if (e.which == 69 || e.which == 39) {
-          // e or right
-          bTurnRight = false;
-        }
-        if (e.which == 87 || e.which == 38) {
-          // w or up
-          bMoveForward = false;
-        }
-        if (e.which == 83 || e.which == 40) {
-          // s or down
-          bMoveBackward = false;
-        }
-      };
-    },
+          var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-    //
-    //
-    /**
-     * Y-Movement
-     * @param  {float}  fMoveInput   the movement from touch or mouse-input
-     * @param  {float}  fMoveFactor  factor by which to multiply the recieved input
-     *
-     * Ultimately modifies the `fLooktimer` variable, which is global :)
-     */
-    yMoveUpdate: function (fMoveInput, fMoveFactor) {
-      // look up/down (with bounds)
-      var fYMoveBy = fMoveInput * fMoveFactor;
-    
-      // if the looktimer is negative (looking down), increase the speed exponentially
-      if (fLooktimer < 0) {
-        fYMoveBy = fYMoveBy * Math.pow(1.2, -fLooktimer);
-      }else{
-        fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
+          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
+            // don't let the player move
+          }else{
+            // move as normal
+            fPlayerX = fNewPlayerX;
+            fPlayerY = fNewPlayerY;
+          }
+        }
+  
+        if (bMoveForward && bPlayerMayMoveForward) {
+  
+          var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+
+          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
+            // don't let the player move
+          }else{
+            // move as normal
+            fPlayerX = fNewPlayerX;
+            fPlayerY = fNewPlayerY;
+          }
+        }
+  
+        if (bMoveBackward) {
+
+          var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+
+          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
+            // don't let the player move
+          }else{
+            // move as normal
+            fPlayerX = fNewPlayerX;
+            fPlayerY = fNewPlayerY;
+          }
+        }
+      },
+    };
+
+
+  // TODO:
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor){
+    // draws (into the pixel buffer) each column one screenheight-pixel at a time
+    for (var j = 0; j < nScreenHeight; j++) {
+        
+      // sky
+      if (j < nCeiling) {
+          screen[j * nScreenWidth + i] = "0";
       }
 
-      // Update the looktimer
-      fLooktimer -= fYMoveBy;
-    
-      // Check and adjust boundaries
-      if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
-        fLooktimer += fYMoveBy;
+      // solid block
+      else if (j > nCeiling && j <= nFloor) {
+
+        // Solid Walltype
+        if (sWalltype != ".") {
+
+          // Render Texture with Shading
+          var sPixelToRender = "0";
+
+          // Standard Textures
+          if (sWalltype == "#") {
+            if(sWallDirection == "N"){
+              sPixelToRender = "a"
+            }
+            else if(sWallDirection == "S"){
+              sPixelToRender = "b"
+            }
+            else if(sWallDirection == "E"){
+              sPixelToRender = "p"
+            }
+            else{
+              sPixelToRender = "q"
+            }
+          }
+          else{
+            sPixelToRender = "h"
+          }
+
+          // if(isBoundary){
+          //   sPixelToRender = "0";
+          // }
+
+          // Does not draw out of bounds pixels
+          if( fDistanceToWall < fDepth ){
+            // Updates the screen with the pixel
+            screen[j * nScreenWidth + i] = sPixelToRender
+          }else{
+            screen[j * nScreenWidth + i] = "o"
+          }
+        }
+        else {
+          screen[j * nScreenWidth + i] = "0";
+        }
+      } // end solid block
+
+      // floor
+      else {
+        screen[j * nScreenWidth + i] = "f";
       }
-    },
-    
+    } // end draw column loop
+  }
 
-    mouseLook: function () {
-      var fMouseLookFactor = 0.002;
 
-      document.body.requestPointerLock();
-      document.onmousemove = function (e) {
-        // look left/right
-        fPlayerA +=
-          e.movementX * fMouseLookFactor ||
-          e.mozMovementX * fMouseLookFactor ||
-          e.webkitMovementX * fMouseLookFactor ||
-          0;
+  // TODO: has some bugs
+  // takes a vector from current position to requested new position (maybe x2?)
+  // check all the walls in the current sector for intersection against that vector
+  // If the vector collides with any wall EXCEPT a portal
+  function testWallCollision( testX, testY ){
 
-        // look up and down
-        _moveHelpers.yMoveUpdate(
-          e.movementY || e.mozMovementY || e.webkitMovementY || 0,
-          0.05
+    // look at all walls in the current player sector
+    var allCurrentWalls = window[sPlayerSector];
+
+    for( var w = 0; w < allCurrentWalls.length; w++ ){
+      var fTestDistanceToWall = fDepth;
+      var currentWall = allCurrentWalls[w];
+      var intersection = intersectionPoint(
+        { x: fPlayerX, y: fPlayerY },
+        { x: testX, y: testY },
+        { x: currentWall[0][0], y: currentWall[0][1] },
+        { x: currentWall[1][0], y: currentWall[1][1] }
+      );
+      if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+        fTestDistanceToWall = Math.sqrt(
+          Math.pow(fPlayerX - intersection.x, 2) +
+          Math.pow(fPlayerY - intersection.y, 2)
         );
-      };
-    },
+        
+        // console.log(fTestDistanceToWall);
 
-    // holds and tracks touch-inputs
-    oTouch: {
-      move: {
-        x: 0,
-        y: 0,
-        bFirstTouch: true,
-      },
-      look: {
-        x: 0,
-        y: 0,
-        bFirstTouch: true,
-      },
-    },
+        // close enough to be considered hitting the wall
+        if(fTestDistanceToWall < 0.1){
 
-    /**
-     * Calculates the difference between touch events fired
-     * @param  {object} prev  information about the state
-     * @param  {event}  e     the event
-     * @return {object}       x and y coordinates
-     */
-    touchCalculate: function (prev, e) {
-      var oDifference = {};
+          // if this wall we are hitting is considered a portal
+          if(currentWall[2] != false){
+            var collisionSector = currentWall[2];
+            // set new global sector
+            sPlayerSector = collisionSector;
+            console.log(sPlayerSector)
 
-      // fetch and compare touch-points
-      // always [0] because no multitouch
-      var fInputX = e.changedTouches[0].clientX;
-      var fInputY = e.changedTouches[0].clientY;
-
-      var differenceX = fInputX - prev.x;
-      var differenceY = fInputY - prev.y;
-
-      prev.x = fInputX;
-      prev.y = fInputY;
-
-      oDifference = {
-        x: differenceX,
-        y: differenceY,
-      };
-
-      return oDifference;
-    },
-
-
-    // called once per frame, handles movement computation
-    move: function () {
-      if (bTurnLeft) {
-        fPlayerA -= 0.05;
-      }
-
-      if (bTurnRight) {
-        fPlayerA += 0.05;
-      }
-
-      var fMoveFactor = 0.1;
-      if (bRunning) {
-        fMoveFactor = 0.2;
-      }
-
-      if (bStrafeLeft) {
-        fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        }else{
-          bOnObject = false;
-          bFalling = true;
+            // and allow moving
+            return false;
+          }
+          else{
+            // non-portal wall, don't allow move
+            return true;
+          }
         }
+        
+        // has collided with any wall
+        // return true;
       }
+    }
+    return false;
+  }
 
-      if (bStrafeRight) {
-        fPlayerX -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        fPlayerY += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          fPlayerX += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        }else{
-          bOnObject = false;
-          bFalling = true;
+
+  function checkSectors( startingSector, i , fDistanceToWall, sWalltype, sWallDirection){
+    
+    var currentSector = startingSector;
+
+    // Queue to store sectors to be checked
+    var sectorQueue = [currentSector];
+    var visitedSectors = {}; // Object to track visited sectors
+
+    while (sectorQueue.length > 0) {
+      // Dequeue the first sector from the queue
+      currentSector = sectorQueue.shift();
+
+      // Mark the current sector as visited
+      visitedSectors[currentSector] = true;
+
+
+      // for each wall in a sector
+      for( var w = 0; w < currentSector.length; w++ ){
+        // Calculate if the lines of the current eye-vector and the testline variable above intersect,
+        // If so, at which point, and then use the distance between that point and the player position (fPlayerX and fPlayerY)
+        // to set the fDistanceToWall variable :) 
+
+        var currentWall = currentSector[w];
+      
+        // Check for intersection of current view vector with the wall-vector we are testing
+        var intersection = intersectionPoint(
+          { x: fPlayerX, y: fPlayerY },
+          { x: fPlayerEndX, y: fPlayerEndY },
+          { x: currentWall[0][0], y: currentWall[0][1] },
+          { x: currentWall[1][0], y: currentWall[1][1] }
+        );
+
+        // If there is an intersection, update fDistanceToWall
+        if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+          fDistanceToWall = Math.sqrt(
+            Math.pow(fPlayerX - intersection.x, 2) +
+            Math.pow(fPlayerY - intersection.y, 2)
+          );
+
+          // Fisheye correction
+          fDistanceToWall *= Math.cos(fAngleDifferences)
+          
+          // preliminary wall shading:
+          if(w % 2 == 0){
+            sWallDirection = "S";
+          }else{
+            sWallDirection = "E";
+          }
+
+          // if the current sector we are looking at has a portal (currentwall[2] !== false)
+          // don't draw that wall
+          if(currentWall[2] != false){
+            sWallDirection = "W";
+            nextSector = window[currentWall[2]];
+
+            // If the next sector hasn't been visited yet, enqueue it for checking
+            if (!visitedSectors[nextSector]) {
+              sectorQueue.push(nextSector);
+            }
+
+            // 
+          }
         }
-      }
+        
+        var nCeiling =
+          fscreenHeightFactor - nScreenHeight / fDistanceToWall;
+        var nFloor =
+          fscreenHeightFactor + nScreenHeight / fDistanceToWall;
 
-      if (bMoveForward && bPlayerMayMoveForward) {
-        fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        }else{
-          bOnObject = false;
-          bFalling = true;
-        }
-      }
+        // save the spot where the wall was hit
+        fDepthBuffer[i] = fDistanceToWall;
+        drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor)
 
-      if (bMoveBackward) {
-        fPlayerX -= (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        fPlayerY -= (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+      } // end iterate over all walls
 
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          fPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          fPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-        }else{
-          bOnObject = false;
-          bFalling = true;
-        }
-      }
-    },
+    }
+    return nextSector;
+
   };
+
+
+
+
+
 
   // constants
   var PI___ = +Math.PI;
@@ -503,10 +888,20 @@ var gameEngineJS = (function () {
   var fPlayerY = 1.0;
   var fPlayerA = 1.5;
 
+  var sPlayerSector = 'sector0';
+
+  var fPlayerEndX;
+  var fPlayerEndY;
+
+  var fscreenHeightFactor;
+
   var nMapHeight = 16;
   var nMapWidth = 16;
 
   var gameRun;
+
+  // holds the frames we"re going to send to the renderer
+  var screen = [];
 
   /**
    * The basic game loop
@@ -529,16 +924,14 @@ var gameEngineJS = (function () {
        * Drawing related
        */
 
-      // holds the frames we"re going to send to the renderer
-      var screen = [];
+      
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
-      var fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+      fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 
 
-      
 
       // for the length of the screenwidth (one frame)
       // One screen-width-pixel at a time, cast a ray
@@ -556,119 +949,42 @@ var gameEngineJS = (function () {
         var fEyeX = Math.cos(fRayAngle);
         var fEyeY = Math.sin(fRayAngle);
         var rayLength = fDepth;
-        var endX = fPlayerX + fEyeX * rayLength;
-        var endY = fPlayerY + fEyeY * rayLength;
+        fPlayerEndX = fPlayerX + fEyeX * rayLength;
+        fPlayerEndY = fPlayerY + fEyeY * rayLength;
+
+
+        fAngleDifferences =  fPlayerA - fRayAngle ;
+        
+        // TODO: reimplement
+          // // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
+          // // This corrects for this perspective
+          // // var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
+          // var angleCorrection = 0;
+
+          // if( angleCorrection == 1 ){
+          //   angleCorrection = 0;
+          // }
+          // fAngleDifferences *= 1- angleCorrection/4;
+
+          // // normalize
+          // if ( fAngleDifferences < 0) {
+          //   fAngleDifferences += PIx2;
+          // }
+          // if (fAngleDifferences > PIx2) {
+          //   fAngleDifferences -= PIx2;
+          // }
 
 
         // TODO: For each sector ... that's a bit more logic. Coming soon.
+        // We will start (and keep track of) each sector the player is in, and then render that sector (only)
+        // from there, will will check for portals into other sectors, and then render those sectors
+        // in the move logic, we're keeping track of when the player walks into a different sector (somehow)
 
         
-        // for each wall in a sector
-        for( var w = 0; w < testsector.length; w++ ){
-          // Calculate if the lines of the current eye-vector and the testline variable above intersect,
-          // If so, at which point, and then use the distance between that point and the player position (fPlayerX and fPlayerY)
-          // to set the fDistanceToWall variable :) 
 
-          var currentWall = testsector[w];
-          
-          
+        // checks the current sector, and potentially updates the sector the player might be in
+        checkSectors(window[sPlayerSector], i, fDistanceToWall, sWalltype, sWallDirection);
 
-          // Check for intersection with the testline
-          var intersection = intersectionPoint(
-            { x: fPlayerX, y: fPlayerY },
-            { x: endX, y: endY },
-            { x: currentWall[0][0], y: currentWall[0][1] },
-            { x: currentWall[1][0], y: currentWall[1][1] }
-          );
-
-          // If there is an intersection, update fDistanceToWall
-          if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
-            fDistanceToWall = Math.sqrt(
-              Math.pow(fPlayerX - intersection.x, 2) +
-              Math.pow(fPlayerY - intersection.y, 2)
-            );
-            // preliminary wall shading:
-            if(w % 2 == 0){
-              sWallDirection = "S";
-            }else{
-              sWallDirection = "E";
-            }
-          }
-          
-
-          var nCeiling =
-            fscreenHeightFactor - nScreenHeight / fDistanceToWall;
-          var nFloor =
-            fscreenHeightFactor + nScreenHeight / fDistanceToWall;
-
-
-          // the spot where the wall was hit
-          fDepthBuffer[i] = fDistanceToWall;
-
-          // console.log(w);
-          // console.log(sWallDirection);
-
-
-          // draws (into the pixel buffer) each column one screenheight-pixel at a time
-          for (var j = 0; j < nScreenHeight; j++) {
-            
-            // sky
-            if (j < nCeiling) {
-                screen[j * nScreenWidth + i] = "0";
-            }
-
-            // solid block
-            else if (j > nCeiling && j <= nFloor) {
-
-              // Solid Walltype
-              if (sWalltype != ".") {
-
-                // Render Texture with Shading
-                var sPixelToRender = "0";
-
-                // Standard Textures
-                if (sWalltype == "#") {
-                  if(sWallDirection == "N"){
-                    sPixelToRender = "a"
-                  }
-                  else if(sWallDirection == "S"){
-                    sPixelToRender = "b"
-                  }
-                  else if(sWallDirection == "E"){
-                    sPixelToRender = "p"
-                  }
-                  else{
-                    sPixelToRender = "q"
-                  }
-                }
-                else{
-                  sPixelToRender = "h"
-                }
-
-                // if(isBoundary){
-                //   sPixelToRender = "0";
-                // }
-
-                // Does not draw out of bounds pixels
-                if( fDistanceToWall < fDepth ){
-                  // Updates the screen with the pixel
-                  screen[j * nScreenWidth + i] = sPixelToRender
-                }else{
-                  screen[j * nScreenWidth + i] = "o"
-                }
-              }
-              else {
-                screen[j * nScreenWidth + i] = "0";
-              }
-            } // end solid block
-
-            // floor
-            else {
-              screen[j * nScreenWidth + i] = "f";
-            }
-          } // end draw column loop
-
-        } // end iterate over all walls
 
       } // end column loop
 
@@ -686,6 +1002,8 @@ var gameEngineJS = (function () {
     eTouchMove = document.getElementById("touchinputmove");
 
     _moveHelpers.keylisten();
+    _moveHelpers.mouseinit();
+    _moveHelpers.touchinit();
 
     // initial gameload
     _loadLevel();
