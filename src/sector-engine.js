@@ -586,10 +586,7 @@ var gameEngineJS = (function () {
           // var fWallTestX = fPlayerX + Math.sin(fPlayerA) * fDepth;
           // var fWallTestY = fPlayerY - Math.cos(fPlayerA) * fDepth;          
 
-          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
-            // don't let the player move
-          }else{
-            // move as normal
+          if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
             fPlayerY = fNewPlayerY;
           }
@@ -600,10 +597,7 @@ var gameEngineJS = (function () {
           var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
           var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
-            // don't let the player move
-          }else{
-            // move as normal
+          if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
             fPlayerY = fNewPlayerY;
           }
@@ -614,10 +608,7 @@ var gameEngineJS = (function () {
           var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
           var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
-            // don't let the player move
-          }else{
-            // move as normal
+          if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
             fPlayerY = fNewPlayerY;
           }
@@ -628,10 +619,7 @@ var gameEngineJS = (function () {
           var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
           var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
 
-          if( testWallCollision(fNewPlayerX, fNewPlayerY) ){
-            // don't let the player move
-          }else{
-            // move as normal
+          if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
             fPlayerY = fNewPlayerY;
           }
