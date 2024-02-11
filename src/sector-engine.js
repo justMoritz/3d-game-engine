@@ -579,8 +579,8 @@ var gameEngineJS = (function () {
   
         if (bStrafeLeft) {
 
-          var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
+          var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
 
           // // the vector along which we are moving
           // var fWallTestX = fPlayerX + Math.sin(fPlayerA) * fDepth;
@@ -594,8 +594,8 @@ var gameEngineJS = (function () {
   
         if (bStrafeRight) {
 
-          var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
+          var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
 
           if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
@@ -605,8 +605,8 @@ var gameEngineJS = (function () {
   
         if (bMoveForward && bPlayerMayMoveForward) {
   
-          var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
+          var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
 
           if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
@@ -616,8 +616,8 @@ var gameEngineJS = (function () {
   
         if (bMoveBackward) {
 
-          var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
-          var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 5.0 * 0.0051) * fMoveFactor;
+          var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
+          var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
 
           if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
             fPlayerX = fNewPlayerX;
