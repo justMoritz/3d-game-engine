@@ -1,7 +1,9 @@
 # Canvas/Color Version
 
-I am working on a Canvas/Color version, there's a branch for it, which includes its own pixel/texture editor. 
-**More info coming soon**
+I am working on a **sector-base new 3D Engine**, a direct continuation of this work here.
+
+Please check out the  [new repo](https://github.com/justMoritz/sector-based-3d-engine) for more information!
+
 
 
 # 3D ASCII Game Engine
