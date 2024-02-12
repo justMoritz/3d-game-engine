@@ -51,7 +51,7 @@ var fDepthBuffer = [];
 var fPlayerX = 14.0;
 var fPlayerY = 1.0;
 var fPlayerA = 1.5;
-var fPlayerH = 1;
+var fPlayerH = 0;
 
 var sPlayerSector = 'sector0';
 

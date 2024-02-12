@@ -204,20 +204,24 @@ map = {
   ],
 }
 
-
+// 1.5 is 125% 
 // 1 is standard
-// 0.75 is 25% shorter 
-// 1.25 is 25% longer
+// 0.5 is 25%
+// 0 is 50%
+// -1 is 0%
+// of the reference of each
 sectorMeta = {
   "sector1" : [
-    0.5, // Ceiling Height
     0.5, // Floor Height
-    2
+    1.5, // Ceiling Height
+  ],
+  "sector5" : [
+    1.25, // Floor Height
+    0.75, // Ceiling Height
   ],
   "sector6": [
     1.5,
     0.5,
-    0.75
   ]
 }
 
@@ -436,8 +440,8 @@ var gameEngineJS = (function () {
            
             // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
             wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
-            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * sectorCeilingFactor;
-            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall   * sectorFloorFactor ;
+            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
+            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
             fDepthBuffer[i] = fDistanceToWall;      
             drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition, fSampleXScale, fSampleYScale)
           }
@@ -476,8 +480,10 @@ var gameEngineJS = (function () {
       // allows for jumping a certain amount of time
       if (bJumping) {
         nJumptimer++;
+        // TODO: BETTER JUMPING
+        // fPlayerH += 0.1;
       }
-      if (nJumptimer > 6) {
+      if (nJumptimer > 0.5) {
         bFalling = true;
         bJumping = false;
         nJumptimer = 6;
@@ -501,6 +507,8 @@ var gameEngineJS = (function () {
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+
+      // fscreenHeightFactor = fscreenHeightFactor * fPlayerH
       // TODO: factor in fPlayerH
 
 

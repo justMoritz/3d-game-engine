@@ -43,9 +43,9 @@
 
             // sets the player Height when a sector is changed
             if(typeof sectorMeta[sPlayerSector] !== 'undefined'){
-              fPlayerH = sectorMeta[sPlayerSector][2]
+              fPlayerH = 1 - sectorMeta[sPlayerSector][0]
             }else{
-              fPlayerH = 1;
+              fPlayerH = 0;
             }
             console.log(fPlayerH)
 
