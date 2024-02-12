@@ -166,111 +166,6 @@ sector4 = [
 
 
 
-  /**
-   * Function will get the pixel to be sampled from the sprite
-   *
-   * @param  {object/string} texture -      EITHER: 
-   *                                          A complete texture object to be sampled, 
-   *                                        OR: 
-   *                                          the name of the texture key in either the global
-   *                                          / level-side side texture object
-   * @param  {float} x -                    The x coordinate of the sample (how much across)
-   * @param  {float} y -                    The y coordinate of the sample
-   * @return {string}
-   */
-  var _getSamplePixel = function (texture, x, y) {
-
-    // defaults
-    var scaleFactor = texture["scale"] || defaultTexScale;
-    var texWidth = texture["width"] || defaultTexWidth;
-    var texHeight = texture["height"] || defaultTexHeight;
-    var noColor = texture["noColor"] || false;
-    
-
-    var texpixels = texture["texture"];
-
-    if (texture["texture"] == "DIRECTIONAL") {
-      // Different Texture based on viewport
-      if (nDegrees > 0 && nDegrees < 180) {
-          texpixels = texture["S"];
-      } else {
-          texpixels = texture["N"];
-      }
-    }
-
-    scaleFactor = scaleFactor || 2;
-    
-    x = (scaleFactor * x) % 1;
-    y = (scaleFactor * y) % 1;
-
-    var sampleX = ~~(texWidth * x);
-    var sampleY = ~~(texHeight * y);
-
-    var samplePosition = texWidth * sampleY + sampleX;
-    var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
-
-    var currentColor;
-    var currentPixel;
-
-    if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-      return "+";
-    } else {
-      
-      if( noColor ){
-        currentPixel = texpixels[samplePosition];
-        currentColor = 'm';
-      }else{
-        currentPixel = texpixels[samplePosition2];
-        currentColor = texpixels[samplePosition2+1];
-      }
-  
-      return [currentPixel, currentColor];
-    }
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-// takes beginning and ends of two vectors, and returns the point at which they meet, if they do
-// Stolen from jdh on YouTube, (who stole it from Wikipedia), but then implemented for my needs :)
-function intersectionPoint(a0, a1, b0, b1) {
-  var d = ((a0.x - a1.x) * (b0.y - b1.y)) - ((a0.y - a1.y) * (b0.x - b1.x));
-  
-  if (Math.abs(d) < 0.000001) { 
-    return { x: NaN, y: NaN }; 
-  }
-    
-  var t = (((a0.x - b0.x) * (b0.y - b1.y)) - ((a0.y - b0.y) * (b0.x - b1.x))) / d;
-  var u = (((a0.x - b0.x) * (a0.y - a1.y)) - ((a0.y - b0.y) * (a0.x - a1.x))) / d;
-
-  if(t >= 0 && t <= 1 && u >= 0 && u <= 1){
-    return { 
-      x: a0.x + (t * (a1.x - a0.x)), 
-      y: a0.y + (t * (a1.y - a0.y)), 
-    }
-  }
-  else{
-    return { x: NaN, y: NaN };
-  }
-}
-
-
-
-var epsilon = 0.0001;
-function approximatelyEqual(a, b, epsilon) {
-  return Math.abs(a - b) < epsilon;
-}
-
-
 var gameEngineJS = (function () {
   
 
@@ -292,60 +187,6 @@ var gameEngineJS = (function () {
     fPlayerA = testmap.fPlayerA;
 
     main();
-  };
-
-
-  // leaving the console for errors, logging seems to kill performance
-  var _debugOutput = function (input) {
-    eDebugOut.innerHTML = input;
-  };
-
-
-  var _drawToCanvas = function ( pixels ) {
-    // Assuming your canvas has a width and height
-
-    eCanvas.width = nScreenWidth;
-    eCanvas.height = nScreenHeight;
-    
-    // Create an ImageData object with the pixel data
-    var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
-        
-    // Convert values to shades of colors
-    for (var i = 0; i < pixels.length; i++) {
-      var pixelValue = pixels[i];
-      var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
-      imageData.data[i * 4] = color[0]; // Red 
-      imageData.data[i * 4 + 1] = color[1]; // Green 
-      imageData.data[i * 4 + 2] = color[2]; // Blue 
-      imageData.data[i * 4 + 3] = 255; // Alpha 
-    }
-    // Use putImageData to draw the pixels onto the canvas
-    cCtx.putImageData(imageData, 0, 0);
-  }
-  var _fDrawFrame = function (screen, target) {
-    _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
-    var frame = screen
-    var target = target || eScreen;
-
-    var sOutput = "";
-    var sCanvasOutput = "";
-
-    // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-    var printIndex = 0;
-
-    for (var row = 0; row < nScreenHeight; row++) {
-      for (var pix = 0; pix < nScreenWidth; pix++) {
-        // H-blank based on screen-width
-        if (printIndex % nScreenWidth == 0) {
-          sOutput += "<br>";
-        }
-        sOutput += frame[printIndex];
-        sCanvasOutput += frame[printIndex];
-        printIndex++;
-      }
-    }
-    target.innerHTML = sOutput;
-    _drawToCanvas( sCanvasOutput );
   };
 
 
@@ -428,7 +269,10 @@ var gameEngineJS = (function () {
    * @param {*} sWallDirection 
    * @returns 
    */
-  function checkSectors( startingSector, i , fDistanceToWall, sWalltype, sWallDirection){
+  function checkSectors( startingSector, i , fDistanceToWall){
+
+    var sWalltype = "#";
+    var sWallDirection = "N";
     
     var currentSector = startingSector;
 
@@ -543,8 +387,6 @@ var gameEngineJS = (function () {
         // take the current player angle, subtract half the field of view
 
         var fDistanceToWall = 0;
-        var sWalltype = "#";
-        var sWallDirection = "N";
 
               
         // Calculate the direction of the current ray
@@ -586,7 +428,8 @@ var gameEngineJS = (function () {
         
 
         // checks the current sector, and potentially updates the sector the player might be in
-        checkSectors(sPlayerSector, i, fDistanceToWall, sWalltype, sWallDirection);
+        // TODO: Consider not passing fDistanceToWall
+        checkSectors(sPlayerSector, i, fDistanceToWall);
 
 
       } // end column loop

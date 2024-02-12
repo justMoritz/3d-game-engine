@@ -240,3 +240,384 @@ var _rh = {
     return fill;
   },
 };
+
+
+
+
+
+/**
+ * Function will get the pixel to be sampled from the sprite
+ *
+ * @param  {object/string} texture -      EITHER: 
+ *                                          A complete texture object to be sampled, 
+ *                                        OR: 
+ *                                          the name of the texture key in either the global
+ *                                          / level-side side texture object
+ * @param  {float} x -                    The x coordinate of the sample (how much across)
+ * @param  {float} y -                    The y coordinate of the sample
+ * @return {string}
+ */
+var _getSamplePixel = function (texture, x, y) {
+
+  // defaults
+  var scaleFactor = texture["scale"] || defaultTexScale;
+  var texWidth = texture["width"] || defaultTexWidth;
+  var texHeight = texture["height"] || defaultTexHeight;
+  var noColor = texture["noColor"] || false;
+  
+
+  var texpixels = texture["texture"];
+
+  if (texture["texture"] == "DIRECTIONAL") {
+    // Different Texture based on viewport
+    if (nDegrees > 0 && nDegrees < 180) {
+        texpixels = texture["S"];
+    } else {
+        texpixels = texture["N"];
+    }
+  }
+
+  scaleFactor = scaleFactor || 2;
+  
+  x = (scaleFactor * x) % 1;
+  y = (scaleFactor * y) % 1;
+
+  var sampleX = ~~(texWidth * x);
+  var sampleY = ~~(texHeight * y);
+
+  var samplePosition = texWidth * sampleY + sampleX;
+  var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+
+  var currentColor;
+  var currentPixel;
+
+  if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
+    return "+";
+  } else {
+    
+    if( noColor ){
+      currentPixel = texpixels[samplePosition];
+      currentColor = 'm';
+    }else{
+      currentPixel = texpixels[samplePosition2];
+      currentColor = texpixels[samplePosition2+1];
+    }
+
+    return [currentPixel, currentColor];
+  }
+};
+
+
+
+// returns true every a-th interation of b
+var _everyAofB = function (a, b) {
+  return a && a % b === 0;
+};
+
+
+
+
+// lookup-table “for fine-control” or “for perfomance”
+// …(but really because I couldn"t figure out the logic [apparently] )
+var _skipEveryXrow = function (input) {
+  input = Math.round(input);
+  switch (Number(input)) {
+    case 0:
+      return 0;
+      break;
+    case 1:
+      return 8;
+      break;
+    case 2:
+      return 6;
+      break;
+    case 3:
+      return 4;
+      break;
+    case 4:
+      return 3;
+      break;
+    case 5:
+      return 2;
+      break;
+    case 6:
+      return 2;
+      break;
+    case 7:
+      return 2;
+      break;
+    case 8:
+      return 1;
+      break;
+
+    case -1:
+      return 8;
+      break;
+    case -2:
+      return 8;
+      break;
+    case -3:
+      return 7;
+      break;
+    case -4:
+      return 7;
+      break;
+    case -5:
+      return 6;
+      break;
+    case -6:
+      return 6;
+      break;
+    case -7:
+      return 5;
+      break;
+    case -8:
+      return 5;
+      break;
+    case -9:
+      return 4;
+      break;
+    case -10:
+      return 4;
+      break;
+    case -11:
+      return 3;
+      break;
+    case -12:
+      return 3;
+      break;
+    case -13:
+      return 3;
+      break;
+    case -14:
+      return 3;
+      break;
+    case -15:
+      return 3;
+      break;
+    case -16:
+      return 2;
+      break;
+
+    default:
+      return 0;
+  }
+};
+
+
+
+
+
+  
+/**
+ * Retrieve a fixed number of elements from an array, evenly distributed but
+ * always including the first and last elements.
+ *
+ * source https://stackoverflow.com/questions/32439437/retrieve-an-evenly-distributed-number-of-elements-from-an-array
+ * wow!!!!
+ *
+ * @param   {Array} items - The array to operate on.
+ * @param   {number} n -    The number of elements to extract.
+ * @returns {Array}
+ */
+// helper function
+function _toConsumableArray(arr) {
+  return (
+    _arrayWithoutHoles(arr) ||
+    _iterableToArray(arr) ||
+    _unsupportedIterableToArray(arr) ||
+    _nonIterableSpread()
+  );
+}
+function _evenlyPickItemsFromArray(allItems, neededCount) {
+  if (neededCount >= allItems.length) {
+    return _toConsumableArray(allItems);
+  }
+
+  var result = [];
+  var totalItems = allItems.length;
+  var interval = totalItems / neededCount;
+
+  for (var i = 0; i < neededCount; i++) {
+    var evenIndex = ~~(i * interval + interval / 2);
+    result.push(allItems[evenIndex]);
+  }
+
+  return result;
+}
+
+
+
+
+
+
+/**
+ * Creates a new array of pixels taking looking up and down into account
+ * It returns an array to be rendered later.
+ * the aim is to remove the first and last 30 pixels of very row,
+ * to obscure the skewing
+ */
+var _fPrepareFrame = function (oInput, eTarget) {
+  var eTarget = eTarget || eScreen;
+  var sOutput = [];
+
+  // this is the maximum of variation created by the lookup timer, aka the final look-modifier value
+  var neverMoreThan = Math.round(
+    nScreenHeight / _skipEveryXrow(fLooktimer) - 1
+  );
+
+  // used to skew the image
+  var globalPrintIndex = 0;
+  var fLookModifier = 0;
+
+  // if looking up, the starting point is the max number of pixesl to indent,
+  // which will be decremented, otherwise it remains 0, which will be incremented
+  if (fLooktimer > 0 && isFinite(neverMoreThan)) {
+    fLookModifier = neverMoreThan;
+  }
+
+  // iterate each row at a time
+  for (var row = 0; row < nScreenHeight; row++) {
+    // increment the fLookModifier every time it needs to grow (grows per row)
+    if (_everyAofB(row, _skipEveryXrow(fLooktimer))) {
+      if (fLooktimer > 0) {
+        // looking up
+        fLookModifier--;
+      } else {
+        fLookModifier++;
+      }
+    }
+
+    // print filler pixels
+    for (var i = 0; i < fLookModifier; i++) {
+      sOutput.push(".");
+    }
+
+    var toBeRemoved = 2 * fLookModifier;
+    var removeFrom = [];
+
+    //  make a new array that contains the indices of the elements to print
+    // (removes X amount of elements from array)
+    var items = [];
+    for (var i = 0; i <= nScreenWidth; i++) {
+      items.push(i);
+    }
+
+    // list to be removed from each row:
+    // [1,2,3,4,5,6,7,8]
+    // [1,2, ,4,5, ,7,8]
+    //   [1,2,4,5,7,8]
+    removeFrom = _evenlyPickItemsFromArray(items, toBeRemoved);
+
+    // loops through each rows of pixels
+    for (var rpix = 0; rpix < nScreenWidth; rpix++) {
+      // print only if the pixel is in the list of pixels to print
+      if (removeFrom.includes(rpix)) {
+        // don"t print
+      } else {
+        // print
+        sOutput.push( oInput[globalPrintIndex] );
+        // sOutput.push(_printCompositPixel(oInput, oOverlay, globalPrintIndex));
+      }
+
+      globalPrintIndex++;
+    } // end for(rpix
+
+    // print filler pixels
+    for (var i = 0; i < fLookModifier; i++) {
+      sOutput.push(".");
+    }
+  } // end for(row
+
+  return sOutput;
+};
+
+
+
+var _drawToCanvas = function ( pixels ) {
+  // Assuming your canvas has a width and height
+
+  eCanvas.width = nScreenWidth;
+  eCanvas.height = nScreenHeight;
+  
+  // Create an ImageData object with the pixel data
+  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
+      
+  // Convert values to shades of colors
+  for (var i = 0; i < pixels.length; i++) {
+    var pixelValue = pixels[i];
+    var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
+    imageData.data[i * 4] = color[0]; // Red 
+    imageData.data[i * 4 + 1] = color[1]; // Green 
+    imageData.data[i * 4 + 2] = color[2]; // Blue 
+    imageData.data[i * 4 + 3] = 255; // Alpha 
+  }
+  // Use putImageData to draw the pixels onto the canvas
+  cCtx.putImageData(imageData, 0, 0);
+}
+
+
+var _fDrawFrame = function (screen, target) {
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
+  var frame = screen
+  var target = target || eScreen;
+
+  var sOutput = "";
+  var sCanvasOutput = "";
+
+  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  var printIndex = 0;
+
+  for (var row = 0; row < nScreenHeight; row++) {
+    for (var pix = 0; pix < nScreenWidth; pix++) {
+      // H-blank based on screen-width
+      if (printIndex % nScreenWidth == 0) {
+        sOutput += "<br>";
+      }
+      sOutput += frame[printIndex];
+      sCanvasOutput += frame[printIndex];
+      printIndex++;
+    }
+  }
+  target.innerHTML = sOutput;
+  _drawToCanvas( sCanvasOutput );
+};
+
+
+
+var _fDrawFrameWithSkew = function (screen, target) {
+  var frame = _fPrepareFrame(screen);
+  var target = target || eScreen;
+
+  var sOutput = "";
+  var sCanvasOutput = "";
+
+  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  var printIndex = 0;
+  var removePixels = nScreenHeight / 2;
+
+  
+  for (var row = 0; row < nScreenHeight; row++) {
+    for (var pix = 0; pix < nScreenWidth; pix++) {
+      // H-blank based on screen-width
+      if (printIndex % nScreenWidth == 0) {
+        sOutput += "<br>";
+      }
+
+      if (pix < removePixels) {
+        sOutput += "";
+        sCanvasOutput += "4";
+      } else if (pix > nScreenWidth - removePixels) {
+        sOutput += "";
+        sCanvasOutput += "4";
+      } else {
+        sOutput += frame[printIndex];
+        sCanvasOutput += frame[printIndex];
+      }
+
+      printIndex++;
+    }
+  }
+  target.innerHTML = sOutput;
+  _drawToCanvas( sCanvasOutput, removePixels );
+};
