@@ -2,6 +2,17 @@
  * FOR TESTING ONLY
  */
 
+// TODO:
+// Map into single file
+// Texture sampling should work like this:
+
+// Wall detection:
+// 1) we know where the wall was hit, this is our x-sampling point
+// 2) we also know the starting and stopping coordinates of the wall
+// 3) we can use the start and end corrdinate of the wall to normalize the sample position
+// 4) Y coordinate stays as is
+
+
 var map = "";
 map += ".......";
 map += ".......";
@@ -22,7 +33,7 @@ testmap = {
   fPlayerX: 7.7,
   fPlayerY: 3.9,
   fPlayerA: 3.4,
-  fDepth: 9,
+  fDepth: 15,
   startingSector: 'sector3',
 };
 
@@ -119,7 +130,7 @@ sector3 = [
   [
     [6, 6],
     [4.5, 5],
-    false
+    'sector4'
   ],     
   // s3 wall 4
   [
@@ -128,6 +139,99 @@ sector3 = [
     false
   ],     
 ]
+
+sector4 = [
+  [
+    [6, 6],
+    [4.5, 5],
+    'sector3',
+  ],     
+  [
+    [6, 6],
+    [9, 12],
+    false
+  ],     
+  [
+    [9, 12],
+    [4.5, 12],
+    false
+  ],     
+  [
+    [4.5, 12],
+    [4.5, 5],
+    false
+  ],        
+]
+
+
+
+
+  /**
+   * Function will get the pixel to be sampled from the sprite
+   *
+   * @param  {object/string} texture -      EITHER: 
+   *                                          A complete texture object to be sampled, 
+   *                                        OR: 
+   *                                          the name of the texture key in either the global
+   *                                          / level-side side texture object
+   * @param  {float} x -                    The x coordinate of the sample (how much across)
+   * @param  {float} y -                    The y coordinate of the sample
+   * @return {string}
+   */
+  var _getSamplePixel = function (texture, x, y) {
+
+    // defaults
+    var scaleFactor = texture["scale"] || defaultTexScale;
+    var texWidth = texture["width"] || defaultTexWidth;
+    var texHeight = texture["height"] || defaultTexHeight;
+    var noColor = texture["noColor"] || false;
+    
+
+    var texpixels = texture["texture"];
+
+    if (texture["texture"] == "DIRECTIONAL") {
+      // Different Texture based on viewport
+      if (nDegrees > 0 && nDegrees < 180) {
+          texpixels = texture["S"];
+      } else {
+          texpixels = texture["N"];
+      }
+    }
+
+    scaleFactor = scaleFactor || 2;
+    
+    x = (scaleFactor * x) % 1;
+    y = (scaleFactor * y) % 1;
+
+    var sampleX = ~~(texWidth * x);
+    var sampleY = ~~(texHeight * y);
+
+    var samplePosition = texWidth * sampleY + sampleX;
+    var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+
+    var currentColor;
+    var currentPixel;
+
+    if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
+      return "+";
+    } else {
+      
+      if( noColor ){
+        currentPixel = texpixels[samplePosition];
+        currentColor = 'm';
+      }else{
+        currentPixel = texpixels[samplePosition2];
+        currentColor = texpixels[samplePosition2+1];
+      }
+  
+      return [currentPixel, currentColor];
+    }
+  };
+
+
+
+
+
 
 
 
@@ -769,8 +873,8 @@ var gameEngineJS = (function () {
 
       var sectorWalls = window[currentSector]; // the actual sector object from the level file
 
-      if(i == 300)
-        console.log(`Current Sector ${currentSector}`)
+      // if(i == 300)
+      //   console.log(`Current Sector ${currentSector}`)
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -814,8 +918,8 @@ var gameEngineJS = (function () {
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
               sectorQueue.push(nextSector);
-              if(i == 300)
-                console.log(`Next Sector ${nextSector}`);
+              // if(i == 300)
+              //   console.log(`Next Sector ${nextSector}`);
             }
 
           }
@@ -829,8 +933,8 @@ var gameEngineJS = (function () {
       } // end iterate over all walls
 
     }
-    if(i == 300)
-      console.log('---');
+    // if(i == 300)
+    //   console.log('---');
     // return nextSector;
   };
 
