@@ -57,6 +57,8 @@ var fPlayerEndY;
 
 var fscreenHeightFactor;
 
+var oMap;
+
 var nMapHeight = 16;
 var nMapWidth = 16;
 

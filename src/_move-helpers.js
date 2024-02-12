@@ -14,7 +14,7 @@
   function testWallCollision( testX, testY ){
 
     // look at all walls in the current player sector
-    var allCurrentWalls = window[sPlayerSector];
+    var allCurrentWalls = oMap[sPlayerSector];
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var fTestDistanceToWall = fDepth;
@@ -57,7 +57,7 @@
     return false;
   }
 
-  
+
 
 
 // keyboard and mouse

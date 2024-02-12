@@ -7,15 +7,145 @@
 // Texture sampling should work like this:
 
 
+map = {
 
-var map = "";
-map += ".......";
-map += ".......";
-map += ".......";
-map += ".......";
-map += ".......";
-map += ".......";
-map += ".......";
+  sector1: [
+    // s1 wall 0
+    [
+      [4,2], // point 1
+      [5,4], // point 2
+      'sector2',
+      '#'
+    ],     
+    // s1 wall 1
+    [
+      [5,4],
+      [2,5],
+      false,
+      'o'
+    ],     
+    // s1 wall 2
+    [
+      [2, 5],
+      [0.5, 4],
+      false,
+      '#'
+    ],     
+    // s1 wall 3
+    [
+      [0.5, 4],
+      [0.2, 0.2],
+      false,
+      '#'
+    ],     
+    // s1 wall 4
+    [
+      [0.2, 0.2],
+      [4, 2],
+      false,
+      '#'
+    ],
+  ],
+  
+  sector2 : [
+    // s2 wall 0
+    [
+      [4,2], // point 1
+      [5,4], // point 2
+      'sector1',
+      '#'
+    ],     
+    // s2 wall 1
+    [
+      [4,2],
+      [6,1],
+      false,
+      'o'
+    ],     
+    // s2 wall 2
+    [
+      [6, 1],
+      [7, 2.1],
+      false,
+      'o'
+    ],     
+    // s2 wall 3
+    [
+      [7, 2.1],
+      [5, 4],
+      'sector3',,
+      'Y'
+    ],     
+  ],
+  
+  sector3 : [
+    // s3 wall 0
+    [
+      [7, 2.1], // point 1
+      [5, 4], // point 2
+      'sector2',,
+      'o'
+    ],     
+    // s3 wall 1
+    [
+      [7,2.1],
+      [8,4],
+      false,
+      '#'
+    ],     
+    // s3 wall 2
+    [
+      [8, 4],
+      [6, 6],
+      false,
+      '#'
+    ],     
+    // s3 wall 3
+    [
+      [6, 6],
+      [4.5, 5],
+      'sector4',
+      '#'
+    ],     
+    // s3 wall 4
+    [
+      [4.5, 5],
+      [5, 4],
+      false,
+      '#'
+    ],     
+  ],
+  
+  sector4 : [
+    [
+      [6, 6],
+      [4.5, 5],
+      'sector3',
+      '#'
+    ],     
+    [
+      [6, 6],
+      [9, 12],
+      false,
+      'Y'
+    ],     
+    [
+      [9, 12],
+      [4.5, 12],
+      false,
+      'o'
+    ],     
+    [
+      [4.5, 12],
+      [4.5, 5],
+      false,
+      'o'
+    ],        
+  ]
+}
+
+
+
 
 // 2 2 1 // 1
 // A: 3.4 X:6 Y:2.7 // 2
@@ -42,121 +172,6 @@ testline = [
 ]
 
 
-sector1 = [
-  // s1 wall 0
-  [
-    [4,2], // point 1
-    [5,4], // point 2
-    'sector2'
-  ],     
-  // s1 wall 1
-  [
-    [5,4],
-    [2,5],
-    false
-  ],     
-  // s1 wall 2
-  [
-    [2, 5],
-    [0.5, 4],
-    false
-  ],     
-  // s1 wall 3
-  [
-    [0.5, 4],
-    [0.2, 0.2],
-    false
-  ],     
-  // s1 wall 4
-  [
-    [0.2, 0.2],
-    [4, 2],
-    false
-  ],
-]
-
-sector2 = [
-  // s2 wall 0
-  [
-    [4,2], // point 1
-    [5,4], // point 2
-    'sector1'
-  ],     
-  // s2 wall 1
-  [
-    [4,2],
-    [6,1],
-    false
-  ],     
-  // s2 wall 2
-  [
-    [6, 1],
-    [7, 2.1],
-    false
-  ],     
-  // s2 wall 3
-  [
-    [7, 2.1],
-    [5, 4],
-    'sector3',
-  ],     
-]
-
-sector3 = [
-  // s3 wall 0
-  [
-    [7, 2.1], // point 1
-    [5, 4], // point 2
-    'sector2',
-  ],     
-  // s3 wall 1
-  [
-    [7,2.1],
-    [8,4],
-    false
-  ],     
-  // s3 wall 2
-  [
-    [8, 4],
-    [6, 6],
-    false
-  ],     
-  // s3 wall 3
-  [
-    [6, 6],
-    [4.5, 5],
-    'sector4'
-  ],     
-  // s3 wall 4
-  [
-    [4.5, 5],
-    [5, 4],
-    false
-  ],     
-]
-
-sector4 = [
-  [
-    [6, 6],
-    [4.5, 5],
-    'sector3',
-  ],     
-  [
-    [6, 6],
-    [9, 12],
-    false
-  ],     
-  [
-    [9, 12],
-    [4.5, 12],
-    false
-  ],     
-  [
-    [4.5, 12],
-    [4.5, 5],
-    false
-  ],        
-]
 
 
 
@@ -171,6 +186,7 @@ var gameEngineJS = (function () {
     clearInterval(gameRun);
 
     // updates the level map, dimensions and textures
+    oMap = testmap.map;
     nMapHeight = testmap.nMapHeight;
     nMapWidth = testmap.nMapWidth;
     fDepth = testmap.fDepth || fDepth;
@@ -193,75 +209,40 @@ var gameEngineJS = (function () {
         
       // sky
       if (j < nCeiling) {
-          screen[j * nScreenWidth + i] = "0";
+          screen[j * nScreenWidth + i] = "a";
       }
 
       // solid block
       else if (j > nCeiling && j <= nFloor) {
 
-        // Solid Walltype
-        if (sWalltype != ".") {
+        // Render Texture with Shading
+        var sPixelToRender = "0";
 
-          // Render Texture with Shading
-          var sPixelToRender = "0";
-
-          // Standard Textures
-          // if (sWalltype == "#") {
-          //   if(sWallDirection == "N"){
-          //     sPixelToRender = "a"
-          //   }
-          //   else if(sWallDirection == "S"){
-          //     sPixelToRender = "b"
-          //   }
-          //   else if(sWallDirection == "E"){
-          //     sPixelToRender = "p"
-          //   }
-          //   // does not draw a wall, if there is a portal
-          //   else if(sWallDirection == "X"){
-          //     return
-          //   }
-          //   else{
-          //     sPixelToRender = "q"
-          //   }
-          // }
-          // else{
-          //   sPixelToRender = "h"
-          // }
-
-          if(sWallDirection == "X"){
-            return
-          }
-          else{
-
-            if(i == 300){
-              console.log(fSampleX);
-            }
-
-            var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-            // var currentPixel = _getSamplePixel( textures["T"], intersection, fSampleY )
-
-            sPixelToRender = _rh.renderWall(
-              fDistanceToWall,
-              sWallDirection,
-              _getSamplePixel( textures["T"], fSampleX, fSampleY, sWallDirection, true)
-            );
-          }
-
-
-          // if(isBoundary){
-          //   sPixelToRender = "0";
-          // }
-
-          // Does not draw out of bounds pixels
-          if( fDistanceToWall < fDepth ){
-            // Updates the screen with the pixel
-            screen[j * nScreenWidth + i] = sPixelToRender
-          }else{
-            screen[j * nScreenWidth + i] = "o"
-          }
+        // Don't render if Portal
+        if(sWallDirection == "X"){
+          return
         }
-        else {
-          screen[j * nScreenWidth + i] = "0";
+        else{
+
+          // if(i == 300){
+          //   console.log(fSampleX);
+          // }
+
+          var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
+          // var currentPixel = _getSamplePixel( textures["T"], intersection, fSampleY )
+
+          sPixelToRender = _rh.renderWall(
+            fDistanceToWall,
+            sWallDirection,
+            _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, sWallDirection, true)
+          );
+        }
+
+        // Does not draw out of bounds pixels
+        if( fDistanceToWall < fDepth ){
+          screen[j * nScreenWidth + i] = sPixelToRender
+        }else{
+          screen[j * nScreenWidth + i] = "o"
         }
       } // end solid block
 
@@ -280,14 +261,13 @@ var gameEngineJS = (function () {
    * @param {string} startingSector 
    * @param {*} i 
    * @param {*} fDistanceToWall 
-   * @param {*} sWalltype 
-   * @param {*} sWallDirection 
    * @returns 
    */
-  function checkSectors( startingSector, i , fDistanceToWall){
+  function checkSectors( startingSector, i){
 
-    var sWalltype = "#";
+    var sWalltype = "Y";
     var sWallDirection = "N";
+    var fDistanceToWall;
     
     var currentSector = startingSector;
 
@@ -302,8 +282,7 @@ var gameEngineJS = (function () {
       // Mark the current sector as visited
       visitedSectors[currentSector] = true;
 
-      var sectorWalls = window[currentSector]; // the actual sector object from the level file
-
+      var sectorWalls = oMap[currentSector]; // the actual sector object from the level file
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -352,7 +331,12 @@ var gameEngineJS = (function () {
           // 3) we can use the start and end corrdinate of the wall to normalize the sample position
           // 4) Y coordinate stays as is
 
-          wallSamplePosition = intersection.x
+
+          // Standard Wall Type
+          
+          if(currentWall[3] != false){
+            sWallType = currentWall[3];
+          }
 
 
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
@@ -365,14 +349,21 @@ var gameEngineJS = (function () {
             if (!visitedSectors[nextSector]) {
               sectorQueue.push(nextSector);
             }
-
           }
+          else{
+            wallSamplePosition = intersection.y
+
+            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
+            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
+            fDepthBuffer[i] = fDistanceToWall;
+          
+            drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition)
+          }
+
+
         }
         
-        var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
-        var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
-        fDepthBuffer[i] = fDistanceToWall;
-        drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, wallSamplePosition)
+        
 
       } // end iterate over all walls
 
