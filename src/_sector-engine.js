@@ -210,8 +210,8 @@ map = {
 // 1.25 is 25% longer
 sectorMeta = {
   "sector1" : [
-    0.25, // Ceiling Height
-    1,    // Floor Height
+    0.5, // Ceiling Height
+    0.5,    // Floor Height
   ],
   "sector6": [
     0.5,
@@ -406,6 +406,15 @@ var gameEngineJS = (function () {
           if(currentWall[2] != false){
             sWallDirection = "X";
             nextSector = currentWall[2];
+
+            // if(typeof sectorMeta[nextSector] !== 'undefined'){
+            //   nextSectorFloorFactor = sectorMeta[currentSector][0];
+            //   nextSectorCeilingFactor = sectorMeta[currentSector][1];
+
+            //   if(nextSectorFloorFactor < 1){
+            //     console.log('looking at a higher floor')
+            //   }
+            // }
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
