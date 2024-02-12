@@ -401,7 +401,9 @@ var gameEngineJS = (function () {
           }
           else{
 
-            wallSamplePosition = Math.abs(intersection.x - intersection.y)
+            wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
+
+            // wallSamplePosition = Math.abs(intersection.x - intersection.y)
 
             var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
             var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;

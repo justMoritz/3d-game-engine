@@ -34,6 +34,16 @@ function intersectionPoint(a0, a1, b0, b1) {
 }
 
 
+// Linear interpolation function to find sample position 
+function texSampleLerp( ax,ay, bx ,by, hx, hy ){
+  var distanceAH = Math.sqrt(Math.pow(hx - ax, 2) + Math.pow(hy - ay, 2));
+  var totalLength = Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
+
+  // Distance between points a and h
+  // div. by total length of the wall
+  return distanceAH / totalLength;
+}
+
 
 var epsilon = 0.0001;
 function approximatelyEqual(a, b, epsilon) {
