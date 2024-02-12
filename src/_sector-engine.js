@@ -215,10 +215,10 @@ sectorMeta = {
     0.5, // Floor Height
     1.5, // Ceiling Height
   ],
-  "sector5" : [
-    1.25, // Floor Height
-    0.75, // Ceiling Height
-  ],
+  // "sector5" : [
+  //   1.25, // Floor Height
+  //   0.75, // Ceiling Height
+  // ],
   "sector6": [
     1.5,
     0.5,
@@ -481,9 +481,9 @@ var gameEngineJS = (function () {
       if (bJumping) {
         nJumptimer++;
         // TODO: BETTER JUMPING
-        // fPlayerH += 0.1;
+        fPlayerH += 0.1;
       }
-      if (nJumptimer > 0.5) {
+      if (nJumptimer > 5) {
         bFalling = true;
         bJumping = false;
         nJumptimer = 6;
@@ -493,6 +493,7 @@ var gameEngineJS = (function () {
       // falling back down after jump
       if (bFalling && nJumptimer > 1) {
         nJumptimer--;
+        fPlayerH -= 0.1;
       }else{
         bFalling = false;
       }
@@ -505,7 +506,7 @@ var gameEngineJS = (function () {
     
 
       // Some constants for each loop
-      var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
+      var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
       // fscreenHeightFactor = fscreenHeightFactor * fPlayerH
