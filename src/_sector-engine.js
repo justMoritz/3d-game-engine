@@ -1,10 +1,6 @@
 /**
- * FOR TESTING ONLY
+ * Sectors
  */
-
-// TODO:
-// Map into single file
-// Texture sampling should work like this:
 
 map = {
   "sector1": [
@@ -208,10 +204,26 @@ map = {
   ]  
 }
 
+
+// 1 is standard
+// 0.75 is 25% shorter 
+// 1.25 is 25% longer
+sectorMeta = {
+  "sector1" : [
+    0.25, // Ceiling Height
+    1,    // Floor Height
+  ],
+  "sector6": [
+    0.5,
+    1.5
+  ]
+}
+
 testmap = {
   nMapHeight: 15,
   nMapWidth: 15,
   map: map,
+  sectorMeta: sectorMeta,
   fPlayerX: 7.7,
   fPlayerY: 3.9,
   fPlayerA: 3.4,
@@ -338,6 +350,15 @@ var gameEngineJS = (function () {
 
       var sectorWalls = oMap[currentSector]; // the actual sector object from the level file
 
+      var sectorFloorFactor = 1;
+      var sectorCeilingFactor = 1;
+
+      // per-sector overrides for floor and ceiling heights
+      if(typeof sectorMeta[currentSector] !== 'undefined'){
+        sectorFloorFactor = sectorMeta[currentSector][0]
+        sectorCeilingFactor = sectorMeta[currentSector][1]
+      }
+
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
         // Calculate if the lines of the current eye-vector and the testline variable above intersect,
@@ -373,23 +394,15 @@ var gameEngineJS = (function () {
             sWallDirection = "E";
           }
 
-          // TODO:
-          // Wall detection:
-          // 1) we know where the wall was hit, this is our x-sampling point
-          // 2) we also know the starting and stopping coordinates of the wall
-          // 3) we can use the start and end corrdinate of the wall to normalize the sample position
-          // 4) Y coordinate stays as is
-
-
-          // Standard Wall Type
-          
+          // Wall Type (texture)
           if(currentWall[3] != false){
             sWallType = currentWall[3];
           }
 
-
+          // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // don't draw that wall
+          // TODO: Need to determine, if the sector we are looking into has a larger ceiling or floor, draw the wall for the section that's obstructed
           if(currentWall[2] != false){
             sWallDirection = "X";
             nextSector = currentWall[2];
@@ -400,15 +413,13 @@ var gameEngineJS = (function () {
             }
           }
           else{
+            // Regular wall
 
+            // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
             wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
-
-            // wallSamplePosition = Math.abs(intersection.x - intersection.y)
-
-            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
-            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
-            fDepthBuffer[i] = fDistanceToWall;
-          
+            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * sectorCeilingFactor;
+            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall   * sectorFloorFactor ;
+            fDepthBuffer[i] = fDistanceToWall;      
             drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition)
           }
 
