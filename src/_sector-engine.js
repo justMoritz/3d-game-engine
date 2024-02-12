@@ -480,13 +480,11 @@ var gameEngineJS = (function () {
       // allows for jumping a certain amount of time
       if (bJumping) {
         nJumptimer++;
-        // TODO: BETTER JUMPING
         fPlayerH += 0.1;
       }
-      if (nJumptimer > 5) {
+      if (nJumptimer > 10) {
         bFalling = true;
         bJumping = false;
-        nJumptimer = 6;
       }
       
 
