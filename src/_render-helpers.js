@@ -68,9 +68,9 @@ var _rh = {
     var b25  = _rh.colorReferenceTable[color][0];
     var b0   = "0";
 
-    var fDepthRatio1 = fDepth / 5.5;
-    var fDepthRatio2 = fDepth /3.66;
-    var fDepthRatio3 = fDepth /2.33;
+    var fDepthRatio1 = fDepth/2 / 5.5;
+    var fDepthRatio2 = fDepth/2 /3.66;
+    var fDepthRatio3 = fDepth/2 /2.33;
 
     // Set default fill value
     let fill = b0;

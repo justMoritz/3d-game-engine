@@ -36,6 +36,8 @@ var bStrafeLeft;
 var bStrafeRight;
 var bMoveForward;
 var bMoveBackward;
+var bJumping;
+var bFalling;
 var bRunning;
 var bPaused;
 var bPlayerMayMoveForward = true;
@@ -49,6 +51,7 @@ var fDepthBuffer = [];
 var fPlayerX = 14.0;
 var fPlayerY = 1.0;
 var fPlayerA = 1.5;
+var fPlayerH = 1;
 
 var sPlayerSector = 'sector0';
 

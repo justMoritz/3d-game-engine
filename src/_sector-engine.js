@@ -211,11 +211,13 @@ map = {
 sectorMeta = {
   "sector1" : [
     0.5, // Ceiling Height
-    0.5,    // Floor Height
+    0.5, // Floor Height
+    2
   ],
   "sector6": [
+    1.5,
     0.5,
-    1.5
+    0.75
   ]
 }
 
@@ -470,16 +472,36 @@ var gameEngineJS = (function () {
         fPlayerA -= PIx2;
       }
 
-      /**
-       * Drawing related
-       */
 
+      // allows for jumping a certain amount of time
+      if (bJumping) {
+        nJumptimer++;
+      }
+      if (nJumptimer > 6) {
+        bFalling = true;
+        bJumping = false;
+        nJumptimer = 6;
+      }
       
+
+      // falling back down after jump
+      if (bFalling && nJumptimer > 1) {
+        nJumptimer--;
+      }else{
+        bFalling = false;
+      }
+
+      // stop falling
+      if (nJumptimer < 1) {
+        bFalling = false;
+      }
+
+    
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - nJumptimer * 0.15 - fLooktimer * 0.15);
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
-
+      // TODO: factor in fPlayerH
 
 
 
