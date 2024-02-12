@@ -345,6 +345,13 @@ var gameEngineJS = (function () {
             sWallDirection = "E";
           }
 
+          // TODO:
+          // Wall detection:
+          // 1) we know where the wall was hit, this is our x-sampling point
+          // 2) we also know the starting and stopping coordinates of the wall
+          // 3) we can use the start and end corrdinate of the wall to normalize the sample position
+          // 4) Y coordinate stays as is
+
           wallSamplePosition = intersection.x
 
 
