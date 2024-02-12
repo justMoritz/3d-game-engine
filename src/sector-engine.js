@@ -6,11 +6,6 @@
 // Map into single file
 // Texture sampling should work like this:
 
-// Wall detection:
-// 1) we know where the wall was hit, this is our x-sampling point
-// 2) we also know the starting and stopping coordinates of the wall
-// 3) we can use the start and end corrdinate of the wall to normalize the sample position
-// 4) Y coordinate stays as is
 
 
 var map = "";
@@ -192,7 +187,7 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     for (var j = 0; j < nScreenHeight; j++) {
         
@@ -211,27 +206,47 @@ var gameEngineJS = (function () {
           var sPixelToRender = "0";
 
           // Standard Textures
-          if (sWalltype == "#") {
-            if(sWallDirection == "N"){
-              sPixelToRender = "a"
-            }
-            else if(sWallDirection == "S"){
-              sPixelToRender = "b"
-            }
-            else if(sWallDirection == "E"){
-              sPixelToRender = "p"
-            }
-            // does not draw a wall, if there is a portal
-            else if(sWallDirection == "X"){
-              return
-            }
-            else{
-              sPixelToRender = "q"
-            }
+          // if (sWalltype == "#") {
+          //   if(sWallDirection == "N"){
+          //     sPixelToRender = "a"
+          //   }
+          //   else if(sWallDirection == "S"){
+          //     sPixelToRender = "b"
+          //   }
+          //   else if(sWallDirection == "E"){
+          //     sPixelToRender = "p"
+          //   }
+          //   // does not draw a wall, if there is a portal
+          //   else if(sWallDirection == "X"){
+          //     return
+          //   }
+          //   else{
+          //     sPixelToRender = "q"
+          //   }
+          // }
+          // else{
+          //   sPixelToRender = "h"
+          // }
+
+          if(sWallDirection == "X"){
+            return
           }
           else{
-            sPixelToRender = "h"
+
+            if(i == 300){
+              console.log(fSampleX);
+            }
+
+            var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
+            // var currentPixel = _getSamplePixel( textures["T"], intersection, fSampleY )
+
+            sPixelToRender = _rh.renderWall(
+              fDistanceToWall,
+              sWallDirection,
+              _getSamplePixel( textures["T"], fSampleX, fSampleY, sWallDirection, true)
+            );
           }
+
 
           // if(isBoundary){
           //   sPixelToRender = "0";
@@ -297,6 +312,7 @@ var gameEngineJS = (function () {
         // to set the fDistanceToWall variable :) 
 
         var currentWall = sectorWalls[w];
+        var wallSamplePosition = null;
       
         // Check for intersection of current view vector with the wall-vector we are testing
         var intersection = intersectionPoint(
@@ -313,6 +329,12 @@ var gameEngineJS = (function () {
             Math.pow(fPlayerY - intersection.y, 2)
           );
 
+          var fSampleX = 0.0;
+          // var currentWallStartX = currentWall[0][0];
+          // var currentWallEndX = currentWall[1][0];
+          // intersection
+
+          
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
           
@@ -322,6 +344,9 @@ var gameEngineJS = (function () {
           }else{
             sWallDirection = "E";
           }
+
+          wallSamplePosition = intersection.x
+
 
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // don't draw that wall
@@ -340,7 +365,7 @@ var gameEngineJS = (function () {
         var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
         var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
         fDepthBuffer[i] = fDistanceToWall;
-        drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor)
+        drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, wallSamplePosition)
 
       } // end iterate over all walls
 
