@@ -6,142 +6,181 @@
 // Map into single file
 // Texture sampling should work like this:
 
-
 map = {
-
-  sector1: [
-    // s1 wall 0
+  "sector1": [
     [
-      [4,2], // point 1
-      [5,4], // point 2
-      'sector2',
-      '#'
+      [4,2], 
+      [5,4], 
+      "sector2",
+      "#"
     ],     
-    // s1 wall 1
     [
       [5,4],
       [2,5],
       false,
-      'o'
+      "o"
     ],     
-    // s1 wall 2
     [
       [2, 5],
       [0.5, 4],
       false,
-      '#'
+      "#"
     ],     
-    // s1 wall 3
     [
       [0.5, 4],
       [0.2, 0.2],
       false,
-      '#'
+      "#"
     ],     
-    // s1 wall 4
     [
       [0.2, 0.2],
       [4, 2],
       false,
-      '#'
-    ],
+      "#"
+    ]
   ],
   
-  sector2 : [
-    // s2 wall 0
+  "sector2" : [
     [
-      [4,2], // point 1
-      [5,4], // point 2
-      'sector1',
-      '#'
+      [4,2],
+      [5,4],
+      "sector1",
+      "#"
     ],     
-    // s2 wall 1
     [
       [4,2],
       [6,1],
       false,
-      'o'
+      "o"
     ],     
-    // s2 wall 2
     [
       [6, 1],
       [7, 2.1],
       false,
-      'o'
+      "o"
     ],     
-    // s2 wall 3
     [
       [7, 2.1],
       [5, 4],
-      'sector3',,
-      'Y'
-    ],     
+      "sector3",
+      "Y"
+    ]     
   ],
   
-  sector3 : [
-    // s3 wall 0
+  "sector3" : [
     [
-      [7, 2.1], // point 1
-      [5, 4], // point 2
-      'sector2',,
-      'o'
+      [7, 2.1],
+      [5, 4], 
+      "sector2",
+      "o"
     ],     
-    // s3 wall 1
     [
       [7,2.1],
       [8,4],
       false,
-      '#'
+      "#"
     ],     
-    // s3 wall 2
     [
       [8, 4],
       [6, 6],
       false,
-      '#'
+      "#"
     ],     
-    // s3 wall 3
     [
       [6, 6],
       [4.5, 5],
-      'sector4',
-      '#'
+      "sector4",
+      "#"
     ],     
-    // s3 wall 4
     [
       [4.5, 5],
       [5, 4],
       false,
-      '#'
-    ],     
+      "#"
+    ]     
   ],
-  
-  sector4 : [
+  "sector4" : [
     [
       [6, 6],
       [4.5, 5],
-      'sector3',
-      '#'
+      "sector3",
+      "#"
     ],     
     [
       [6, 6],
-      [9, 12],
+      [6, 10],
       false,
-      'Y'
+      "Y"
     ],     
     [
-      [9, 12],
-      [4.5, 12],
-      false,
-      'o'
+      [6, 10],
+      [4.5, 10],
+      "sector5",
+      "o"
     ],     
     [
-      [4.5, 12],
+      [4.5, 10],
       [4.5, 5],
       false,
-      'o'
-    ],        
+      "o"
+    ]        
+  ],
+
+  "sector5" : [
+    [
+      [4.5, 10],
+      [6, 10],
+      "sector4",
+      "#"
+    ],     
+    [
+      [4.5, 10],
+      [4.5, 14],
+      false,
+      "Y"
+    ],     
+    [
+      [4.5, 14],
+      [6, 14],
+      false,
+      "o"
+    ],     
+    [
+      [6, 14],
+      [6, 10],
+      "sector6",
+      "o"
+    ]        
+  ],
+
+  "sector6" : [
+    [
+      [6, 14],
+      [6, 10],
+      "sector5",
+      "#"
+    ],     
+    [
+      [6, 10],
+      [15, 11],
+      false,
+      "Y"
+    ],     
+    [
+      [15, 11],
+      [15, 14],
+      false,
+      "o"
+    ],     
+    [
+      [15, 14],
+      [6, 14],
+      false,
+      "o"
+    ]        
   ]
+
+  
 }
 
 
@@ -152,13 +191,13 @@ map = {
 // A: 3.4 X:7.7 Y:3.9 // 3
 
 testmap = {
-  nMapHeight: 7,
-  nMapWidth: 7,
+  nMapHeight: 15,
+  nMapWidth: 15,
   map: map,
   fPlayerX: 7.7,
   fPlayerY: 3.9,
   fPlayerA: 3.4,
-  fDepth: 15,
+  fDepth: 30,
   startingSector: 'sector3',
 };
 
@@ -263,9 +302,8 @@ var gameEngineJS = (function () {
    * @param {*} fDistanceToWall 
    * @returns 
    */
-  function checkSectors( startingSector, i){
+  function checkSectors( startingSector, i ){
 
-    var sWalltype = "Y";
     var sWallDirection = "N";
     var fDistanceToWall;
     
@@ -308,12 +346,7 @@ var gameEngineJS = (function () {
             Math.pow(fPlayerY - intersection.y, 2)
           );
 
-          var fSampleX = 0.0;
-          // var currentWallStartX = currentWall[0][0];
-          // var currentWallEndX = currentWall[1][0];
-          // intersection
 
-          
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
           
@@ -351,7 +384,8 @@ var gameEngineJS = (function () {
             }
           }
           else{
-            wallSamplePosition = intersection.y
+
+            wallSamplePosition = Math.abs(intersection.x - intersection.y)
 
             var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall;
             var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall;
@@ -409,7 +443,7 @@ var gameEngineJS = (function () {
         // calculates the ray angle into the world space
         // take the current player angle, subtract half the field of view
 
-        var fDistanceToWall = 0;
+        // var fDistanceToWall = 0;
 
               
         // Calculate the direction of the current ray
@@ -424,35 +458,28 @@ var gameEngineJS = (function () {
         fAngleDifferences =  fPlayerA - fRayAngle ;
         
         // TODO: reimplement
-          // // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
-          // // This corrects for this perspective
-          // // var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
-          // var angleCorrection = 0;
+        // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
+        // This corrects for this perspective
+        // var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
+        var angleCorrection = 0;
 
-          // if( angleCorrection == 1 ){
-          //   angleCorrection = 0;
-          // }
-          // fAngleDifferences *= 1- angleCorrection/4;
+        if( angleCorrection == 1 ){
+          angleCorrection = 0;
+        }
+        fAngleDifferences *= 1- angleCorrection/4;
 
-          // // normalize
-          // if ( fAngleDifferences < 0) {
-          //   fAngleDifferences += PIx2;
-          // }
-          // if (fAngleDifferences > PIx2) {
-          //   fAngleDifferences -= PIx2;
-          // }
+        // normalize
+        if ( fAngleDifferences < 0) {
+          fAngleDifferences += PIx2;
+        }
+        if (fAngleDifferences > PIx2) {
+          fAngleDifferences -= PIx2;
+        }
 
-
-        // TODO: For each sector ... that's a bit more logic. Coming soon.
-        // We will start (and keep track of) each sector the player is in, and then render that sector (only)
-        // from there, will will check for portals into other sectors, and then render those sectors
-        // in the move logic, we're keeping track of when the player walks into a different sector (somehow)
-
-        
 
         // checks the current sector, and potentially updates the sector the player might be in
         // TODO: Consider not passing fDistanceToWall
-        checkSectors(sPlayerSector, i, fDistanceToWall);
+        checkSectors(sPlayerSector, i);
 
 
       } // end column loop

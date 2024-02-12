@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Visualization</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex;">
+        <textarea id="levelData" rows="10" cols="50" placeholder="Paste level data here..."></textarea><br>
+        <button id="importButton">Import</button>
+    </div>
+    <canvas id="mapCanvas" width="800" height="800"></canvas>
+    <script>
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        let mapData;
+
+        document.getElementById('importButton').addEventListener('click', importMap);
+
+        function importMap() {
+            const levelDataTextarea = document.getElementById('levelData');
+            const levelData = levelDataTextarea.value.trim();
+            if (levelData === '') {
+                alert('Please paste level data first.');
+                return;
+            }
+
+            try {
+                mapData = JSON.parse(levelData);
+                drawMap();
+            } catch (error) {
+                alert('Invalid level data format. Please make sure it is valid JSON.');
+            }
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before drawing
+
+            for (const sector in mapData) {
+                const walls = mapData[sector];
+                ctx.beginPath();
+                for (const wall of walls) {
+                    const startPoint = wall[0];
+                    const endPoint = wall[1];
+                    const connectedSector = wall[2];
+
+                    // Draw point labels
+                    drawPointLabel(startPoint);
+                    drawPointLabel(endPoint);
+
+                    // Check if the wall has a connection to another sector
+                    if (typeof connectedSector === 'string') {
+                        ctx.strokeStyle = 'green';
+                    } else {
+                        ctx.strokeStyle = 'black';
+                    }
+
+                    ctx.moveTo(startPoint[0] * 50, startPoint[1] * 50); // Scale up for better visualization
+                    ctx.lineTo(endPoint[0] * 50, endPoint[1] * 50); // Scale up for better visualization
+                }
+                ctx.stroke();
+            }
+        }
+
+        function drawPointLabel(point) {
+            ctx.font = '10px Arial';
+            ctx.fillStyle = 'red';
+            ctx.fillText(`(${point[0]}, ${point[1]})`, point[0] * 50 + 5, point[1] * 50 - 5); // Scale up for better visualization
+        }
+    </script>
+</body>
+
+</html>

@@ -5,6 +5,11 @@
  */
 
 
+function getFraction(number) {
+  return number % 1;
+}
+
+
 // takes beginning and ends of two vectors, and returns the point at which they meet, if they do
 // Stolen from jdh on YouTube, (who stole it from Wikipedia), but then implemented for my needs :)
 function intersectionPoint(a0, a1, b0, b1) {
