@@ -257,7 +257,7 @@ var _rh = {
  * @param  {float} y -                    The y coordinate of the sample
  * @return {string}
  */
-var _getSamplePixel = function (texture, x, y) {
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale) {
 
   // defaults
   var scaleFactor = texture["scale"] || defaultTexScale;
@@ -278,9 +278,19 @@ var _getSamplePixel = function (texture, x, y) {
   }
 
   scaleFactor = scaleFactor || 2;
+
+  var scaleFactorX = scaleFactor;
+  var scaleFactorY = scaleFactor;
+
+  if(fSampleXScale != null){
+    scaleFactorX = fSampleXScale;
+  }
+  if(fSampleYScale != null){
+    scaleFactorY = fSampleYScale;
+  }
   
-  x = (scaleFactor * x) % 1;
-  y = (scaleFactor * y) % 1;
+  x = (scaleFactorX * x) % 1;
+  y = (scaleFactorY * y) % 1;
 
   var sampleX = ~~(texWidth * x);
   var sampleY = ~~(texHeight * y);

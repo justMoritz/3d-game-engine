@@ -1,6 +1,27 @@
 /**
- * Sectors
+ * SECTOR ENGINE
  */
+
+
+
+
+// sectors
+// 
+
+
+
+/**
+ * Sector Markup
+ * 
+ * (required) wall start x/y     [float, float]
+ * (required) wall end x/y       [float, float]
+ * (required) portal to sector   string or false
+ * (required) wall textures      string
+ *            x-sample scale     float
+ *            Y-sample scale     float
+ * 
+ */
+
 
 map = {
   "sector1": [
@@ -14,7 +35,7 @@ map = {
       [5,4],
       [2,5],
       false,
-      "o"
+      "#"
     ],     
     [
       [2, 5],
@@ -26,13 +47,16 @@ map = {
       [0.5, 4],
       [0.2, 0.2],
       false,
-      "#"
+      "#",
+      10,
+      4
     ],     
     [
       [0.2, 0.2],
       [4, 2],
       false,
-      "#"
+      "#",
+      6
     ]
   ],
 
@@ -118,7 +142,8 @@ map = {
       [4.5, 10],
       [4.5, 5],
       false,
-      "o"
+      "o",
+      8
     ]        
   ],
 
@@ -160,7 +185,8 @@ map = {
       [6, 10],
       [15, 11],
       false,
-      "Y"
+      "Y",
+      8
     ],     
     [
       [15, 11],
@@ -172,36 +198,10 @@ map = {
       [15, 14],
       [6, 14],
       false,
-      "o"
+      "o",
+      8
     ]        
   ],
-
-  "sector7" : [
-    [
-      [8, 12],
-      [8, 13],
-      false,
-      "$"
-    ],     
-    [
-      [8, 13],
-      [9, 13],
-      false,
-      "Y"
-    ],     
-    [
-      [9, 13],
-      [9, 12],
-      false,
-      "#"
-    ],     
-    [
-      [9, 12],
-      [8, 12],
-      false,
-      "o"
-    ]        
-  ]  
 }
 
 
@@ -270,7 +270,7 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     for (var j = 0; j < nScreenHeight; j++) {
         
@@ -291,17 +291,13 @@ var gameEngineJS = (function () {
         }
         else{
 
-          // if(i == 300){
-          //   console.log(fSampleX);
-          // }
-
           var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
           // var currentPixel = _getSamplePixel( textures["T"], intersection, fSampleY )
 
           sPixelToRender = _rh.renderWall(
             fDistanceToWall,
             sWallDirection,
-            _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, sWallDirection, true)
+            _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
           );
         }
 
@@ -367,6 +363,8 @@ var gameEngineJS = (function () {
 
         var currentWall = sectorWalls[w];
         var wallSamplePosition = null;
+        var fSampleXScale = null;
+        var fSampleYScale = null;
       
         // Check for intersection of current view vector with the wall-vector we are testing
         var intersection = intersectionPoint(
@@ -399,6 +397,15 @@ var gameEngineJS = (function () {
             sWallType = currentWall[3];
           }
 
+          // Wall X-Sample Scale Override
+          if(typeof currentWall[4] !== 'undefined' && currentWall[4]){
+            fSampleXScale = currentWall[4];
+          }
+          // Wall Y-Sample Scale Override
+          if(typeof currentWall[5] !== 'undefined' && currentWall[5]){
+            fSampleYScale = currentWall[5];
+          }
+
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // don't draw that wall
@@ -424,12 +431,13 @@ var gameEngineJS = (function () {
           else{
             // Regular wall
 
+           
             // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
             wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
             var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * sectorCeilingFactor;
             var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall   * sectorFloorFactor ;
             fDepthBuffer[i] = fDistanceToWall;      
-            drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition)
+            drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition, fSampleXScale, fSampleYScale)
           }
 
 
